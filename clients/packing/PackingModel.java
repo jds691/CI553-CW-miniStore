@@ -16,13 +16,13 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class PackingModel extends Observable
 {
-  private AtomicReference<Basket> theBasket = new AtomicReference<>(); 
+  private final AtomicReference<Basket> theBasket = new AtomicReference<>();
 
   private StockReadWriter theStock   = null;
   private OrderProcessing theOrder   = null;
   private String          theAction  = "";
   
-  private StateOf         worker   = new StateOf();
+  private final StateOf         worker   = new StateOf();
 
   /*
    * Construct the model of the warehouse Packing client
@@ -59,7 +59,7 @@ public class PackingModel extends Observable
      */
     public synchronized boolean claim()   // Semaphore
     {
-      return held ? false : (held = true);
+      return !held && (held = true);
     }
     
     /**

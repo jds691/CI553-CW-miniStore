@@ -6,31 +6,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
-  * Defines the interface for accessing the order processing system.
-  * @author  Mike Smith University of Brighton
-  * @version 2.0
-  */
+ * Defines the interface for accessing the order processing system.
+ *
+ * @author Mike Smith University of Brighton
+ * @version 2.0
+ */
+public interface OrderProcessing {
+    void newOrder(Basket bought)
+            throws OrderException;
 
-public interface OrderProcessing
-{
-                                                   // Used by
-  public void newOrder(Basket bought)              // Cashier
-         throws OrderException;
+    int uniqueNumber()
+            throws OrderException;
 
-  public int  uniqueNumber()                       // Cashier
-         throws OrderException;
-   
-  public Basket getOrderToPack()                   // Packer
-         throws OrderException;
- 
-  public boolean informOrderPacked(int orderNum)   // Packer 
-         throws OrderException;
-         
-  // not being used in this version
-  public boolean informOrderCollected(int orderNum) // Collection
-         throws OrderException;
-   
-  // not being used in this version
-  public Map<String,List<Integer>> getOrderState() // Display
-         throws OrderException;
+    Basket getOrderToPack()
+            throws OrderException;
+
+    boolean informOrderPacked(int orderNum)
+            throws OrderException;
+
+    boolean informOrderCollected(int orderNum)
+            throws OrderException;
+
+    Map<String, List<Integer>> getOrderState()
+            throws OrderException;
 }
