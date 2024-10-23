@@ -1,11 +1,11 @@
 package middle;
 
-import catalogue.Product;
+import models.Product;
 
 import javax.swing.*;
 
 /**
- * Interface for read access to the stock list.
+ * Interface for read remote.access to the stock list.
  *
  * @author Mike Smith University of Brighton
  * @version 2.0

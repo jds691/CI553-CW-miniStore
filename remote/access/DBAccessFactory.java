@@ -3,7 +3,7 @@
  * @version 3.0
  */
 
-package dbAccess;
+package remote.access;
 
 import debug.DEBUG;
 
@@ -35,8 +35,8 @@ public class DBAccessFactory {
     }
 
     /**
-     * Return an object to implement system level access to the database.
-     * @return An object to provide system level access to the database
+     * Return an object to implement system level remote.access to the database.
+     * @return An object to provide system level remote.access to the database
      */
     public DBAccess getNewDBAccess() {
         setEnvironment();

@@ -1,8 +1,8 @@
 package remote;
 
-import catalogue.Basket;
+import models.Basket;
 import middle.OrderException;
-import orders.Order;
+import models.Order;
 
 import java.io.Serial;
 import java.rmi.RemoteException;

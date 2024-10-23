@@ -1,7 +1,7 @@
 package clients.customer;
 
-import catalogue.Basket;
-import catalogue.Product;
+import models.Basket;
+import models.Product;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.StockException;
@@ -26,7 +26,7 @@ public class CustomerModel extends Observable {
      */
     public CustomerModel(MiddleFactory factory) {
         try {
-            // Database access
+            // Database remote.access
             stockReader = factory.makeStockReader();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());

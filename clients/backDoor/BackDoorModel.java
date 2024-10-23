@@ -1,7 +1,7 @@
 package clients.backDoor;
 
-import catalogue.Basket;
-import catalogue.Product;
+import models.Basket;
+import models.Product;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.StockException;

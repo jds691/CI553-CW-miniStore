@@ -1,6 +1,6 @@
 package middle;
 
-import catalogue.Basket;
+import models.Basket;
 import debug.DEBUG;
 import remote.RemoteOrder_I;
 

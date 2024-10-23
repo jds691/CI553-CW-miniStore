@@ -1,6 +1,6 @@
 package middle;
 
-import catalogue.Product;
+import models.Product;
 import debug.DEBUG;
 import remote.RemoteStockR_I;
 
@@ -9,7 +9,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 
 /**
- * Facade for read access to the stock list.
+ * Facade for read remote.access to the stock list.
  * The actual implementation of this is held on the middle tier.
  * The actual stock list is held in a relational DataBase on the
  * third tier.

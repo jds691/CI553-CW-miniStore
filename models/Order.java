@@ -1,7 +1,5 @@
-package orders;
+package models;
 
-import catalogue.Basket;
-import catalogue.Product;
 import debug.DEBUG;
 import middle.OrderException;
 import middle.OrderProcessor;

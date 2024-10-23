@@ -1,7 +1,7 @@
 package remote;
 
-import catalogue.Product;
-import dbAccess.StockRW;
+import models.Product;
+import remote.access.StockRW;
 import middle.StockException;
 
 import javax.swing.*;
@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 // hence the synchronized methods
 
 /**
- * Implements Read/Write access to the stock list,
+ * Implements Read/Write remote.access to the stock list,
  * the stock list is held in a relational DataBase.
  *
  * @author Mike Smith University of Brighton

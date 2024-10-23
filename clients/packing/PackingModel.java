@@ -1,6 +1,6 @@
 package clients.packing;
 
-import catalogue.Basket;
+import models.Basket;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.OrderException;
@@ -44,7 +44,7 @@ public class PackingModel extends Observable {
         private boolean held = false;
 
         /**
-         * Claim exclusive access
+         * Claim exclusive remote.access
          *
          * @return true if claimed else false
          */

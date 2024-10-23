@@ -1,6 +1,6 @@
-package dbAccess;
+package remote.access;
 
-import catalogue.Product;
+import models.Product;
 import debug.DEBUG;
 import middle.StockException;
 import middle.StockReader;
@@ -16,7 +16,7 @@ import java.sql.*;
 //    no spaces after SQL statement ;
 
 /**
- * Implements Read access to the stock list
+ * Implements Read remote.access to the stock list
  * The stock list is held in a relational DataBase
  *
  * @author Mike Smith University of Brighton

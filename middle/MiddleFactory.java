@@ -7,11 +7,11 @@
 package middle;
 
 /**
- * Provide access to middle tier components.
+ * Provide remote.access to middle tier components.
  */
 public interface MiddleFactory {
     /**
-     * Return an object to access the database for read only access
+     * Return an object to remote.access the database for read only remote.access
      *
      * @return instance of StockReader
      * @throws StockException if issue
@@ -19,7 +19,7 @@ public interface MiddleFactory {
     StockReader makeStockReader() throws StockException;
 
     /**
-     * Return an object to access the database for read/write access
+     * Return an object to remote.access the database for read/write remote.access
      *
      * @return instance of StockReadWriter
      * @throws StockException if issue
@@ -27,7 +27,7 @@ public interface MiddleFactory {
     StockReadWriter makeStockReadWriter() throws StockException;
 
     /**
-     * Return an object to access the order processing system
+     * Return an object to remote.access the order processing system
      *
      * @return instance of OrderProcessing
      * @throws OrderException if issue

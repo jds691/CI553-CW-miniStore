@@ -1,13 +1,13 @@
 package remote;
 
-import catalogue.Product;
+import models.Product;
 import middle.StockException;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 /**
- * Defines the RMI interface for read/write access to the stock object.
+ * Defines the RMI interface for read/write remote.access to the stock object.
  * @author Mike Smith University of Brighton
  * @version 2.0
  */

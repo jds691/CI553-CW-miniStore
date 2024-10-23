@@ -1,9 +1,9 @@
 package middle;
 
-import catalogue.Product;
+import models.Product;
 
 /**
- * Interface for read/write access to the stock list.
+ * Interface for read/write remote.access to the stock list.
  *
  * @author Mike Smith University of Brighton
  * @version 2.0

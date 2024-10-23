@@ -29,7 +29,7 @@ import java.awt.*;
 class Main {
     public static void main(String[] args) {
         //DEBUG.set(true); /* Lots of debug info */
-        MiddleFactory factory = new LocalMiddleFactory();  // Direct access
+        MiddleFactory factory = new LocalMiddleFactory();  // Direct remote.access
 
         startCustomerGUI_MVC(factory);
         startCashierGUI_MVC(factory);
@@ -41,7 +41,7 @@ class Main {
     /**
      * start the Customer client, -search product
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
     public static void startCustomerGUI_MVC(MiddleFactory factory) {
         JFrame window = new JFrame();
@@ -61,7 +61,7 @@ class Main {
     /**
      * start the cashier client - customer check stock, buy product
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
     public static void startCashierGUI_MVC(MiddleFactory factory) {
         JFrame window = new JFrame();
@@ -83,7 +83,7 @@ class Main {
     /**
      * start the Packing client - for warehouse staff to pack the bought order for customer, one order at a time
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
     public static void startPackingGUI_MVC(MiddleFactory factory) {
         JFrame window = new JFrame();
@@ -104,7 +104,7 @@ class Main {
     /**
      * start the BackDoor client - store staff to check and update stock
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
     public static void startBackDoorGUI_MVC(MiddleFactory factory) {
         JFrame window = new JFrame();

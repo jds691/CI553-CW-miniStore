@@ -1,4 +1,4 @@
-package catalogue;
+package models;
 
 import java.io.Serial;
 import java.io.Serializable;

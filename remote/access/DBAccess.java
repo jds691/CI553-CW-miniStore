@@ -1,4 +1,4 @@
-package dbAccess;
+package remote.access;
 
 /**
  * Implements generic management of a database.

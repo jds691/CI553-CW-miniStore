@@ -1,6 +1,6 @@
 package clients.packing;
 
-import catalogue.Basket;
+import models.Basket;
 
 import javax.swing.*;
 import java.awt.*;

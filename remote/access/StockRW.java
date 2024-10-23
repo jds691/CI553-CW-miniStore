@@ -1,6 +1,6 @@
-package dbAccess;
+package remote.access;
 
-import catalogue.Product;
+import models.Product;
 import debug.DEBUG;
 import middle.StockException;
 import middle.StockReadWriter;
@@ -14,7 +14,7 @@ import java.sql.SQLException;
 // 
 
 /**
- * Implements Read /Write access to the stock list
+ * Implements Read /Write remote.access to the stock list
  * The stock list is held in a relational DataBase
  *
  * @author Mike Smith University of Brighton

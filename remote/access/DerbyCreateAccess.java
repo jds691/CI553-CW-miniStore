@@ -1,4 +1,4 @@
-package dbAccess;
+package remote.access;
 
 /**
  * Implements management of an Apache Derby database.

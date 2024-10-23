@@ -1,7 +1,7 @@
-package dbAccess;
+package remote.access;
 
 /**
- * Apache Derby database access
+ * Apache Derby database remote.access
  *
  * @author Mike Smith University of Brighton
  * @version 2.0
@@ -18,7 +18,7 @@ class DerbyAccess extends DBAccess {
     }
 
     /**
-     * Return the url to access the database
+     * Return the url to remote.access the database
      *
      * @return url to database
      */

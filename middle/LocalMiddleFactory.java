@@ -1,11 +1,11 @@
 package middle;
 
-import dbAccess.StockR;
-import dbAccess.StockRW;
-import orders.Order;
+import remote.access.StockR;
+import remote.access.StockRW;
+import models.Order;
 
 /**
- * Provide access to middle tier components.
+ * Provide remote.access to middle tier components.
  * Now only one instance of each middle tier object is created
  * @author Mike Smith University of Brighton
  * @version 2.1
@@ -16,7 +16,7 @@ public class LocalMiddleFactory implements MiddleFactory {
     private static Order orderProcessor = null;
 
     /**
-     * Return an object to access the database for read only access.
+     * Return an object to remote.access the database for read only remote.access.
      * All users share this same object.
      */
     public StockReader makeStockReader() throws StockException {
@@ -27,7 +27,7 @@ public class LocalMiddleFactory implements MiddleFactory {
     }
 
     /**
-     * Return an object to access the database for read/write access.
+     * Return an object to remote.access the database for read/write remote.access.
      * All users share this same object.
      */
     public StockReadWriter makeStockReadWriter() throws StockException {
@@ -38,7 +38,7 @@ public class LocalMiddleFactory implements MiddleFactory {
     }
 
     /**
-     * Return an object to access the order processing system.
+     * Return an object to remote.access the order processing system.
      * All users share this same object.
      */
     public OrderProcessor makeOrderProcessor() throws OrderException {

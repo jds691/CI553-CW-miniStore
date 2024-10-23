@@ -1,7 +1,7 @@
 package clients.cashier;
 
-import catalogue.Basket;
-import catalogue.Product;
+import models.Basket;
+import models.Product;
 import debug.DEBUG;
 import middle.*;
 
@@ -19,7 +19,7 @@ public class CashierModel extends Observable {
     private Product currentProduct = null;
     // Bought items
     private Basket basket = null;
-    // Database access
+    // Database remote.access
     private StockReadWriter stockReadWriter = null;
     // Process order
     private OrderProcessor orderProcessor = null;

@@ -1,6 +1,6 @@
 package remote;
 
-import catalogue.Basket;
+import models.Basket;
 import middle.OrderException;
 
 import java.rmi.Remote;
