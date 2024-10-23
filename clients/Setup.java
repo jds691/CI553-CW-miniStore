@@ -66,12 +66,12 @@ class Setup {
             dbDriver = (new DBAccessFactory()).getNewDBAccess();
             dbDriver.loadDriver();
             theCon = DriverManager.getConnection
-                    (dbDriver.urlOfDatabase(),
-                            dbDriver.username(),
-                            dbDriver.password());
+                    (dbDriver.getUrlOfDatabase(),
+                            dbDriver.getUsername(),
+                            dbDriver.getPassword());
         } catch (SQLException e) {
             System.err.println("Problem with connection to " +
-                    dbDriver.urlOfDatabase());
+                    dbDriver.getUrlOfDatabase());
             System.out.println("SQLException: " + e.getMessage());
             System.out.println("SQLState:     " + e.getSQLState());
             System.out.println("VendorError:  " + e.getErrorCode());
@@ -98,7 +98,7 @@ class Setup {
                         break;
                     case 's':
                     case 'f':
-                        query(stmt, dbDriver.urlOfDatabase(), sqlStatement);
+                        query(stmt, dbDriver.getUrlOfDatabase(), sqlStatement);
                         break;
                     case '*':
                         if (sqlStatement.length() >= 2)
@@ -122,7 +122,7 @@ class Setup {
                 }
             } catch (Exception e) {
                 System.out.println("problems with SQL sent to " +
-                        dbDriver.urlOfDatabase() +
+                        dbDriver.getUrlOfDatabase() +
                         "\n" + sqlStatement + "\n" + e.getMessage());
             }
         }

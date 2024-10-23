@@ -6,20 +6,13 @@ package dbAccess;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
-public class DBAccess {
-    public void loadDriver() throws Exception {
-        throw new RuntimeException("No driver");
-    }
+public abstract class DBAccess {
+    public abstract void loadDriver() throws Exception;
 
-    public String urlOfDatabase() {
-        return "";
-    }
+    public abstract String getUrlOfDatabase();
 
-    public String username() {
-        return "";
-    }
+    public abstract String getUsername();
 
-    public String password() {
-        return "";
-    }
+    //TODO: Storing the password in code is considered insecure
+    public abstract String getPassword();
 }

@@ -7,7 +7,7 @@ package dbAccess;
  * @version 2.0
  */
 class DerbyAccess extends DBAccess {
-    private static final String URLdb = "jdbc:derby:catshop.db";
+    private static final String DB_URL = "jdbc:derby:catshop.db";
     private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 
     /**
@@ -22,8 +22,19 @@ class DerbyAccess extends DBAccess {
      *
      * @return url to database
      */
-    public String urlOfDatabase() {
-        return URLdb;
+    @Override
+    public String getUrlOfDatabase() {
+        return DB_URL;
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
     }
 }
 

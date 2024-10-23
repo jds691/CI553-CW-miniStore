@@ -41,7 +41,7 @@ public class F_StockR implements StockReader {
      *
      * @return true if exists otherwise false
      */
-    public synchronized boolean exists(String number) throws StockException {
+    public synchronized boolean doesProductExist(String number) throws StockException {
         DEBUG.trace("F_StockR:exists()");
 
         try {
@@ -61,7 +61,7 @@ public class F_StockR implements StockReader {
      *
      * @return StockNumber, Description, Price, Quantity
      */
-    public synchronized Product getDetails(String number) throws StockException {
+    public synchronized Product getProductDetails(String number) throws StockException {
         DEBUG.trace("F_StockR:getDetails()");
 
         try {
@@ -76,7 +76,7 @@ public class F_StockR implements StockReader {
         }
     }
 
-    public synchronized ImageIcon getImage(String number) throws StockException {
+    public synchronized ImageIcon getProductImage(String number) throws StockException {
         DEBUG.trace("F_StockR:getImage()");
 
         try {

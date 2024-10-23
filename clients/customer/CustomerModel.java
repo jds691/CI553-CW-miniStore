@@ -57,8 +57,8 @@ public class CustomerModel extends Observable {
         productNumber = productNumber.trim();
         int amount = 1;
         try {
-            if (stockReader.exists(productNumber)) {
-                Product product = stockReader.getDetails(productNumber);
+            if (stockReader.doesProductExist(productNumber)) {
+                Product product = stockReader.getProductDetails(productNumber);
                 //  In stock?
                 if (product.getQuantity() >= amount) {
                     prompt = String.format(
@@ -70,7 +70,7 @@ public class CustomerModel extends Observable {
                     //   Require 1
                     product.setQuantity(amount);
                     basket.add(product);
-                    image = stockReader.getImage(productNumber);
+                    image = stockReader.getProductImage(productNumber);
                 } else {
                     prompt = product.getDescription() + " not in stock";
                 }

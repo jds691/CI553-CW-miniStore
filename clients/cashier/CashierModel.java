@@ -32,7 +32,7 @@ public class CashierModel extends Observable {
     public CashierModel(MiddleFactory factory) {
         try {
             stockReadWriter = factory.makeStockReadWriter();
-            orderProcessor = factory.makeOrderProcessing();
+            orderProcessor = factory.makeOrderProcessor();
         } catch (Exception e) {
             DEBUG.error("CashierModel.constructor\n%s", e.getMessage());
         }
@@ -62,8 +62,8 @@ public class CashierModel extends Observable {
         int amount = 1;
 
         try {
-            if (stockReadWriter.exists(productNumber)) {
-                Product product = stockReadWriter.getDetails(productNumber);
+            if (stockReadWriter.doesProductExist(productNumber)) {
+                Product product = stockReadWriter.getProductDetails(productNumber);
                 if (product.getQuantity() >= amount) {
                     prompt = String.format(
                             "%s : %7.2f (%2d) ",

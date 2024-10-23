@@ -29,12 +29,13 @@ import java.awt.*;
 class Main {
     public static void main(String[] args) {
         //DEBUG.set(true); /* Lots of debug info */
-        MiddleFactory mlf = new LocalMiddleFactory();  // Direct access
-        startCustomerGUI_MVC(mlf);
-        startCashierGUI_MVC(mlf);
-        startCashierGUI_MVC(mlf);
-        startPackingGUI_MVC(mlf);
-        startBackDoorGUI_MVC(mlf);
+        MiddleFactory factory = new LocalMiddleFactory();  // Direct access
+
+        startCustomerGUI_MVC(factory);
+        startCashierGUI_MVC(factory);
+        startCashierGUI_MVC(factory);
+        startPackingGUI_MVC(factory);
+        startBackDoorGUI_MVC(factory);
     }
 
     /**

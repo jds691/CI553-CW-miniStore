@@ -11,7 +11,18 @@ class WindowsAccess extends DBAccess {
         Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
     }
 
-    public String urlOfDatabase() {
+    @Override
+    public String getUrlOfDatabase() {
         return "jdbc:odbc:cshop";
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
     }
 }

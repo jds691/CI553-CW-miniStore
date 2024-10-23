@@ -38,7 +38,7 @@ public class R_StockR
      * @return true if exists otherwise false
      */
     public synchronized boolean exists(String pNum) throws RemoteException, StockException {
-        return stockReader.exists(pNum);
+        return stockReader.doesProductExist(pNum);
     }
 
     /**
@@ -48,7 +48,7 @@ public class R_StockR
      * @return StockNumber, Description, Price, Quantity
      */
     public synchronized Product getDetails(String pNum) throws RemoteException, StockException {
-        return stockReader.getDetails(pNum);
+        return stockReader.getProductDetails(pNum);
     }
 
     /**
@@ -60,6 +60,6 @@ public class R_StockR
      * @return Image
      */
     public synchronized ImageIcon getImage(String pNum) throws RemoteException, StockException {
-        return stockReader.getImage(pNum);
+        return stockReader.getProductImage(pNum);
     }
 }

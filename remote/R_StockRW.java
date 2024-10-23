@@ -47,7 +47,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized boolean exists(String pNum) throws StockException {
-        return stockReadWriter.exists(pNum);
+        return stockReadWriter.doesProductExist(pNum);
     }
 
     /**
@@ -58,7 +58,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized Product getDetails(String pNum) throws StockException {
-        return stockReadWriter.getDetails(pNum);
+        return stockReadWriter.getProductDetails(pNum);
     }
 
     /**
@@ -69,7 +69,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized ImageIcon getImage(String pNum) throws StockException {
-        return stockReadWriter.getImage(pNum);
+        return stockReadWriter.getProductImage(pNum);
     }
 
     /**

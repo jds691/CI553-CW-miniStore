@@ -11,7 +11,18 @@ class LinuxAccess extends DBAccess {
         Class.forName("org.gjt.mm.mysql.Driver").newInstance();
     }
 
-    public String urlOfDatabase() {
+    @Override
+    public String getUrlOfDatabase() {
         return "jdbc:mysql://localhost/cshop?user=root";
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
     }
 }

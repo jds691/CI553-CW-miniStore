@@ -13,6 +13,7 @@ import java.io.Serializable;
 public class Product implements Serializable {
     @Serial
     private static final long serialVersionUID = 20092506;
+    
     private String productNumber;
     private String description;
     private double price;

@@ -37,9 +37,9 @@ public class StockR implements StockReader {
             dbDriver.loadDriver();
 
             connection = DriverManager.getConnection(
-                    dbDriver.urlOfDatabase(),
-                    dbDriver.username(),
-                    dbDriver.password()
+                    dbDriver.getUrlOfDatabase(),
+                    dbDriver.getUsername(),
+                    dbDriver.getPassword()
             );
 
             connection.setAutoCommit(true);
@@ -66,7 +66,7 @@ public class StockR implements StockReader {
      * @param pNum The product number
      * @return true if exists otherwise false
      */
-    public synchronized boolean exists(String pNum) throws StockException {
+    public synchronized boolean doesProductExist(String pNum) throws StockException {
         try {
             ResultSet rs;
             try (PreparedStatement statement = connection.prepareStatement(
@@ -93,7 +93,7 @@ public class StockR implements StockReader {
      * @param pNum The product number
      * @return Details in an instance of a Product
      */
-    public synchronized Product getDetails(String pNum) throws StockException {
+    public synchronized Product getProductDetails(String pNum) throws StockException {
         try {
             Product product = new Product("0", "", 0.00, 0);
 
@@ -129,7 +129,7 @@ public class StockR implements StockReader {
      *             Assumed to exist in database.
      * @return ImageIcon representing the image
      */
-    public synchronized ImageIcon getImage(String pNum) throws StockException {
+    public synchronized ImageIcon getProductImage(String pNum) throws StockException {
         String filename = "default.jpg";
         try {
             ResultSet results;

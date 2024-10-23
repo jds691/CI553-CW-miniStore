@@ -57,8 +57,8 @@ public class BackDoorModel extends Observable {
         this.productNumber = productNumber.trim();
 
         try {
-            if (stockReadWriter.exists(this.productNumber)) {
-                Product product = stockReadWriter.getDetails(this.productNumber);
+            if (stockReadWriter.doesProductExist(this.productNumber)) {
+                Product product = stockReadWriter.getProductDetails(this.productNumber);
                 prompt = String.format(
                         "%s : %7.2f (%2d) ",
                         product.getDescription(),
@@ -88,9 +88,9 @@ public class BackDoorModel extends Observable {
         this.productNumber = productNumber.trim();
 
         try {
-            if (stockReadWriter.exists(this.productNumber)) {
+            if (stockReadWriter.doesProductExist(this.productNumber)) {
                 stockReadWriter.addStock(this.productNumber, quantity);
-                Product product = stockReadWriter.getDetails(this.productNumber);
+                Product product = stockReadWriter.getProductDetails(this.productNumber);
                 basket.add(product);
                 prompt = "";
             } else {

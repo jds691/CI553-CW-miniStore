@@ -32,6 +32,6 @@ public interface MiddleFactory {
      * @return instance of OrderProcessing
      * @throws OrderException if issue
      */
-    OrderProcessor makeOrderProcessing() throws OrderException;
+    OrderProcessor makeOrderProcessor() throws OrderException;
 }
 

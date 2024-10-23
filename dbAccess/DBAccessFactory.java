@@ -61,7 +61,7 @@ public class DBAccessFactory {
                 System.exit(0);
         }
 
-        return new DBAccess();
+        throw new RuntimeException("No database driver");
     }
 
     /**

@@ -26,7 +26,7 @@ public class PackingModel extends Observable {
      */
     public PackingModel(MiddleFactory mf) {
         try {
-            orderProcessor = mf.makeOrderProcessing();
+            orderProcessor = mf.makeOrderProcessor();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }

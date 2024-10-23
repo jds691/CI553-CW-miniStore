@@ -41,7 +41,7 @@ public class LocalMiddleFactory implements MiddleFactory {
      * Return an object to access the order processing system.
      * All users share this same object.
      */
-    public OrderProcessor makeOrderProcessing() throws OrderException {
+    public OrderProcessor makeOrderProcessor() throws OrderException {
         if (orderProcessor == null)
             orderProcessor = new Order();
 

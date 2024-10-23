@@ -88,7 +88,7 @@ public class StockRW extends StockR implements StockReadWriter {
         DEBUG.trace("DB StockRW: modifyStock(%s)",
                 detail.getProductNumber());
         try {
-            if (!exists(detail.getProductNumber())) {
+            if (!doesProductExist(detail.getProductNumber())) {
                 try (PreparedStatement statement = getConnection().prepareStatement(
                         "insert into ProductTable values (?, ?, ?, ?)"
                 )) {
