@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
-public interface OrderProcessing {
+public interface OrderProcessor {
     void newOrder(Basket bought)
             throws OrderException;
 

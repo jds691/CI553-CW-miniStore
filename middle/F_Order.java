@@ -19,19 +19,20 @@ import java.util.Map;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
-public class F_Order implements OrderProcessing {
-    private RemoteOrder_I aR_Order = null;
-    private String theOrderURL = null;
+public class F_Order implements OrderProcessor {
+    private RemoteOrder_I orderProcessor;
+    private final String orderURL;
 
     public F_Order(String url) {
-        theOrderURL = url;
+        orderURL = url;
     }
 
     private void connect() throws OrderException {
         try {
-            aR_Order = (RemoteOrder_I) Naming.lookup(theOrderURL);
+            orderProcessor = (RemoteOrder_I) Naming.lookup(orderURL);
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Com: " + e.getMessage());
         }
     }
@@ -40,10 +41,13 @@ public class F_Order implements OrderProcessing {
         DEBUG.trace("F_Order:newOrder()");
 
         try {
-            if (aR_Order == null) connect();
-            aR_Order.newOrder(bought);
+            if (orderProcessor == null)
+                connect();
+
+            orderProcessor.newOrder(bought);
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Net: " + e.getMessage());
         }
     }
@@ -52,10 +56,13 @@ public class F_Order implements OrderProcessing {
         DEBUG.trace("F_Order:uniqueNumber()");
 
         try {
-            if (aR_Order == null) connect();
-            return aR_Order.uniqueNumber();
+            if (orderProcessor == null)
+                connect();
+
+            return orderProcessor.uniqueNumber();
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Net: " + e.getMessage());
         }
     }
@@ -70,10 +77,13 @@ public class F_Order implements OrderProcessing {
         DEBUG.trace("F_Order:getOrderTioPack()");
 
         try {
-            if (aR_Order == null) connect();
-            return aR_Order.getOrderToPack();
+            if (orderProcessor == null)
+                connect();
+
+            return orderProcessor.getOrderToPack();
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Net: " + e.getMessage());
         }
     }
@@ -87,10 +97,13 @@ public class F_Order implements OrderProcessing {
         DEBUG.trace("F_Order:informOrderPacked()");
 
         try {
-            if (aR_Order == null) connect();
-            return aR_Order.informOrderPacked(orderNum);
+            if (orderProcessor == null)
+                connect();
+
+            return orderProcessor.informOrderPacked(orderNum);
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Net: " + e.getMessage());
         }
     }
@@ -103,10 +116,13 @@ public class F_Order implements OrderProcessing {
         DEBUG.trace("F_Order:informOrderCollected()");
 
         try {
-            if (aR_Order == null) connect();
-            return aR_Order.informOrderCollected(orderNum);
+            if (orderProcessor == null)
+                connect();
+
+            return orderProcessor.informOrderCollected(orderNum);
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Net: " + e.getMessage());
         }
     }
@@ -118,10 +134,13 @@ public class F_Order implements OrderProcessing {
         DEBUG.trace("F_Order:getOrderState()");
 
         try {
-            if (aR_Order == null) connect();
-            return aR_Order.getOrderState();
+            if (orderProcessor == null)
+                connect();
+
+            return orderProcessor.getOrderState();
         } catch (Exception e) {
-            aR_Order = null;
+            orderProcessor = null;
+
             throw new OrderException("Net: " + e.getMessage());
         }
     }

@@ -3,6 +3,7 @@ package clients;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.io.Serial;
 
 /**
  * A class to display a picture in a client
@@ -11,10 +12,12 @@ import java.awt.geom.Rectangle2D;
  * @version 1.0
  */
 public class Picture extends Canvas {
+    @Serial
     private static final long serialVersionUID = 1;
+
     private int width = 260;
     private int height = 260;
-    private Image thePicture = null;
+    private Image image = null;
 
     public Picture() {
         setSize(width, height);
@@ -27,12 +30,12 @@ public class Picture extends Canvas {
     }
 
     public void set(ImageIcon ic) {
-        thePicture = ic.getImage();
+        image = ic.getImage();
         repaint();
     }
 
     public void clear() {
-        thePicture = null;
+        image = null;
         // Force repaint
         repaint();
     }
@@ -57,8 +60,8 @@ public class Picture extends Canvas {
         setSize(width, height);
         g.setPaint(Color.white);
         g.fill(new Rectangle2D.Double(0, 0, width, height));
-        if (thePicture != null) {
-            g.drawImage(thePicture, 0, 0, null);
+        if (image != null) {
+            g.drawImage(image, 0, 0, null);
         }
     }
 }

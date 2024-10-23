@@ -1,5 +1,6 @@
 package catalogue;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -9,58 +10,58 @@ import java.io.Serializable;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
-
 public class Product implements Serializable {
+    @Serial
     private static final long serialVersionUID = 20092506;
-    private String theProductNum;
-    private String theDescription;
-    private double thePrice;
-    private int theQuantity;
+    private String productNumber;
+    private String description;
+    private double price;
+    private int quantity;
 
     /**
      * Construct a product details
      *
-     * @param aProductNum  Product number
-     * @param aDescription Description of product
-     * @param aPrice       The price of the product
-     * @param aQuantity    The Quantity of the product involved
+     * @param productNumber  Product number
+     * @param description Description of product
+     * @param price       The price of the product
+     * @param quantity    The Quantity of the product involved
      */
-    public Product(String aProductNum, String aDescription, double aPrice, int aQuantity) {
-        theProductNum = aProductNum;
-        theDescription = aDescription;
-        thePrice = aPrice;
-        theQuantity = aQuantity;
+    public Product(String productNumber, String description, double price, int quantity) {
+        this.productNumber = productNumber;
+        this.description = description;
+        this.price = price;
+        this.quantity = quantity;
     }
 
-    public String getProductNum() {
-        return theProductNum;
+    public String getProductNumber() {
+        return productNumber;
     }
 
-    public void setProductNum(String aProductNum) {
-        theProductNum = aProductNum;
+    public void setProductNumber(String value) {
+        productNumber = value;
     }
 
     public String getDescription() {
-        return theDescription;
+        return description;
     }
 
-    public void setDescription(String aDescription) {
-        theDescription = aDescription;
+    public void setDescription(String value) {
+        description = value;
     }
 
     public double getPrice() {
-        return thePrice;
+        return price;
     }
 
-    public void setPrice(double aPrice) {
-        thePrice = aPrice;
+    public void setPrice(double value) {
+        price = value;
     }
 
     public int getQuantity() {
-        return theQuantity;
+        return quantity;
     }
 
-    public void setQuantity(int aQuantity) {
-        theQuantity = aQuantity;
+    public void setQuantity(int value) {
+        quantity = value;
     }
 }

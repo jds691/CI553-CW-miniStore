@@ -17,22 +17,21 @@ import java.io.IOException;
  * The database may be Access, mySQL etc.
  */
 public class DBAccessFactory {
-    private static String theAction = "";
-    private static String theDataBase = "";
-    private static String theOS = "";
+    private static String databaseAction = "";
+    private static String databaseType = "";
 
-    public static void setAction(String name) {
-        theAction = name;
+    public static void setAction(String value) {
+        databaseAction = value;
     }
 
-    private static String setEnvironment() {
-        theDataBase = fileToString("DataBase.txt") + theAction;
+    //REVIEW: This can probably be heavily slimmed down, or removed
+    private static void setEnvironment() {
+        databaseType = fileToString("DataBase.txt") + databaseAction;
         String os = System.getProperties().getProperty("os.name");
         String arch = System.getProperties().getProperty("os.arch");
         String osVer = System.getProperties().getProperty("os.version");
-        theOS = String.format("%s %s %s", os, osVer, arch);
-        System.out.println(theOS);
-        return theOS;
+        String osEnvironment = String.format("%s %s %s", os, osVer, arch);
+        System.out.println(osEnvironment);
     }
 
     /**
@@ -41,8 +40,8 @@ public class DBAccessFactory {
      */
     public DBAccess getNewDBAccess() {
         setEnvironment();
-        DEBUG.traceA("Using [%s] as database type\n", theDataBase);
-        switch (theDataBase) {
+        DEBUG.traceA("Using [%s] as database type\n", databaseType);
+        switch (databaseType) {
             case "Derby":
                 return new DerbyAccess();
 
@@ -58,7 +57,7 @@ public class DBAccessFactory {
                 return new LinuxAccess();
 
             default:
-                DEBUG.error("DataBase [%s] not known\n", theDataBase);
+                DEBUG.error("DataBase [%s] not known\n", databaseType);
                 System.exit(0);
         }
 
@@ -101,6 +100,7 @@ public class DBAccessFactory {
             DEBUG.error("IO error: fileToBytes [%s]\n", file);
             System.exit(0);
         }
+
         return vec;
     }
 

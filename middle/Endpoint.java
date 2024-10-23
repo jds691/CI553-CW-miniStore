@@ -6,8 +6,8 @@ package middle;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
-public class Names {
-    public static String STOCK_RW = "rmi://localhost/stock_rw";
-    public static String STOCK_R = "rmi://localhost/stock_r";
+public class Endpoint {
+    public static String STOCK_READ_WRITE = "rmi://localhost/stock_rw";
+    public static String STOCK_READ_ONLY = "rmi://localhost/stock_r";
     public static String ORDER = "rmi://localhost/order";
 }

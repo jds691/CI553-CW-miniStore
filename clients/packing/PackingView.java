@@ -1,8 +1,6 @@
 package clients.packing;
 
 import catalogue.Basket;
-import middle.MiddleFactory;
-import middle.OrderProcessing;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,72 +14,59 @@ import java.util.Observer;
 public class PackingView implements Observer {
     private static final String PACKED = "Packed";
 
-    private static final int H = 300;
-    private static final int W = 400;
+    private static final int HEIGHT = 300;
+    private static final int WIDTH = 400;
 
     private final JLabel pageTitle = new JLabel();
-    private final JLabel theAction = new JLabel();
-    private final JTextArea theOutput = new JTextArea();
-    private final JScrollPane theSP = new JScrollPane();
-    private final JButton theBtPack = new JButton(PACKED);
+    private final JLabel promptLabel = new JLabel();
+    private final JTextArea messageOutput = new JTextArea();
+    private final JScrollPane messageScrollPane = new JScrollPane();
+    private final JButton packButton = new JButton(PACKED);
 
-    private OrderProcessing theOrder = null;
-
-    private PackingController cont = null;
+    private PackingController controller = null;
 
     /**
      * Construct the view
      *
-     * @param rpc Window in which to construct
-     * @param mf  Factor to deliver order and stock objects
+     * @param rootPane Window in which to construct
      * @param x   x-coordinate of position of window on screen
      * @param y   y-coordinate of position of window on screen
      */
-    public PackingView(RootPaneContainer rpc, MiddleFactory mf, int x, int y) {
-        try {
-            // Process order
-            theOrder = mf.makeOrderProcessing();
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
-
+    public PackingView(RootPaneContainer rootPane, int x, int y) {
         // Content Pane
-        Container cp = rpc.getContentPane();
-        Container rootWindow = (Container) rpc;
-        cp.setLayout(null);
-        rootWindow.setSize(W, H);
+        Container contentPane = rootPane.getContentPane();
+        Container rootWindow = (Container) rootPane;
+        contentPane.setLayout(null);
+        rootWindow.setSize(WIDTH, HEIGHT);
         rootWindow.setLocation(x, y);
 
-        Font f = new Font("Monospaced", Font.PLAIN, 12);
+        Font monospaceFont = new Font("Monospaced", Font.PLAIN, 12);
 
         pageTitle.setBounds(110, 0, 270, 20);
         pageTitle.setText("Packing Bought Order");
-        cp.add(pageTitle);
+        contentPane.add(pageTitle);
 
-        // Check Button
-        theBtPack.setBounds(16, 25, 80, 40);
-        theBtPack.addActionListener(
-                e -> cont.doPacked()
+        packButton.setBounds(16, 25, 80, 40);
+        packButton.addActionListener(
+                e -> controller.packOrder()
         );
-        cp.add(theBtPack);
+        contentPane.add(packButton);
 
-        // Message area
-        theAction.setBounds(110, 25, 270, 20);
-        theAction.setText("");
-        cp.add(theAction);
+        promptLabel.setBounds(110, 25, 270, 20);
+        promptLabel.setText("");
+        contentPane.add(promptLabel);
 
-        // Scrolling pane
-        theSP.setBounds(110, 55, 270, 205);
-        theOutput.setText("");
-        theOutput.setFont(f);
-        cp.add(theSP);
+        messageScrollPane.setBounds(110, 55, 270, 205);
+        messageOutput.setText("");
+        messageOutput.setFont(monospaceFont);
+        contentPane.add(messageScrollPane);
 
-        theSP.getViewport().add(theOutput);
+        messageScrollPane.getViewport().add(messageOutput);
         rootWindow.setVisible(true);
     }
 
-    public void setController(PackingController c) {
-        cont = c;
+    public void setController(PackingController controller) {
+        this.controller = controller;
     }
 
     /**
@@ -94,13 +79,13 @@ public class PackingView implements Observer {
     public void update(Observable modelC, Object arg) {
         PackingModel model = (PackingModel) modelC;
         String message = (String) arg;
-        theAction.setText(message);
+        promptLabel.setText(message);
 
         Basket basket = model.getBasket();
         if (basket != null) {
-            theOutput.setText(basket.getDetails());
+            messageOutput.setText(basket.getDetails());
         } else {
-            theOutput.setText("");
+            messageOutput.setText("");
         }
     }
 }

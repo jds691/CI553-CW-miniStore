@@ -23,8 +23,7 @@ import java.sql.*;
  * @version 2.0
  */
 public class StockR implements StockReader {
-    private Connection theCon = null;
-    private Statement theStmt = null;
+    private final Connection connection;
 
     /**
      * Connects to database
@@ -37,29 +36,18 @@ public class StockR implements StockReader {
             DBAccess dbDriver = (new DBAccessFactory()).getNewDBAccess();
             dbDriver.loadDriver();
 
-            theCon = DriverManager.getConnection(
+            connection = DriverManager.getConnection(
                     dbDriver.urlOfDatabase(),
                     dbDriver.username(),
                     dbDriver.password()
             );
 
-            theStmt = theCon.createStatement();
-            theCon.setAutoCommit(true);
+            connection.setAutoCommit(true);
         } catch (SQLException e) {
             throw new StockException("SQL problem:" + e.getMessage());
         } catch (Exception e) {
             throw new StockException("Can not load database driver.");
         }
-    }
-
-
-    /**
-     * Returns a statement object that is used to process SQL statements
-     *
-     * @return A statement object used to access the database
-     */
-    protected Statement getStatementObject() {
-        return theStmt;
     }
 
     /**
@@ -68,8 +56,8 @@ public class StockR implements StockReader {
      *
      * @return a connection object
      */
-    protected Connection getConnectionObject() {
-        return theCon;
+    protected Connection getConnection() {
+        return connection;
     }
 
     /**
@@ -80,13 +68,18 @@ public class StockR implements StockReader {
      */
     public synchronized boolean exists(String pNum) throws StockException {
         try {
-            ResultSet rs = getStatementObject().executeQuery(
-                    "select price from ProductTable " +
-                            "where  ProductTable.productNo = '" + pNum + "'"
-            );
+            ResultSet rs;
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select price from ProductTable where ProductTable.productNo = ?"
+            )) {
+                statement.setString(1, pNum);
+
+                rs = statement.executeQuery();
+            }
+
             boolean res = rs.next();
-            DEBUG.trace("DB StockR: exists(%s) -> %s",
-                    pNum, (res ? "T" : "F"));
+            DEBUG.trace("DB StockR: exists(%s) -> %s", pNum, (res ? "T" : "F"));
+
             return res;
         } catch (SQLException e) {
             throw new StockException("SQL exists: " + e.getMessage());
@@ -102,21 +95,28 @@ public class StockR implements StockReader {
      */
     public synchronized Product getDetails(String pNum) throws StockException {
         try {
-            Product dt = new Product("0", "", 0.00, 0);
-            ResultSet rs = getStatementObject().executeQuery(
-                    "select description, price, stockLevel " +
-                            "from   ProductTable, StockTable " +
-                            "where  ProductTable.productNo = '" + pNum + "' " +
-                            "and    StockTable.productNo   = '" + pNum + "'"
-            );
-            if (rs.next()) {
-                dt.setProductNum(pNum);
-                dt.setDescription(rs.getString("description"));
-                dt.setPrice(rs.getDouble("price"));
-                dt.setQuantity(rs.getInt("stockLevel"));
+            Product product = new Product("0", "", 0.00, 0);
+
+            ResultSet results;
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select description, price, stockLevel from ProductTable, StockTable where  ProductTable.productNo = ? and StockTable.productNo = ?"
+            )) {
+                statement.setString(1, pNum);
+                statement.setString(2, pNum);
+
+                results = statement.executeQuery();
             }
-            rs.close();
-            return dt;
+
+            if (results.next()) {
+                product.setProductNumber(pNum);
+                product.setDescription(results.getString("description"));
+                product.setPrice(results.getDouble("price"));
+                product.setQuantity(results.getInt("stockLevel"));
+            }
+
+            results.close();
+
+            return product;
         } catch (SQLException e) {
             throw new StockException("SQL getDetails: " + e.getMessage());
         }
@@ -132,16 +132,19 @@ public class StockR implements StockReader {
     public synchronized ImageIcon getImage(String pNum) throws StockException {
         String filename = "default.jpg";
         try {
-            ResultSet rs = getStatementObject().executeQuery(
-                    "select picture from ProductTable " +
-                            "where  ProductTable.productNo = '" + pNum + "'"
-            );
+            ResultSet results;
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select picture from ProductTable where ProductTable.productNo = ?"
+            )) {
+                statement.setString(1, pNum);
+                results = statement.executeQuery();
+            }
 
-            boolean res = rs.next();
+            boolean res = results.next();
             if (res)
-                filename = rs.getString("picture");
+                filename = results.getString("picture");
 
-            rs.close();
+            results.close();
         } catch (SQLException e) {
             DEBUG.error("getImage()\n%s\n", e.getMessage());
             throw new StockException("SQL getImage: " + e.getMessage());
@@ -149,5 +152,4 @@ public class StockR implements StockReader {
 
         return new ImageIcon(filename);
     }
-
 }

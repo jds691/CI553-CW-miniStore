@@ -11,19 +11,19 @@ import orders.Order;
  * @version 2.1
  */
 public class LocalMiddleFactory implements MiddleFactory {
-    private static StockR aStockR = null;
-    private static StockRW aStockRW = null;
-    private static Order aOrder = null;
+    private static StockR stockReader = null;
+    private static StockRW stockReadWriter = null;
+    private static Order orderProcessor = null;
 
     /**
      * Return an object to access the database for read only access.
      * All users share this same object.
      */
     public StockReader makeStockReader() throws StockException {
-        if (aStockR == null)
-            aStockR = new StockR();
+        if (stockReader == null)
+            stockReader = new StockR();
 
-        return aStockR;
+        return stockReader;
     }
 
     /**
@@ -31,21 +31,21 @@ public class LocalMiddleFactory implements MiddleFactory {
      * All users share this same object.
      */
     public StockReadWriter makeStockReadWriter() throws StockException {
-        if (aStockRW == null)
-            aStockRW = new StockRW();
+        if (stockReadWriter == null)
+            stockReadWriter = new StockRW();
 
-        return aStockRW;
+        return stockReadWriter;
     }
 
     /**
      * Return an object to access the order processing system.
      * All users share this same object.
      */
-    public OrderProcessing makeOrderProcessing() throws OrderException {
-        if (aOrder == null)
-            aOrder = new Order();
+    public OrderProcessor makeOrderProcessing() throws OrderException {
+        if (orderProcessor == null)
+            orderProcessor = new Order();
 
-        return aOrder;
+        return orderProcessor;
     }
 }
 

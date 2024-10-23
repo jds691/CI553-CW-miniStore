@@ -2,7 +2,7 @@ package clients.packing;
 
 
 import middle.MiddleFactory;
-import middle.Names;
+import middle.Endpoint;
 import middle.RemoteMiddleFactory;
 
 import javax.swing.*;
@@ -17,28 +17,28 @@ import javax.swing.*;
 public class PackingClient {
     public static void main(String[] args) {
         String stockURL = args.length < 1     // URL of stock RW
-                        ? Names.STOCK_RW      //  default  location
+                        ? Endpoint.STOCK_READ_WRITE      //  default  location
                         : args[0];            //  supplied location
         String orderURL = args.length < 2     // URL of order
-                        ? Names.ORDER         //  default  location
+                        ? Endpoint.ORDER         //  default  location
                         : args[1];            //  supplied location
 
-        RemoteMiddleFactory mrf = new RemoteMiddleFactory();
-        mrf.setStockRWInfo(stockURL);
-        mrf.setOrderInfo(orderURL);
-        displayGUI(mrf);
+        RemoteMiddleFactory factory = new RemoteMiddleFactory();
+        factory.setStockRWInfo(stockURL);
+        factory.setOrderInfo(orderURL);
+        displayGUI(factory);
     }
 
-    public static void displayGUI(MiddleFactory mf) {
+    public static void displayGUI(MiddleFactory factory) {
         JFrame window = new JFrame();
 
         window.setTitle("Packing Client (RMI MVC)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        PackingModel model = new PackingModel(mf);
-        PackingView view = new PackingView(window, mf, 0, 0);
-        PackingController cont = new PackingController(model, view);
-        view.setController(cont);
+        PackingModel model = new PackingModel(factory);
+        PackingView view = new PackingView(window, 0, 0);
+        PackingController controller = new PackingController(model);
+        view.setController(controller);
 
         model.addObserver(view);
         window.setVisible(true);

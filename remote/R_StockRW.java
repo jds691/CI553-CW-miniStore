@@ -5,6 +5,7 @@ import dbAccess.StockRW;
 import middle.StockException;
 
 import javax.swing.*;
+import java.io.Serial;
 import java.rmi.RemoteException;
 
 // There can only be 1 ResultSet opened per statement
@@ -22,8 +23,9 @@ public class R_StockRW
         extends java.rmi.server.UnicastRemoteObject
         implements RemoteStockRW_I {
 
+    @Serial
     private static final long serialVersionUID = 1;
-    private StockRW aStockRW = null;
+    private final StockRW stockReadWriter;
 
     /**
      * All transactions are done via StockRW to ensure
@@ -34,7 +36,7 @@ public class R_StockRW
      * @throws middle.StockException    if issue
      */
     public R_StockRW(String url) throws RemoteException, StockException {
-        aStockRW = new StockRW();
+        stockReadWriter = new StockRW();
     }
 
     /**
@@ -45,7 +47,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized boolean exists(String pNum) throws StockException {
-        return aStockRW.exists(pNum);
+        return stockReadWriter.exists(pNum);
     }
 
     /**
@@ -56,7 +58,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized Product getDetails(String pNum) throws StockException {
-        return aStockRW.getDetails(pNum);
+        return stockReadWriter.getDetails(pNum);
     }
 
     /**
@@ -67,7 +69,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized ImageIcon getImage(String pNum) throws StockException {
-        return aStockRW.getImage(pNum);
+        return stockReadWriter.getImage(pNum);
     }
 
     /**
@@ -80,7 +82,7 @@ public class R_StockRW
      */
     // REVIEW: What happens if not can commit data
     public synchronized boolean buyStock(String pNum, int amount) throws StockException {
-        return aStockRW.buyStock(pNum, amount);
+        return stockReadWriter.buyStock(pNum, amount);
     }
 
     /**
@@ -91,7 +93,7 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized void addStock(String pNum, int amount) throws StockException {
-        aStockRW.addStock(pNum, amount);
+        stockReadWriter.addStock(pNum, amount);
     }
 
     /**
@@ -102,6 +104,6 @@ public class R_StockRW
      * @throws middle.StockException if underlying error
      */
     public synchronized void modifyStock(Product product) throws StockException {
-        aStockRW.modifyStock(product);
+        stockReadWriter.modifyStock(product);
     }
 }

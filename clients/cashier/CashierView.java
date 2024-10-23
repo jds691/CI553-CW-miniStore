@@ -1,123 +1,98 @@
 package clients.cashier;
 
 import catalogue.Basket;
-import middle.MiddleFactory;
-import middle.OrderProcessing;
-import middle.StockReadWriter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observable;
 import java.util.Observer;
 
-
 /**
  * View of the model
  */
 public class CashierView implements Observer {
-    // Height of window pixels
-    private static final int H = 300;
-    // Width  of window pixels
-    private static final int W = 400;
+    private static final int HEIGHT = 300;
+    private static final int WIDTH = 400;
 
     private static final String CHECK = "Check";
     private static final String BUY = "Buy";
     private static final String BOUGHT = "Bought/Pay";
 
     private final JLabel pageTitle = new JLabel();
-    private final JLabel theAction = new JLabel();
-    private final JTextField theInput = new JTextField();
-    private final JTextArea theOutput = new JTextArea();
-    private final JScrollPane theSP = new JScrollPane();
-    private final JButton theBtCheck = new JButton(CHECK);
-    private final JButton theBtBuy = new JButton(BUY);
-    private final JButton theBtBought = new JButton(BOUGHT);
+    private final JLabel promptLabel = new JLabel();
+    private final JTextField productNumberInput = new JTextField();
+    private final JTextArea messageOutput = new JTextArea();
+    private final JScrollPane messageScrollPane = new JScrollPane();
+    private final JButton checkButton = new JButton(CHECK);
+    private final JButton buyButton = new JButton(BUY);
+    private final JButton payButton = new JButton(BOUGHT);
 
-    private StockReadWriter theStock = null;
-    private OrderProcessing theOrder = null;
-    private CashierController cont = null;
+    private CashierController controller = null;
 
     /**
      * Construct the view
      *
-     * @param rpc Window in which to construct
-     * @param mf  Factor to deliver order and stock objects
+     * @param rootPane Window in which to construct
      * @param x   x-coordinate of position of window on screen
      * @param y   y-coordinate of position of window on screen
      */
-    public CashierView(RootPaneContainer rpc, MiddleFactory mf, int x, int y) {
-        try {
-            // Database access
-            theStock = mf.makeStockReadWriter();
-            // Process order
-            theOrder = mf.makeOrderProcessing();
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
-
-        // Content Pane
-        Container cp = rpc.getContentPane();
-        Container rootWindow = (Container) rpc;
+    public CashierView(RootPaneContainer rootPane, int x, int y) {
+        Container contentPane = rootPane.getContentPane();
+        Container rootWindow = (Container) rootPane;
         // No layout manager
-        cp.setLayout(null);
-        rootWindow.setSize(W, H);
+        contentPane.setLayout(null);
+        rootWindow.setSize(WIDTH, HEIGHT);
         rootWindow.setLocation(x, y);
 
-        Font f = new Font("Monospaced", Font.PLAIN, 12);
+        Font monospaceFont = new Font("Monospaced", Font.PLAIN, 12);
 
         pageTitle.setBounds(110, 0, 270, 20);
-        pageTitle.setText("Thank You for Shopping at MiniStrore");
-        cp.add(pageTitle);
+        pageTitle.setText("Thank You for Shopping at MiniStore");
+        contentPane.add(pageTitle);
 
-        // Check Button
-        theBtCheck.setBounds(16, 25, 80, 40);
-        theBtCheck.addActionListener(
-                e -> cont.doCheck(theInput.getText())
+        checkButton.setBounds(16, 25, 80, 40);
+        checkButton.addActionListener(
+                e -> controller.queryProduct(productNumberInput.getText())
         );
-        cp.add(theBtCheck);
+        contentPane.add(checkButton);
 
-        // Buy button
-        theBtBuy.setBounds(16, 25 + 60, 80, 40);
-        theBtBuy.addActionListener(
-                e -> cont.doBuy()
+        buyButton.setBounds(16, 25 + 60, 80, 40);
+        buyButton.addActionListener(
+                e -> controller.buyCurrentProduct()
         );
-        cp.add(theBtBuy);
+        contentPane.add(buyButton);
 
-        // Bought Button
-        theBtBought.setBounds(16, 25 + 60 * 3, 80, 40);
-        theBtBought.addActionListener(
-                e -> cont.doBought()
+        payButton.setBounds(16, 25 + 60 * 3, 80, 40);
+        payButton.addActionListener(
+                e -> controller.buyBasket()
         );
-        cp.add(theBtBought);
+        contentPane.add(payButton);
 
-        // Message area
-        theAction.setBounds(110, 25, 270, 20);
-        theAction.setText("");
-        cp.add(theAction);
+        promptLabel.setBounds(110, 25, 270, 20);
+        promptLabel.setText("");
+        contentPane.add(promptLabel);
 
-        // Input Area
-        theInput.setBounds(110, 50, 270, 40);
-        theInput.setText("");
-        cp.add(theInput);
+        productNumberInput.setBounds(110, 50, 270, 40);
+        productNumberInput.setText("");
+        contentPane.add(productNumberInput);
 
-        // Scrolling pane
-        theSP.setBounds(110, 100, 270, 160);
-        theOutput.setText("");
-        theOutput.setFont(f);
-        cp.add(theSP);
+        messageScrollPane.setBounds(110, 100, 270, 160);
+        messageOutput.setText("");
+        messageOutput.setFont(monospaceFont);
+        contentPane.add(messageScrollPane);
 
-        theSP.getViewport().add(theOutput);
+        messageScrollPane.getViewport().add(messageOutput);
         rootWindow.setVisible(true);
-        theInput.requestFocus();
+        productNumberInput.requestFocus();
     }
 
     /**
      * The controller object, used so that an interaction can be passed to the controller
      *
-     * @param c The controller
+     * @param controller The controller
      */
-    public void setController(CashierController c) {
-        cont = c;
+    public void setController(CashierController controller) {
+        this.controller = controller;
     }
 
     /**
@@ -130,13 +105,13 @@ public class CashierView implements Observer {
     public void update(Observable modelC, Object arg) {
         CashierModel model = (CashierModel) modelC;
         String message = (String) arg;
-        theAction.setText(message);
+        promptLabel.setText(message);
         Basket basket = model.getBasket();
         if (basket == null)
-            theOutput.setText("Customers order");
+            messageOutput.setText("Customers order");
         else
-            theOutput.setText(basket.getDetails());
+            messageOutput.setText(basket.getDetails());
 
-        theInput.requestFocus();               // Focus is here
+        productNumberInput.requestFocus();
     }
 }

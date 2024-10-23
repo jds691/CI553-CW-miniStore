@@ -5,7 +5,7 @@ import catalogue.Basket;
 import catalogue.Product;
 import debug.DEBUG;
 import middle.OrderException;
-import middle.OrderProcessing;
+import middle.OrderProcessor;
 
 import java.util.*;
 
@@ -26,9 +26,9 @@ import java.util.*;
  * @author Michael Alexander Smith
  * @version 2.0
  */
-public class OrderX implements OrderProcessing {
+public class OrderX implements OrderProcessor {
     // Start at 1
-    private static int theNextNumber = 1;
+    private static int uniqueNumber = 1;
     // Orders entered but waiting to be processed (picked)
     private final ArrayList<Basket> theWaitingTray = new ArrayList<Basket>();
 
@@ -47,7 +47,7 @@ public class OrderX implements OrderProcessing {
     private String asString(Basket basket) {
         StringBuilder sb = new StringBuilder(1024);
         Formatter fr = new Formatter(sb);
-        fr.format("#%d (", basket.getOrderNum());
+        fr.format("#%d (", basket.getOrderNumber());
 
         for (Product pr : basket) {
             fr.format("%-15.15s: %3d ", pr.getDescription(), pr.getQuantity());
@@ -66,7 +66,7 @@ public class OrderX implements OrderProcessing {
      * @return A unique order number
      */
     public synchronized int uniqueNumber() {
-        return theNextNumber++;
+        return uniqueNumber++;
     }
 
     /**
@@ -118,7 +118,7 @@ public class OrderX implements OrderProcessing {
         DEBUG.trace("DEBUG: Order picked [%d]", orderNum);
 
         for (int i = 0; i < theBeingPickedTray.size(); i++) {
-            if (theBeingPickedTray.get(i).getOrderNum() == orderNum) {
+            if (theBeingPickedTray.get(i).getOrderNumber() == orderNum) {
                 Basket picked = theBeingPickedTray.remove(i);
                 theToBeCollectedTray.add(picked);
 
@@ -140,7 +140,7 @@ public class OrderX implements OrderProcessing {
         DEBUG.trace("DEBUG: Order collected [%d]", orderNum);
 
         for (int i = 0; i < theToBeCollectedTray.size(); i++) {
-            if (theToBeCollectedTray.get(i).getOrderNum() == orderNum) {
+            if (theToBeCollectedTray.get(i).getOrderNumber() == orderNum) {
                 theToBeCollectedTray.remove(i);
 
                 return true;
@@ -178,7 +178,7 @@ public class OrderX implements OrderProcessing {
         List<Integer> res = new ArrayList<Integer>();
 
         for (Basket sb : queue) {
-            res.add(sb.getOrderNum());
+            res.add(sb.getOrderNumber());
         }
 
         return res;

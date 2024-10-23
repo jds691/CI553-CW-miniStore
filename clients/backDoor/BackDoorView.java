@@ -1,8 +1,5 @@
 package clients.backDoor;
 
-import middle.MiddleFactory;
-import middle.StockReadWriter;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.Observable;
@@ -11,108 +8,96 @@ import java.util.Observer;
 /**
  * Implements the Customer view.
  */
-
 public class BackDoorView implements Observer {
     private static final String RESTOCK = "Add";
     private static final String CLEAR = "Clear";
     private static final String QUERY = "Query";
 
-    private static final int H = 300;       // Height of window pixels
-    private static final int W = 400;       // Width  of window pixels
+    private static final int HEIGHT = 300;
+    private static final int WIDTH = 400;
 
     private final JLabel pageTitle = new JLabel();
-    private final JLabel theAction = new JLabel();
-    private final JTextField theInput = new JTextField();
-    private final JTextField theInputNo = new JTextField();
-    private final JTextArea theOutput = new JTextArea();
-    private final JScrollPane theSP = new JScrollPane();
-    private final JButton theBtClear = new JButton(CLEAR);
-    private final JButton theBtRStock = new JButton(RESTOCK);
-    private final JButton theBtQuery = new JButton(QUERY);
+    private final JLabel promptLabel = new JLabel();
+    private final JTextField productNumberInput = new JTextField();
+    private final JTextField quantityInput = new JTextField();
+    private final JTextArea messageOutput = new JTextArea();
+    private final JScrollPane messageScrollPane = new JScrollPane();
+    private final JButton clearButton = new JButton(CLEAR);
+    private final JButton restockButton = new JButton(RESTOCK);
+    private final JButton queryButton = new JButton(QUERY);
 
-    private StockReadWriter theStock = null;
-    private BackDoorController cont = null;
+    private BackDoorController controller = null;
 
     /**
      * Construct the view
      *
-     * @param rpc Window in which to construct
-     * @param mf  Factor to deliver order and stock objects
+     * @param rootPane Window in which to construct
      * @param x   x-coordinate of position of window on screen
      * @param y   y-coordinate of position of window on screen
      */
-    public BackDoorView(RootPaneContainer rpc, MiddleFactory mf, int x, int y) {
-        try {
-            // Database access
-            theStock = mf.makeStockReadWriter();
-        } catch (Exception e) {
-            System.out.println("Exception: " + e.getMessage());
-        }
-        // Content Pane
-        Container cp = rpc.getContentPane();
-        // Root Window
-        Container rootWindow = (Container) rpc;
+    public BackDoorView(RootPaneContainer rootPane, int x, int y) {
+        Container contentPane = rootPane.getContentPane();
+        Container rootWindow = (Container) rootPane;
         // No layout manager
-        cp.setLayout(null);
-        // Size of Window
-        rootWindow.setSize(W, H);
+        contentPane.setLayout(null);
+        rootWindow.setSize(WIDTH, HEIGHT);
         rootWindow.setLocation(x, y);
 
-        Font f = new Font("Monospaced", Font.PLAIN, 12);  // Font f is
+        Font monospaceFont = new Font("Monospaced", Font.PLAIN, 12);
 
         pageTitle.setBounds(110, 0, 270, 20);
         pageTitle.setText("Staff check and manage stock");
-        cp.add(pageTitle);
+        contentPane.add(pageTitle);
 
-        // Buy button
-        theBtQuery.setBounds(16, 25, 80, 40);
-        theBtQuery.addActionListener(
-                e -> cont.doQuery(theInput.getText())
+        queryButton.setBounds(16, 25, 80, 40);
+        queryButton.addActionListener(
+                e -> controller.queryProduct(productNumberInput.getText())
         );
-        cp.add(theBtQuery);
+        contentPane.add(queryButton);
 
-        // Check Button
-        theBtRStock.setBounds(16, 25 + 60, 80, 40);
-        theBtRStock.addActionListener(
-                e -> cont.doRStock(theInput.getText(), theInputNo.getText())
+        restockButton.setBounds(16, 25 + 60, 80, 40);
+        restockButton.addActionListener(e -> {
+            try {
+                controller.restockProduct(productNumberInput.getText(), quantityInput.getText());
+            } catch (NumberFormatException exception) {
+                promptLabel.setText(exception.getMessage());
+            }
+        });
+        contentPane.add(restockButton);
+
+        clearButton.setBounds(16, 25 + 60 * 2, 80, 40);
+        clearButton.addActionListener(
+                e -> controller.reset()
         );
-        cp.add(theBtRStock);
+        contentPane.add(clearButton);
 
-        // Buy button
-        theBtClear.setBounds(16, 25 + 60 * 2, 80, 40);
-        theBtClear.addActionListener(
-                e -> cont.doClear()
-        );
-        cp.add(theBtClear);
-
-        // Message area
-        theAction.setBounds(110, 25, 270, 20);
-        theAction.setText("");
-        cp.add(theAction);
+        promptLabel.setBounds(110, 25, 270, 20);
+        promptLabel.setText("");
+        contentPane.add(promptLabel);
 
         // Input Area
-        theInput.setBounds(110, 50, 120, 40);
-        theInput.setText("");
-        cp.add(theInput);
+        productNumberInput.setBounds(110, 50, 120, 40);
+        productNumberInput.setText("");
+        contentPane.add(productNumberInput);
 
         // Input Area
-        theInputNo.setBounds(260, 50, 120, 40);
-        theInputNo.setText("0");
-        cp.add(theInputNo);
+        quantityInput.setBounds(260, 50, 120, 40);
+        quantityInput.setText("0");
+        contentPane.add(quantityInput);
 
         // Scrolling pane
-        theSP.setBounds(110, 100, 270, 160);
-        theOutput.setText("");
-        theOutput.setFont(f);
-        cp.add(theSP);
+        messageScrollPane.setBounds(110, 100, 270, 160);
+        messageOutput.setText("");
+        messageOutput.setFont(monospaceFont);
+        contentPane.add(messageScrollPane);
 
-        theSP.getViewport().add(theOutput);
+        messageScrollPane.getViewport().add(messageOutput);
         rootWindow.setVisible(true);
-        theInput.requestFocus();
+        productNumberInput.requestFocus();
     }
 
-    public void setController(BackDoorController c) {
-        cont = c;
+    public void setController(BackDoorController controller) {
+        this.controller = controller;
     }
 
     /**
@@ -125,10 +110,9 @@ public class BackDoorView implements Observer {
     public void update(Observable modelC, Object arg) {
         BackDoorModel model = (BackDoorModel) modelC;
         String message = (String) arg;
-        theAction.setText(message);
+        promptLabel.setText(message);
 
-        theOutput.setText(model.getBasket().getDetails());
-        theInput.requestFocus();
+        messageOutput.setText(model.getBasket().getDetails());
+        productNumberInput.requestFocus();
     }
-
 }

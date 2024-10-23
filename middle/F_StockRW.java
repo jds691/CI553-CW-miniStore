@@ -1,5 +1,12 @@
 package middle;
 
+import catalogue.Product;
+import debug.DEBUG;
+import remote.RemoteStockRW_I;
+
+import java.rmi.Naming;
+import java.rmi.RemoteException;
+
 /**
  * Facade for read/write access to the stock list.
  * The actual implementation of this is held on the middle tier.
@@ -9,35 +16,24 @@ package middle;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
-
-import catalogue.Product;
-import debug.DEBUG;
-import remote.RemoteStockRW_I;
-
-import java.rmi.Naming;
-import java.rmi.RemoteException;
-
-/**
- * Setup connection to the middle tier
- */
-
 public class F_StockRW
         extends F_StockR
         implements StockReadWriter {
-    private RemoteStockRW_I aR_StockRW = null;
-    private String theStockURL = null;
+
+    private RemoteStockRW_I stockReadWriter = null;
+    private final String stockURL;
 
     public F_StockRW(String url) {
         // Not used
         super(url);
-        theStockURL = url;
+        stockURL = url;
     }
 
     private void connect() throws StockException {
         try {
-            aR_StockRW = (RemoteStockRW_I) Naming.lookup(theStockURL);
+            stockReadWriter = (RemoteStockRW_I) Naming.lookup(stockURL);
         } catch (Exception e) {
-            aR_StockRW = null;
+            stockReadWriter = null;
             throw new StockException("Com: " + e.getMessage());
         }
     }
@@ -52,10 +48,13 @@ public class F_StockRW
         DEBUG.trace("F_StockRW:buyStock()");
 
         try {
-            if (aR_StockRW == null) connect();
-            return aR_StockRW.buyStock(number, amount);
+            if (stockReadWriter == null)
+                connect();
+
+            return stockReadWriter.buyStock(number, amount);
         } catch (RemoteException e) {
-            aR_StockRW = null;
+            stockReadWriter = null;
+
             throw new StockException("Net: " + e.getMessage());
         }
     }
@@ -71,10 +70,13 @@ public class F_StockRW
         DEBUG.trace("F_StockRW:addStock()");
 
         try {
-            if (aR_StockRW == null) connect();
-            aR_StockRW.addStock(number, amount);
+            if (stockReadWriter == null)
+                connect();
+
+            stockReadWriter.addStock(number, amount);
         } catch (RemoteException e) {
-            aR_StockRW = null;
+            stockReadWriter = null;
+
             throw new StockException("Net: " + e.getMessage());
         }
     }
@@ -90,10 +92,13 @@ public class F_StockRW
         DEBUG.trace("F_StockRW:modifyStock()");
 
         try {
-            if (aR_StockRW == null) connect();
-            aR_StockRW.modifyStock(detail);
+            if (stockReadWriter == null)
+                connect();
+
+            stockReadWriter.modifyStock(detail);
         } catch (RemoteException e) {
-            aR_StockRW = null;
+            stockReadWriter = null;
+
             throw new StockException("Net: " + e.getMessage());
         }
     }

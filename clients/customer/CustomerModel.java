@@ -4,7 +4,6 @@ import catalogue.Basket;
 import catalogue.Product;
 import debug.DEBUG;
 import middle.MiddleFactory;
-import middle.OrderProcessing;
 import middle.StockException;
 import middle.StockReader;
 
@@ -15,31 +14,26 @@ import java.util.Observable;
  * Implements the Model of the customer client
  */
 public class CustomerModel extends Observable {
-    // Current product
-    private final Product theProduct = null;
-    private final OrderProcessing theOrder = null;
     // Bought items
-    private Basket theBasket = null;
-    // Product being processed
-    private String pn = "";
-    private StockReader theStock = null;
-    private ImageIcon thePic = null;
+    private Basket basket = null;
+    private StockReader stockReader = null;
+    private ImageIcon image = null;
 
     /**
      * Construct the model of the Customer
      *
-     * @param mf The factory to create the connection objects
+     * @param factory The factory to create the connection objects
      */
-    public CustomerModel(MiddleFactory mf) {
+    public CustomerModel(MiddleFactory factory) {
         try {
             // Database access
-            theStock = mf.makeStockReader();
+            stockReader = factory.makeStockReader();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
         }
 
         // Initial Basket
-        theBasket = makeBasket();
+        basket = makeBasket();
     }
 
     /**
@@ -48,61 +42,58 @@ public class CustomerModel extends Observable {
      * @return the basket of products
      */
     public Basket getBasket() {
-        return theBasket;
+        return basket;
     }
 
     /**
      * Check if the product is in Stock
      *
-     * @param productNum The product number
+     * @param productNumber The product number
      */
-    public void doCheck(String productNum) {
-        theBasket.clear();
-        String theAction = "";
-        // Product no.
-        pn = productNum.trim();
+    public void queryProduct(String productNumber) {
+        basket.clear();
+        String prompt = "";
+        // Product being processed
+        productNumber = productNumber.trim();
         int amount = 1;
         try {
-            if (theStock.exists(pn)) {
-                Product pr = theStock.getDetails(pn);
+            if (stockReader.exists(productNumber)) {
+                Product product = stockReader.getDetails(productNumber);
                 //  In stock?
-                if (pr.getQuantity() >= amount)
-                {
-                    theAction = String.format(
+                if (product.getQuantity() >= amount) {
+                    prompt = String.format(
                             "%s : %7.2f (%2d) ",
-                            pr.getDescription(),
-                            pr.getPrice(),
-                            pr.getQuantity()
+                            product.getDescription(),
+                            product.getPrice(),
+                            product.getQuantity()
                     );
                     //   Require 1
-                    pr.setQuantity(amount);
-                    theBasket.add(pr);
-                    thePic = theStock.getImage(pn);
+                    product.setQuantity(amount);
+                    basket.add(product);
+                    image = stockReader.getImage(productNumber);
                 } else {
-                    theAction = pr.getDescription() + " not in stock";
+                    prompt = product.getDescription() + " not in stock";
                 }
             } else {
-                theAction = "Unknown product number " + pn;
+                prompt = "Unknown product number " + productNumber;
             }
         } catch (StockException e) {
             DEBUG.error("CustomerClient.doCheck()\n%s", e.getMessage());
         }
 
         setChanged();
-        notifyObservers(theAction);
+        notifyObservers(prompt);
     }
 
     /**
      * Clear the products from the basket
      */
-    public void doClear() {
-        String theAction = "";
-        // Clear s. list
-        theBasket.clear();
-        theAction = "Enter Product Number";
-        thePic = null;
+    public void reset() {
+        String prompt = "Enter Product Number";
+        basket.clear();
+        image = null;
         setChanged();
-        notifyObservers(theAction);
+        notifyObservers(prompt);
     }
 
     /**
@@ -111,7 +102,7 @@ public class CustomerModel extends Observable {
      * @return An instance of an ImageIcon
      */
     public ImageIcon getPicture() {
-        return thePic;
+        return image;
     }
 
     /**

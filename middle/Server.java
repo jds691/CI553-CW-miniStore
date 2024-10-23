@@ -17,15 +17,15 @@ import java.rmi.registry.LocateRegistry;
 class Server {
     public static void main(String[] args) {
         String stockR = args.length < 1      // URL of stock R
-                ? Names.STOCK_R       //  default  location
+                ? Endpoint.STOCK_READ_ONLY       //  default  location
                 : args[0];            //  supplied location
 
         String stockRW = args.length < 2     // URL of stock RW
-                ? Names.STOCK_RW     //  default  location
+                ? Endpoint.STOCK_READ_WRITE     //  default  location
                 : args[1];           //  supplied location
 
         String order = args.length < 3    // URL of order manip
-                ? Names.ORDER        //  default  location
+                ? Endpoint.ORDER        //  default  location
                 : args[2];           //  supplied location
 
         (new Server()).bind(stockR, stockRW, order);

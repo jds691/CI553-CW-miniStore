@@ -43,7 +43,7 @@ public class RemoteMiddleFactory implements MiddleFactory {
      * Return an object to access the order processing system.
      * Access is via RMI
      */
-    public OrderProcessing makeOrderProcessing() throws OrderException {
+    public OrderProcessor makeOrderProcessing() throws OrderException {
         return new F_Order(theOrder_URL);
     }
 }

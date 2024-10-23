@@ -5,6 +5,7 @@ import debug.DEBUG;
 import middle.StockException;
 import middle.StockReadWriter;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 // There can only be 1 ResultSet opened per statement
@@ -21,7 +22,6 @@ import java.sql.SQLException;
  */
 public class StockRW extends StockR implements StockReadWriter {
     public StockRW() throws StockException {
-        // Connection done in StockR's constructor
         super();
     }
 
@@ -34,19 +34,23 @@ public class StockRW extends StockR implements StockReadWriter {
      */
     public synchronized boolean buyStock(String pNum, int amount) throws StockException {
         DEBUG.trace("DB StockRW: buyStock(%s,%d)", pNum, amount);
-        int updates = 0;
+        int updates;
         try {
-            getStatementObject().executeUpdate(
-                    "update StockTable set stockLevel = stockLevel-" + amount +
-                            " where productNo = '" + pNum + "' and " +
-                            "stockLevel >= " + amount
-            );
-            updates = 1; // getStatementObject().getUpdateCount();
+            try (PreparedStatement statement = getConnection().prepareStatement(
+                    "update StockTable set stockLevel = stockLevel - ? where productNo = ? and stockLevel >= ?"
+            )) {
+                statement.setInt(1, amount);
+                statement.setString(2, pNum);
+                statement.setInt(3, amount);
+
+                updates = statement.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new StockException("SQL buyStock: " + e.getMessage());
         }
+
         DEBUG.trace("buyStock() updates -> %n", updates);
-        return updates > 0;   // sucess ?
+        return updates > 0;   // success ?
     }
 
     /**
@@ -58,16 +62,20 @@ public class StockRW extends StockR implements StockReadWriter {
      */
     public synchronized void addStock(String pNum, int amount) throws StockException {
         try {
-            getStatementObject().executeUpdate(
-                    "update StockTable set stockLevel = stockLevel + " + amount +
-                            " where productNo = '" + pNum + "'"
-            );
+            try (PreparedStatement statement = getConnection().prepareStatement(
+                    "update StockTable set stockLevel = stockLevel + ? where productNo = ?"
+            )) {
+                statement.setInt(1, amount);
+                statement.setString(2, pNum);
+
+                statement.executeUpdate();
+            }
+
             DEBUG.trace("DB StockRW: addStock(%s,%d)", pNum, amount);
         } catch (SQLException e) {
             throw new StockException("SQL addStock: " + e.getMessage());
         }
     }
-
 
     /**
      * Modifies Stock details for a given product number.
@@ -78,33 +86,45 @@ public class StockRW extends StockR implements StockReadWriter {
      */
     public synchronized void modifyStock(Product detail) throws StockException {
         DEBUG.trace("DB StockRW: modifyStock(%s)",
-                detail.getProductNum());
+                detail.getProductNumber());
         try {
-            if (!exists(detail.getProductNum())) {
-                getStatementObject().executeUpdate(
-                        "insert into ProductTable values ('" +
-                                detail.getProductNum() + "', " +
-                                "'" + detail.getDescription() + "', " +
-                                "'images/Pic" + detail.getProductNum() + ".jpg', " +
-                                "'" + detail.getPrice() + "' " + ")"
-                );
-                getStatementObject().executeUpdate(
-                        "insert into StockTable values ('" +
-                                detail.getProductNum() + "', " +
-                                "'" + detail.getQuantity() + "' " + ")"
-                );
-            } else {
-                getStatementObject().executeUpdate(
-                        "update ProductTable " +
-                                "  set description = '" + detail.getDescription() + "' , " +
-                                "      price       = " + detail.getPrice() +
-                                "  where productNo = '" + detail.getProductNum() + "' "
-                );
+            if (!exists(detail.getProductNumber())) {
+                try (PreparedStatement statement = getConnection().prepareStatement(
+                        "insert into ProductTable values (?, ?, ?, ?)"
+                )) {
+                    statement.setString(1, detail.getProductNumber());
+                    statement.setString(2, detail.getDescription());
+                    statement.setString(3, String.format("images/Pic%s.jpg", detail.getProductNumber()));
+                    statement.setDouble(4, detail.getPrice());
+                    statement.executeUpdate();
+                }
 
-                getStatementObject().executeUpdate(
-                        "update StockTable set stockLevel = " + detail.getQuantity() +
-                                "  where productNo = '" + detail.getProductNum() + "'"
-                );
+                try (PreparedStatement statement = getConnection().prepareStatement(
+                        "insert into StockTable values (?, ?)"
+                )) {
+                    statement.setString(1, detail.getProductNumber());
+                    statement.setInt(2, detail.getQuantity());
+                    statement.executeUpdate();
+                }
+            } else {
+                try (PreparedStatement statement = getConnection().prepareStatement(
+                        "update ProductTable set description = ?, price = ? where productNo = ?"
+                )) {
+                    statement.setString(1, detail.getDescription());
+                    statement.setDouble(2, detail.getPrice());
+                    statement.setString(3, detail.getProductNumber());
+
+                    statement.executeUpdate();
+                }
+
+                try (PreparedStatement statement = getConnection().prepareStatement(
+                        "update StockTable set stockLevel = ? where productNo = ?"
+                )) {
+                    statement.setInt(1, detail.getQuantity());
+                    statement.setString(2, detail.getProductNumber());
+
+                    statement.executeUpdate();
+                }
             }
         } catch (SQLException e) {
             throw new StockException("SQL modifyStock: " + e.getMessage());

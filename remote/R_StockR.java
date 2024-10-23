@@ -5,6 +5,7 @@ import dbAccess.StockR;
 import middle.StockException;
 
 import javax.swing.*;
+import java.io.Serial;
 import java.rmi.RemoteException;
 
 // There can only be 1 ResultSet opened per statement
@@ -22,11 +23,12 @@ public class R_StockR
         extends java.rmi.server.UnicastRemoteObject
         implements RemoteStockR_I {
 
+    @Serial
     private static final long serialVersionUID = 1;
-    private StockR aStockR = null;
+    private final StockR stockReader;
 
     public R_StockR(String url) throws RemoteException, StockException {
-        aStockR = new StockR();
+        stockReader = new StockR();
     }
 
     /**
@@ -36,7 +38,7 @@ public class R_StockR
      * @return true if exists otherwise false
      */
     public synchronized boolean exists(String pNum) throws RemoteException, StockException {
-        return aStockR.exists(pNum);
+        return stockReader.exists(pNum);
     }
 
     /**
@@ -46,7 +48,7 @@ public class R_StockR
      * @return StockNumber, Description, Price, Quantity
      */
     public synchronized Product getDetails(String pNum) throws RemoteException, StockException {
-        return aStockR.getDetails(pNum);
+        return stockReader.getDetails(pNum);
     }
 
     /**
@@ -58,6 +60,6 @@ public class R_StockR
      * @return Image
      */
     public synchronized ImageIcon getImage(String pNum) throws RemoteException, StockException {
-        return aStockR.getImage(pNum);
+        return stockReader.getImage(pNum);
     }
 }
