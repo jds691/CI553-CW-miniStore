@@ -1,12 +1,10 @@
 package clients.packing;
 
-
 import catalogue.Basket;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.OrderException;
-import middle.OrderProcessing;
-import middle.StockReadWriter;
+import middle.OrderProcessor;
 
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicReference;
@@ -14,139 +12,121 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * Implements the Model of the warehouse packing client
  */
-public class PackingModel extends Observable
-{
-  private AtomicReference<Basket> theBasket = new AtomicReference<>(); 
+public class PackingModel extends Observable {
+    private final AtomicReference<Basket> basket = new AtomicReference<>();
 
-  private StockReadWriter theStock   = null;
-  private OrderProcessing theOrder   = null;
-  private String          theAction  = "";
-  
-  private StateOf         worker   = new StateOf();
+    private OrderProcessor orderProcessor = null;
 
-  /*
-   * Construct the model of the warehouse Packing client
-   * @param mf The factory to create the connection objects
-   */
-  public PackingModel(MiddleFactory mf)
-  {
-    try                                     // 
-    {      
-      theStock = mf.makeStockReadWriter();  // Database access
-      theOrder = mf.makeOrderProcessing();  // Process order
-    } catch ( Exception e )
-    {
-      DEBUG.error("CustomerModel.constructor\n%s", e.getMessage() );
-    }
+    private final Semaphore worker = new Semaphore();
 
-    theBasket.set( null );                  // Initial Basket
-    // Start a background check to see when a new order can be packed
-    new Thread( () -> checkForNewOrder() ).start();
-  }
-  
-  
-  /**
-   * Semaphore used to only allow 1 order
-   * to be packed at once by this person
-   */
-  class StateOf
-  {
-    private boolean held = false;
-    
     /**
-     * Claim exclusive access
-     * @return true if claimed else false
+     * Construct the model of the warehouse Packing client
+     *
+     * @param mf The factory to create the connection objects
      */
-    public synchronized boolean claim()   // Semaphore
-    {
-      return held ? false : (held = true);
+    public PackingModel(MiddleFactory mf) {
+        try {
+            orderProcessor = mf.makeOrderProcessor();
+        } catch (Exception e) {
+            DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
+        }
+
+        basket.set(null);
+        // Start a background check to see when a new order can be packed
+        new Thread(this::checkForNewOrder).start();
     }
-    
+
     /**
-     * Free the lock
+     * Semaphore used to only allow 1 order
+     * to be packed at once by this person
      */
-    public synchronized void free()     //
-    {
-      assert held;
-      held = false;
+    static class Semaphore {
+        private boolean held = false;
+
+        /**
+         * Claim exclusive access
+         *
+         * @return true if claimed else false
+         */
+        public synchronized boolean claim() {
+            return !held && (held = true);
+        }
+
+        /**
+         * Free the lock
+         */
+        public synchronized void free() {
+            assert held;
+            held = false;
+        }
     }
 
-  }
-  
-  /**
-   * Method run in a separate thread to check if there
-   * is a new order waiting to be packed and we have
-   * nothing to do.
-   */
-  private void checkForNewOrder()
-  {
-    while ( true )
-    {
-      try
-      {
-        boolean isFree = worker.claim();     // Are we free
-        if ( isFree )                        // T
-        {                                    //
-          Basket sb = 
-            theOrder.getOrderToPack();       //  Order 
-          if ( sb != null )                  //  Order to pack
-          {                                  //  T
-            theBasket.set(sb);               //   Working on
-            theAction = "Bought Receipt";     //   what to do
-          } else {                           //  F
-            worker.free();                   //  Free
-            theAction = "";                  // 
-          }
-          setChanged(); notifyObservers(theAction);
-        }                                    // 
-        Thread.sleep(2000);                  // idle
-      } catch ( Exception e )
-      {
-        DEBUG.error("%s\n%s",                // Eek!
-           "BackGroundCheck.run()\n%s",
-           e.getMessage() );
-      }
-    }
-  }
-  
-  
-  /**
-   * Return the Basket of products that are to be picked
-   * @return the basket
-   */
-  public Basket getBasket()
-  {
-    return theBasket.get();
-  }
+    /**
+     * Method run in a separate thread to check if there
+     * is a new order waiting to be packed and we have
+     * nothing to do.
+     */
+    private void checkForNewOrder() {
+        while (true) {
+            try {
+                boolean isFree = worker.claim();
+                if (isFree) {
+                    Basket sb = orderProcessor.getOrderToPack();
+                    String prompt = "";
+                    if (sb != null) {
+                        basket.set(sb);
+                        prompt = "Bought Receipt";
+                    } else {
+                        worker.free();
+                        prompt = "";
+                    }
 
-  /**
-   * Process a packed Order
-   */
-  public void doPacked()
-  {
-    String theAction = "";
-    try
-    {
-      Basket basket =  theBasket.get();       // Basket being packed
-      if ( basket != null )                   // T
-      {
-        theBasket.set( null );                //  packed
-        int no = basket.getOrderNum();        //  Order no
-        theOrder.informOrderPacked( no );     //  Tell system
-        theAction = "";                       //  Inform picker
-        worker.free();                        //  Can pack some more
-      } else {                                // F 
-        theAction = "No order";       //   Not packed order
-      }
-      setChanged(); notifyObservers(theAction);
+                    setChanged();
+                    notifyObservers(prompt);
+                }
+
+                Thread.sleep(2000);
+            } catch (Exception e) {
+                DEBUG.error("%s\n%s", "BackGroundCheck.run()\n%s", e.getMessage());
+            }
+        }
     }
-    catch ( OrderException e )                // Error
-    {                                         //  Of course
-      DEBUG.error( "ReceiptModel.doOk()\n%s\n",//  should not
-                            e.getMessage() ); //  happen
+
+    /**
+     * Return the Basket of products that are to be picked
+     *
+     * @return the basket
+     */
+    public Basket getBasket() {
+        return basket.get();
     }
-    setChanged(); notifyObservers(theAction);
-  }
+
+    /**
+     * Process a packed Order
+     */
+    public void packOrder() {
+        String prompt = "";
+
+        try {
+            Basket basket = this.basket.get();
+            if (basket != null) {
+                this.basket.set(null);
+                int orderNumber = basket.getOrderNumber();
+                orderProcessor.informOrderPacked(orderNumber);
+                prompt = "";
+                worker.free();
+            } else {
+                prompt = "No order";
+            }
+            setChanged();
+            notifyObservers(prompt);
+        } catch (OrderException e) {
+            DEBUG.error("ReceiptModel.doOk()\n%s\n", e.getMessage());
+        }
+
+        setChanged();
+        notifyObservers(prompt);
+    }
 }
 
 
