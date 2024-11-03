@@ -2,13 +2,7 @@ package remote;
 
 import logic.Product;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-class ProductImpl implements Product, Serializable {
-    @Serial
-    private static final long serialVersionUID = 20092506;
-
+class ProductImpl implements Product {
     private String productNumber;
     private String description;
     private double price;
