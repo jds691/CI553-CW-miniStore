@@ -1,7 +1,7 @@
 package clients.customer;
 
 import models.Basket;
-import models.Product;
+import logic.Product;
 import debug.DEBUG;
 import middle.MiddleFactory;
 import middle.StockException;

@@ -3,6 +3,7 @@ package models;
 import debug.DEBUG;
 import middle.OrderException;
 import middle.OrderProcessor;
+import logic.Product;
 
 import java.util.stream.Collectors;
 

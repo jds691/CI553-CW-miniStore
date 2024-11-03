@@ -1,6 +1,6 @@
 package middle;
 
-import models.Product;
+import logic.Product;
 
 /**
  * Interface for read/write remote.access to the stock list.

@@ -1,7 +1,7 @@
 package middle;
 
-import remote.access.StockR;
-import remote.access.StockRW;
+import remote.StockR;
+import remote.StockRW;
 import models.Order;
 
 /**

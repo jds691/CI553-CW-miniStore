@@ -1,6 +1,6 @@
 package remote;
 
-import models.Product;
+import logic.Product;
 import middle.StockException;
 
 import java.rmi.Remote;

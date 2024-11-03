@@ -1,6 +1,6 @@
-package remote.access;
+package remote;
 
-import models.Product;
+import logic.Product;
 import debug.DEBUG;
 import middle.StockException;
 import middle.StockReadWriter;

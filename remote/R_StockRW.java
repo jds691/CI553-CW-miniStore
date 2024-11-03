@@ -1,7 +1,6 @@
 package remote;
 
-import models.Product;
-import remote.access.StockRW;
+import logic.Product;
 import middle.StockException;
 
 import javax.swing.*;

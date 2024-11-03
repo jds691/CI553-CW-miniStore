@@ -1,6 +1,6 @@
 package middle;
 
-import models.Product;
+import logic.Product;
 import debug.DEBUG;
 import remote.RemoteStockR_I;
 

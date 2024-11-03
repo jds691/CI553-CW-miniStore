@@ -1,68 +1,62 @@
-package models;
+package remote;
+
+import logic.Product;
 
 import java.io.Serial;
 import java.io.Serializable;
 
-/**
- * Used to hold the following information about
- * a product: Product number, Description, Price, Stock level.
- *
- * @author Mike Smith University of Brighton
- * @version 2.0
- */
-@Deprecated
-public class Product implements Serializable {
+class ProductImpl implements Product, Serializable {
     @Serial
     private static final long serialVersionUID = 20092506;
-    
+
     private String productNumber;
     private String description;
     private double price;
     private int quantity;
 
-    /**
-     * Construct a product details
-     *
-     * @param productNumber  Product number
-     * @param description Description of product
-     * @param price       The price of the product
-     * @param quantity    The Quantity of the product involved
-     */
-    public Product(String productNumber, String description, double price, int quantity) {
+    public ProductImpl(String productNumber, String description, double price, int quantity) {
         this.productNumber = productNumber;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
     }
 
+    @Override
     public String getProductNumber() {
         return productNumber;
     }
 
+    @Override
     public void setProductNumber(String value) {
         productNumber = value;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
+    @Override
     public void setDescription(String value) {
         description = value;
     }
 
+    @Override
     public double getPrice() {
         return price;
     }
 
+    @Override
     public void setPrice(double value) {
         price = value;
     }
 
+    @Override
     public int getQuantity() {
         return quantity;
     }
 
+    @Override
     public void setQuantity(int value) {
         quantity = value;
     }

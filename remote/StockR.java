@@ -1,9 +1,11 @@
-package remote.access;
+package remote;
 
-import models.Product;
+import logic.Product;
 import debug.DEBUG;
 import middle.StockException;
 import middle.StockReader;
+import remote.access.DBAccess;
+import remote.access.DBAccessFactory;
 
 import javax.swing.*;
 import java.sql.*;
@@ -95,7 +97,7 @@ public class StockR implements StockReader {
      */
     public synchronized Product getProductDetails(String pNum) throws StockException {
         try {
-            Product product = new Product("0", "", 0.00, 0);
+            Product product = new ProductImpl("0", "", 0.00, 0);
 
             ResultSet results;
             try (PreparedStatement statement = connection.prepareStatement(
