@@ -12,6 +12,7 @@ import clients.customer.CustomerView;
 import clients.packing.PackingController;
 import clients.packing.PackingModel;
 import clients.packing.PackingView;
+import debug.DEBUG;
 import middle.LocalMiddleFactory;
 import middle.MiddleFactory;
 
@@ -28,7 +29,7 @@ import java.awt.*;
  */
 class Main {
     public static void main(String[] args) {
-        //DEBUG.set(true); /* Lots of debug info */
+        DEBUG.set(true);
         MiddleFactory factory = new LocalMiddleFactory();  // Direct remote.access
 
         startCustomerGUI_MVC(factory);
