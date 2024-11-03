@@ -21,6 +21,7 @@ class OrderImpl implements Order {
 
     @Override
     public void addProduct(Product product) {
+        //TODO: Update product quantity if products contains it already, then sort based on productNumber
         products.add(product);
     }
 
