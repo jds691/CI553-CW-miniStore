@@ -114,7 +114,8 @@ public class CustomerView implements Observer {
             productPicture.set(image);
         }
 
-        messageOutput.setText(model.getBasket().getDetails());
+        //TODO: Add back rich message output
+        //messageOutput.setText(model.getProducts().getRichDescription());
         productNumberInput.requestFocus();
     }
 }

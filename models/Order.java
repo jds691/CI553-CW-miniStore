@@ -1,3 +1,4 @@
+/*
 package models;
 
 import debug.DEBUG;
@@ -20,7 +21,7 @@ import java.util.*;
  *
  * @author Mike Smith University of Brighton
  * @version 3.0
- */
+
 @Deprecated
 public class Order implements OrderProcessor {
     // Start at order 1
@@ -33,7 +34,7 @@ public class Order implements OrderProcessor {
      *
      * @param basket an instance of a basket
      * @return Description of contents
-     */
+
     private String asString(Basket basket) {
         StringBuilder sb = new StringBuilder(1024);
         Formatter fr = new Formatter(sb);
@@ -54,7 +55,7 @@ public class Order implements OrderProcessor {
      * would be good to recycle numbers after 999
      *
      * @return A unique order number
-     */
+
     public synchronized int uniqueNumber() {
         return uniqueNumber++;
     }
@@ -63,7 +64,7 @@ public class Order implements OrderProcessor {
      * Add a new order to the order processing system
      *
      * @param bought A new order that is to be processed
-     */
+
     public synchronized void newOrder(Basket bought) throws OrderException {
         DEBUG.trace("DEBUG: New order");
 
@@ -78,11 +79,11 @@ public class Order implements OrderProcessor {
      * Returns an order to pack from the warehouse.
      *
      * @return An order to pack or null if no order
-     */
-    public synchronized Basket getOrderToPack() throws OrderException {
+
+    public synchronized Order getOrderToPack() throws OrderException {
         DEBUG.trace("DEBUG: Get order to pack");
 
-        Basket foundWaiting = null;
+        Order foundWaiting = null;
 
         for (Folder bws : folders) {
             if (bws.getState() == State.WAITING) {
@@ -102,7 +103,7 @@ public class Order implements OrderProcessor {
      *
      * @param orderNum The order that has been packed
      * @return true Order in system, false no such order
-     */
+
     public synchronized boolean informOrderPacked(int orderNum) throws OrderException {
         DEBUG.trace("DEBUG: Order packed [%d]", orderNum);
 
@@ -125,7 +126,7 @@ public class Order implements OrderProcessor {
      * collected by the customer
      *
      * @return true If order is in the system, otherwise false
-     */
+
     public synchronized boolean informOrderCollected(int orderNum) throws OrderException {
         DEBUG.trace("DEBUG: Order collected [%d]", orderNum);
 
@@ -156,7 +157,7 @@ public class Order implements OrderProcessor {
      * </PRE>
      *
      * @return a Map with the keys: "Waiting", "BeingPacked", "ToBeCollected"
-     */
+
     public synchronized Map<String, List<Integer>> getOrderState() throws OrderException {
         Map<String, List<Integer>> res = new HashMap<>();
 
@@ -172,7 +173,7 @@ public class Order implements OrderProcessor {
      *
      * @param inState The state to find order numbers in
      * @return A list of order numbers
-     */
+
     private List<Integer> orderNums(State inState) {
         return folders.stream()
                 .filter(folder -> folder.getState() == inState)
@@ -188,7 +189,7 @@ public class Order implements OrderProcessor {
 
     /**
      * Wraps a Basket and it state into a folder
-     */
+
     private static class Folder {
         // For this basket
         private final Basket basket;
@@ -213,3 +214,4 @@ public class Order implements OrderProcessor {
         }
     }
 }
+*/

@@ -1,13 +1,12 @@
 package clients.customer;
 
-import models.Basket;
-import logic.Product;
 import debug.DEBUG;
-import middle.MiddleFactory;
-import middle.StockException;
-import middle.StockReader;
+import logic.LogicFactory;
+import logic.Product;
+import logic.ProductReader;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.Observable;
 
 /**
@@ -15,8 +14,8 @@ import java.util.Observable;
  */
 public class CustomerModel extends Observable {
     // Bought items
-    private Basket basket = null;
-    private StockReader stockReader = null;
+    private ArrayList<Product> products = null;
+    private ProductReader productReader = null;
     private ImageIcon image = null;
 
     /**
@@ -24,16 +23,16 @@ public class CustomerModel extends Observable {
      *
      * @param factory The factory to create the connection objects
      */
-    public CustomerModel(MiddleFactory factory) {
+    public CustomerModel(LogicFactory factory) {
         try {
             // Database remote.access
-            stockReader = factory.makeStockReader();
+            productReader = factory.getProductReader();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
         }
 
         // Initial Basket
-        basket = makeBasket();
+        products = new ArrayList<>();
     }
 
     /**
@@ -41,8 +40,8 @@ public class CustomerModel extends Observable {
      *
      * @return the basket of products
      */
-    public Basket getBasket() {
-        return basket;
+    public ArrayList<Product> getProducts() {
+        return products;
     }
 
     /**
@@ -51,34 +50,30 @@ public class CustomerModel extends Observable {
      * @param productNumber The product number
      */
     public void queryProduct(String productNumber) {
-        basket.clear();
+        products.clear();
         String prompt = "";
         // Product being processed
         productNumber = productNumber.trim();
         int amount = 1;
-        try {
-            if (stockReader.doesProductExist(productNumber)) {
-                Product product = stockReader.getProductDetails(productNumber);
-                //  In stock?
-                if (product.getQuantity() >= amount) {
-                    prompt = String.format(
-                            "%s : %7.2f (%2d) ",
-                            product.getDescription(),
-                            product.getPrice(),
-                            product.getQuantity()
-                    );
-                    //   Require 1
-                    product.setQuantity(amount);
-                    basket.add(product);
-                    image = stockReader.getProductImage(productNumber);
-                } else {
-                    prompt = product.getDescription() + " not in stock";
-                }
+        if (productReader.doesProductExist(productNumber)) {
+            Product product = productReader.getProductDetails(productNumber);
+            //  In stock?
+            if (product.getQuantity() >= amount) {
+                prompt = String.format(
+                        "%s : %7.2f (%2d) ",
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getQuantity()
+                );
+                //   Require 1
+                product.setQuantity(amount);
+                products.add(product);
+                image = productReader.getProductImage(productNumber);
             } else {
-                prompt = "Unknown product number " + productNumber;
+                prompt = product.getDescription() + " not in stock";
             }
-        } catch (StockException e) {
-            DEBUG.error("CustomerClient.doCheck()\n%s", e.getMessage());
+        } else {
+            prompt = "Unknown product number " + productNumber;
         }
 
         setChanged();
@@ -90,7 +85,7 @@ public class CustomerModel extends Observable {
      */
     public void reset() {
         String prompt = "Enter Product Number";
-        basket.clear();
+        products.clear();
         image = null;
         setChanged();
         notifyObservers(prompt);
@@ -111,15 +106,6 @@ public class CustomerModel extends Observable {
     private void askForUpdate() {
         setChanged();
         notifyObservers("START only");
-    }
-
-    /**
-     * Make a new Basket
-     *
-     * @return an instance of a new Basket
-     */
-    protected Basket makeBasket() {
-        return new Basket();
     }
 }
 

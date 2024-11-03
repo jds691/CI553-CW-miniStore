@@ -1,3 +1,4 @@
+/*
 package remote;
 
 import logic.Product;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
  *
  * @author Mike Smith University of Brighton
  * @version 2.0
- */
+
 public class StockRW extends StockR implements StockReadWriter {
     public StockRW() throws StockException {
         super();
@@ -31,7 +32,7 @@ public class StockRW extends StockR implements StockReadWriter {
      * @param pNum   Product number
      * @param amount Amount of stock bought
      * @return true if succeeds else false
-     */
+
     public synchronized boolean buyStock(String pNum, int amount) throws StockException {
         DEBUG.trace("DB StockRW: buyStock(%s,%d)", pNum, amount);
         int updates;
@@ -59,7 +60,7 @@ public class StockRW extends StockR implements StockReadWriter {
      *
      * @param pNum   Product number
      * @param amount Amount of stock to add
-     */
+
     public synchronized void addStock(String pNum, int amount) throws StockException {
         try {
             try (PreparedStatement statement = getConnection().prepareStatement(
@@ -83,7 +84,7 @@ public class StockRW extends StockR implements StockReadWriter {
      * Information modified: Description, Price
      *
      * @param detail Product details to change stocklist to
-     */
+
     public synchronized void modifyStock(Product detail) throws StockException {
         DEBUG.trace("DB StockRW: modifyStock(%s)",
                 detail.getProductNumber());
@@ -131,3 +132,4 @@ public class StockRW extends StockR implements StockReadWriter {
         }
     }
 }
+*/

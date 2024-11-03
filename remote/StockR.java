@@ -1,3 +1,4 @@
+/*
 package remote;
 
 import logic.Product;
@@ -23,7 +24,7 @@ import java.sql.*;
  *
  * @author Mike Smith University of Brighton
  * @version 2.0
- */
+
 public class StockR implements StockReader {
     private final Connection connection;
 
@@ -32,7 +33,7 @@ public class StockR implements StockReader {
      * Uses a factory method to help set up the connection
      *
      * @throws StockException if problem
-     */
+
     public StockR() throws StockException {
         try {
             DBAccess dbDriver = (new DBAccessFactory()).getNewDBAccess();
@@ -57,7 +58,7 @@ public class StockR implements StockReader {
      * requests to the DataBase
      *
      * @return a connection object
-     */
+
     protected Connection getConnection() {
         return connection;
     }
@@ -67,7 +68,7 @@ public class StockR implements StockReader {
      *
      * @param pNum The product number
      * @return true if exists otherwise false
-     */
+
     public synchronized boolean doesProductExist(String pNum) throws StockException {
         try {
             ResultSet rs;
@@ -94,7 +95,7 @@ public class StockR implements StockReader {
      *
      * @param pNum The product number
      * @return Details in an instance of a Product
-     */
+
     public synchronized Product getProductDetails(String pNum) throws StockException {
         try {
             Product product = new ProductImpl("0", "", 0.00, 0);
@@ -130,7 +131,7 @@ public class StockR implements StockReader {
      * @param pNum The product number
      *             Assumed to exist in database.
      * @return ImageIcon representing the image
-     */
+
     public synchronized ImageIcon getProductImage(String pNum) throws StockException {
         String filename = "default.jpg";
         try {
@@ -155,3 +156,4 @@ public class StockR implements StockReader {
         return new ImageIcon(filename);
     }
 }
+*/

@@ -1,12 +1,12 @@
 package clients.backDoor;
 
-import models.Basket;
-import logic.Product;
 import debug.DEBUG;
-import middle.MiddleFactory;
-import middle.StockException;
-import middle.StockReadWriter;
+import logic.LogicFactory;
+import logic.Product;
+import logic.ProductReader;
+import logic.StockWriter;
 
+import java.util.ArrayList;
 import java.util.Observable;
 
 /**
@@ -16,26 +16,28 @@ public class BackDoorModel extends Observable {
     /**
      * Bought items
      */
-    private Basket basket = null;
+    private ArrayList<Product> products = null;
     /**
      * Product being processed
      */
     private String productNumber = "";
 
-    private StockReadWriter stockReadWriter = null;
+    private ProductReader productReader = null;
+    private StockWriter stockWriter = null;
 
     /**
      * Construct the model of the back door client
      * @param factory The factory to create the connection objects
      */
-    public BackDoorModel(MiddleFactory factory) {
+    public BackDoorModel(LogicFactory factory) {
         try {
-            stockReadWriter = factory.makeStockReadWriter();
+            productReader = factory.getProductReader();
+            stockWriter = factory.getStockWriter();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }
 
-        basket = makeBasket();
+        products = new ArrayList<>();
     }
 
     /**
@@ -43,8 +45,8 @@ public class BackDoorModel extends Observable {
      *
      * @return basket
      */
-    public Basket getBasket() {
-        return basket;
+    public ArrayList<Product> getProducts() {
+        return products;
     }
 
     /**
@@ -56,20 +58,16 @@ public class BackDoorModel extends Observable {
         String prompt;
         this.productNumber = productNumber.trim();
 
-        try {
-            if (stockReadWriter.doesProductExist(this.productNumber)) {
-                Product product = stockReadWriter.getProductDetails(this.productNumber);
-                prompt = String.format(
-                        "%s : %7.2f (%2d) ",
-                        product.getDescription(),
-                        product.getPrice(),
-                        product.getQuantity()
-                );
-            } else {
-                prompt = "Unknown product number " + this.productNumber;
-            }
-        } catch (StockException e) {
-            prompt = e.getMessage();
+        if (productReader.doesProductExist(this.productNumber)) {
+            Product product = productReader.getProductDetails(this.productNumber);
+            prompt = String.format(
+                    "%s : %7.2f (%2d) ",
+                    product.getDescription(),
+                    product.getPrice(),
+                    product.getQuantity()
+            );
+        } else {
+            prompt = "Unknown product number " + this.productNumber;
         }
 
         setChanged();
@@ -84,20 +82,16 @@ public class BackDoorModel extends Observable {
      */
     public void restockProduct(String productNumber, int quantity) {
         String prompt;
-        basket = makeBasket();
+        products = new ArrayList<>();
         this.productNumber = productNumber.trim();
 
-        try {
-            if (stockReadWriter.doesProductExist(this.productNumber)) {
-                stockReadWriter.addStock(this.productNumber, quantity);
-                Product product = stockReadWriter.getProductDetails(this.productNumber);
-                basket.add(product);
-                prompt = "";
-            } else {
-                prompt = "Unknown product number " + this.productNumber;
-            }
-        } catch (StockException e) {
-            prompt = e.getMessage();
+        if (productReader.doesProductExist(this.productNumber)) {
+            stockWriter.addStock(this.productNumber, quantity);
+            Product product = productReader.getProductDetails(this.productNumber);
+            products.add(product);
+            prompt = "";
+        } else {
+            prompt = "Unknown product number " + this.productNumber;
         }
 
         setChanged();
@@ -110,18 +104,9 @@ public class BackDoorModel extends Observable {
     //TODO: Figure out what this is actually responsible for
     public void reset() {
         String prompt = "Enter Product Number";
-        basket.clear();
+        products.clear();
         setChanged();
         notifyObservers(prompt);
-    }
-
-    /**
-     * return an instance of a Basket
-     *
-     * @return a new instance of a Basket
-     */
-    protected Basket makeBasket() {
-        return new Basket();
     }
 }
 

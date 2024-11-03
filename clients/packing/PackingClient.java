@@ -1,9 +1,9 @@
 package clients.packing;
 
 
-import middle.MiddleFactory;
-import middle.Endpoint;
-import middle.RemoteMiddleFactory;
+import logic.LogicFactory;
+import logic.RemoteLogicFactory;
+import remote.access.Endpoint;
 
 import javax.swing.*;
 
@@ -17,19 +17,17 @@ import javax.swing.*;
 public class PackingClient {
     public static void main(String[] args) {
         String stockURL = args.length < 1     // URL of stock RW
-                        ? Endpoint.STOCK_READ_WRITE      //  default  location
+                        ? Endpoint.STOCK_WRITE      //  default  location
                         : args[0];            //  supplied location
         String orderURL = args.length < 2     // URL of order
                         ? Endpoint.ORDER         //  default  location
                         : args[1];            //  supplied location
 
-        RemoteMiddleFactory factory = new RemoteMiddleFactory();
-        factory.setStockRWInfo(stockURL);
-        factory.setOrderInfo(orderURL);
+        RemoteLogicFactory factory = new RemoteLogicFactory(orderURL, null, stockURL);
         displayGUI(factory);
     }
 
-    public static void displayGUI(MiddleFactory factory) {
+    public static void displayGUI(LogicFactory factory) {
         JFrame window = new JFrame();
 
         window.setTitle("Packing Client (RMI MVC)");

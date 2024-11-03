@@ -1,12 +1,13 @@
 package models;
 
+import logic.Product;
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Formatter;
 import java.util.Locale;
-import logic.Product;
 
 /**
  * A collection of products,
@@ -15,7 +16,7 @@ import logic.Product;
  * @author Mike Smith University of Brighton
  * @version 2.2
  */
-@Deprecated
+@Deprecated(forRemoval = true)
 public class Basket extends ArrayList<Product> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1;

@@ -10,7 +10,6 @@ public interface Product {
     double getPrice();
     void setPrice(double value);
 
-
     /**
      * Gets the current number of this product in stock.
      *

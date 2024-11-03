@@ -1,8 +1,10 @@
-package middle;
+package server;
 
-import remote.R_Order;
-import remote.R_StockR;
-import remote.R_StockRW;
+import logic.LocalLogicFactory;
+import logic.OrderProcessor;
+import logic.ProductReader;
+import logic.StockWriter;
+import remote.access.Endpoint;
 
 import java.net.InetAddress;
 import java.rmi.Naming;
@@ -17,11 +19,11 @@ import java.rmi.registry.LocateRegistry;
 class Server {
     public static void main(String[] args) {
         String stockR = args.length < 1      // URL of stock R
-                ? Endpoint.STOCK_READ_ONLY       //  default  location
+                ? Endpoint.PRODUCT_READ       //  default  location
                 : args[0];            //  supplied location
 
         String stockRW = args.length < 2     // URL of stock RW
-                ? Endpoint.STOCK_READ_WRITE     //  default  location
+                ? Endpoint.STOCK_WRITE     //  default  location
                 : args[1];           //  supplied location
 
         String order = args.length < 3    // URL of order manip
@@ -32,11 +34,8 @@ class Server {
     }
 
     private void bind(String urlStockR, String urlStockRW, String urlOrder) {
-        R_StockR theStockR;
-        R_StockRW theStockRW;
-        R_Order theOrder;
-
         System.out.println("Server: ");
+
         try {
             LocateRegistry.createRegistry(1099);
             String IPAddress = InetAddress.getLocalHost().getHostAddress();
@@ -46,17 +45,20 @@ class Server {
             System.exit(0);
         }
 
+        LocalLogicFactory factory = new LocalLogicFactory();
+
         try {
-            theStockR = new R_StockR(urlStockR);
-            Naming.rebind(urlStockR, theStockR);
+            ProductReader productReaderWrapper = new ProductReaderRemoteWrapper(factory.getProductReader());
+            Naming.rebind(urlStockR, productReaderWrapper);
             System.out.println("StockR  bound to: " + urlStockR);
 
-            theStockRW = new R_StockRW(urlStockRW);
-            Naming.rebind(urlStockRW, theStockRW);
+            StockWriter stockWriterWrapper = new StockWriterRemoteWrapper(factory.getStockWriter());
+            Naming.rebind(urlStockRW, stockWriterWrapper);
             System.out.println("StockRW bound to: " + urlStockRW);
 
-            theOrder = new R_Order(urlOrder);
-            Naming.rebind(urlOrder, theOrder);
+            //theOrder = new R_Order(urlOrder);
+            OrderProcessor orderProcessorWrapper = new OrderProcessorRemoteWrapper(factory.getOrderProcessor());
+            Naming.rebind(urlOrder, orderProcessorWrapper);
             System.out.println("Order   bound to: " + urlOrder);
 
         } catch (Exception err) {

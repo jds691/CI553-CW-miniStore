@@ -1,6 +1,6 @@
 package clients.packing;
 
-import models.Basket;
+import logic.Order;
 
 import javax.swing.*;
 import java.awt.*;
@@ -81,9 +81,9 @@ public class PackingView implements Observer {
         String message = (String) arg;
         promptLabel.setText(message);
 
-        Basket basket = model.getBasket();
-        if (basket != null) {
-            messageOutput.setText(basket.getDetails());
+        Order order = model.getCurrentOrder();
+        if (order != null) {
+            messageOutput.setText(order.getRichDescription());
         } else {
             messageOutput.setText("");
         }

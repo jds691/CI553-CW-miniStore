@@ -1,8 +1,8 @@
 package clients.customer;
 
-import middle.MiddleFactory;
-import middle.Endpoint;
-import middle.RemoteMiddleFactory;
+import logic.LogicFactory;
+import logic.RemoteLogicFactory;
+import remote.access.Endpoint;
 
 import javax.swing.*;
 
@@ -12,15 +12,14 @@ import javax.swing.*;
 public class CustomerClient {
     public static void main(String[] args) {
         String stockURL = args.length < 1         // URL of stock R
-                        ? Endpoint.STOCK_READ_ONLY           //  default  location
+                        ? Endpoint.PRODUCT_READ           //  default  location
                         : args[0];                //  supplied location
 
-        RemoteMiddleFactory factory = new RemoteMiddleFactory();
-        factory.setStockRInfo(stockURL);
+        RemoteLogicFactory factory = new RemoteLogicFactory(null, null, stockURL);
         displayGUI(factory);
     }
 
-    private static void displayGUI(MiddleFactory factory) {
+    private static void displayGUI(LogicFactory factory) {
         JFrame window = new JFrame();
         window.setTitle("Customer Client (MVC RMI)");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

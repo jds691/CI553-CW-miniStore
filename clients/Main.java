@@ -13,8 +13,8 @@ import clients.packing.PackingController;
 import clients.packing.PackingModel;
 import clients.packing.PackingView;
 import debug.DEBUG;
-import middle.LocalMiddleFactory;
-import middle.MiddleFactory;
+import logic.LocalLogicFactory;
+import logic.LogicFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +30,7 @@ import java.awt.*;
 class Main {
     public static void main(String[] args) {
         DEBUG.set(true);
-        MiddleFactory factory = new LocalMiddleFactory();  // Direct remote.access
+        LogicFactory factory = new LocalLogicFactory();  // Direct remote.access
 
         startCustomerGUI_MVC(factory);
         startCashierGUI_MVC(factory);
@@ -44,7 +44,7 @@ class Main {
      *
      * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startCustomerGUI_MVC(MiddleFactory factory) {
+    public static void startCustomerGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
         window.setTitle("Customer Client MVC");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -64,7 +64,7 @@ class Main {
      *
      * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startCashierGUI_MVC(MiddleFactory factory) {
+    public static void startCashierGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
         window.setTitle("Cashier Client MVC");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -86,7 +86,7 @@ class Main {
      *
      * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startPackingGUI_MVC(MiddleFactory factory) {
+    public static void startPackingGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
 
         window.setTitle("Packing Client MVC");
@@ -107,7 +107,7 @@ class Main {
      *
      * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startBackDoorGUI_MVC(MiddleFactory factory) {
+    public static void startBackDoorGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
 
         window.setTitle("BackDoor Client MVC");
