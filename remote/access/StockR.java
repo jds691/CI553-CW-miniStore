@@ -75,12 +75,12 @@ public class StockR implements StockReader {
                 statement.setString(1, pNum);
 
                 rs = statement.executeQuery();
+
+                boolean res = rs.next();
+                DEBUG.trace("DB StockR: exists(%s) -> %s", pNum, (res ? "T" : "F"));
+
+                return res;
             }
-
-            boolean res = rs.next();
-            DEBUG.trace("DB StockR: exists(%s) -> %s", pNum, (res ? "T" : "F"));
-
-            return res;
         } catch (SQLException e) {
             throw new StockException("SQL exists: " + e.getMessage());
         }
@@ -105,18 +105,18 @@ public class StockR implements StockReader {
                 statement.setString(2, pNum);
 
                 results = statement.executeQuery();
+
+                if (results.next()) {
+                    product.setProductNumber(pNum);
+                    product.setDescription(results.getString("description"));
+                    product.setPrice(results.getDouble("price"));
+                    product.setQuantity(results.getInt("stockLevel"));
+                }
+
+                results.close();
+
+                return product;
             }
-
-            if (results.next()) {
-                product.setProductNumber(pNum);
-                product.setDescription(results.getString("description"));
-                product.setPrice(results.getDouble("price"));
-                product.setQuantity(results.getInt("stockLevel"));
-            }
-
-            results.close();
-
-            return product;
         } catch (SQLException e) {
             throw new StockException("SQL getDetails: " + e.getMessage());
         }
@@ -138,13 +138,13 @@ public class StockR implements StockReader {
             )) {
                 statement.setString(1, pNum);
                 results = statement.executeQuery();
+
+                boolean res = results.next();
+                if (res)
+                    filename = results.getString("picture");
+
+                results.close();
             }
-
-            boolean res = results.next();
-            if (res)
-                filename = results.getString("picture");
-
-            results.close();
         } catch (SQLException e) {
             DEBUG.error("getImage()\n%s\n", e.getMessage());
             throw new StockException("SQL getImage: " + e.getMessage());
