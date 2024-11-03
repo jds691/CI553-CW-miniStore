@@ -20,6 +20,7 @@ import java.util.*;
  * @author Mike Smith University of Brighton
  * @version 3.0
  */
+@Deprecated
 public class Order implements OrderProcessor {
     // Start at order 1
     private static int uniqueNumber = 1;

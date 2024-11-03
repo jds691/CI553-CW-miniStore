@@ -10,6 +10,7 @@ import java.io.Serializable;
  * @author Mike Smith University of Brighton
  * @version 2.0
  */
+@Deprecated
 public class Product implements Serializable {
     @Serial
     private static final long serialVersionUID = 20092506;

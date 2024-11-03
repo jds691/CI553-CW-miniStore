@@ -14,6 +14,7 @@ import java.util.Locale;
  * @author Mike Smith University of Brighton
  * @version 2.2
  */
+@Deprecated
 public class Basket extends ArrayList<Product> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1;
