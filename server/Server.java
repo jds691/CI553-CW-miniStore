@@ -17,6 +17,7 @@ import java.rmi.registry.LocateRegistry;
  * @version 2.0
  */
 class Server {
+    //TODO: Server has no compile errors, but fails to start due to a lack of RemoteExceptions on the method declarations
     public static void main(String[] args) {
         String stockR = args.length < 1      // URL of stock R
                 ? Endpoint.PRODUCT_READ       //  default  location
