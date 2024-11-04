@@ -7,12 +7,14 @@ class ProductImpl implements Product {
     private String description;
     private double price;
     private int quantity;
+    private String imageFilename;
 
-    public ProductImpl(String productNumber, String description, double price, int quantity) {
+    public ProductImpl(String productNumber, String description, double price, int quantity, String imageFilename) {
         this.productNumber = productNumber;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
+        this.imageFilename = imageFilename;
     }
 
     @Override
@@ -53,5 +55,14 @@ class ProductImpl implements Product {
     @Override
     public void setQuantity(int value) {
         quantity = value;
+    }
+
+    @Override
+    public String getImageFilename() {
+        return imageFilename;
+    }
+
+    public void setImageFilename(String imageFilename) {
+        this.imageFilename = imageFilename;
     }
 }

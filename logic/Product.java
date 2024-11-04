@@ -17,4 +17,6 @@ public interface Product {
      */
     int getQuantity();
     void setQuantity(int value);
+
+    String getImageFilename();
 }

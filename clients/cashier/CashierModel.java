@@ -73,8 +73,6 @@ public class CashierModel extends Observable {
 
                 //   Remember prod.
                 currentProduct = product;
-                //    & quantity
-                currentProduct.setQuantity(amount);
                 //   OK await BUY
                 currentState = State.CHECKED;
             } else {
@@ -97,7 +95,7 @@ public class CashierModel extends Observable {
         if (currentState != State.CHECKED) {
             prompt = "please check its availability";
         } else {
-            boolean stockBought = stockWriter.buyStock(currentProduct.getProductNumber(), currentProduct.getQuantity());
+            boolean stockBought = stockWriter.buyStock(currentProduct, 1);
 
             if (stockBought) {
                 makeBasketIfRequired();

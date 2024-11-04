@@ -10,18 +10,18 @@ public interface StockWriter extends Remote {
      * Customer buys stock,
      * stock level is thus decremented by amount bought.
      *
-     * @param productNumber   Product number
+     * @param product   Product
      * @param amount Quantity of product
      * @return StockNumber, Description, Price, Quantity
      */
-    boolean buyStock(String productNumber, int amount);
+    boolean buyStock(Product product, int amount);
     /**
      * Adds stock (Restocks) to store.
      *
-     * @param productNumber   Product number
+     * @param product   Product number
      * @param amount Quantity of product
      */
-    void addStock(String productNumber, int amount);
+    void addStock(Product product, int amount);
     /**
      * Modifies Stock details for a given product number.
      * Information modified: Description, Price

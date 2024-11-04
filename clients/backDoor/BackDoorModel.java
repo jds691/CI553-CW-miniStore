@@ -86,8 +86,8 @@ public class BackDoorModel extends Observable {
         this.productNumber = productNumber.trim();
 
         if (productReader.doesProductExist(this.productNumber)) {
-            stockWriter.addStock(this.productNumber, quantity);
             Product product = productReader.getProductDetails(this.productNumber);
+            stockWriter.addStock(product, quantity);
             products.add(product);
             prompt = "";
         } else {

@@ -34,7 +34,6 @@ class Main {
 
         startCustomerGUI_MVC(factory);
         startCashierGUI_MVC(factory);
-        startCashierGUI_MVC(factory);
         startPackingGUI_MVC(factory);
         startBackDoorGUI_MVC(factory);
     }

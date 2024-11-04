@@ -20,13 +20,13 @@ public class StockWriterRemoteWrapper
     }
 
     @Override
-    public synchronized boolean buyStock(String productNumber, int amount) {
-        return origin.buyStock(productNumber, amount);
+    public synchronized boolean buyStock(Product product, int amount) {
+        return origin.buyStock(product, amount);
     }
 
     @Override
-    public synchronized void addStock(String productNumber, int amount) {
-        origin.addStock(productNumber, amount);
+    public synchronized void addStock(Product product, int amount) {
+        origin.addStock(product, amount);
     }
 
     @Override
