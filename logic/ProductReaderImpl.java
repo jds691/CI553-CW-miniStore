@@ -4,7 +4,7 @@ import remote.Repository;
 
 import javax.swing.*;
 
-public class ProductReaderImpl implements ProductReader {
+class ProductReaderImpl implements ProductReader {
     private final Repository<Product, String> productRepository;
 
     public ProductReaderImpl(Repository<Product, String> repository) {

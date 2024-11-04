@@ -1,6 +1,6 @@
 package logic;
 
-public class OrderProcessorImpl implements OrderProcessor {
+class OrderProcessorImpl implements OrderProcessor {
     //TODO: When creating the processor, find the last order number
     private int uniqueNumber = 0;
 

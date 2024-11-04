@@ -2,7 +2,7 @@ package logic;
 
 import remote.Repository;
 
-public class StockWriterImpl implements StockWriter {
+class StockWriterImpl implements StockWriter {
     private final Repository<Product, String> stockRepository;
 
     public StockWriterImpl(Repository<Product, String> stockRepository) {

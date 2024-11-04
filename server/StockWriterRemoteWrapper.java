@@ -7,7 +7,7 @@ import java.io.Serial;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class StockWriterRemoteWrapper
+class StockWriterRemoteWrapper
         extends UnicastRemoteObject
         implements StockWriter {
     @Serial
