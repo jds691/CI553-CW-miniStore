@@ -21,7 +21,7 @@ public class LocalLogicFactory implements LogicFactory {
     @Override
     public OrderProcessor getOrderProcessor() {
         if (orderProcessor == null) {
-            orderProcessor = new OrderProcessorImpl();
+            orderProcessor = new OrderProcessorImpl(repositoryFactory.getOrderRepository());
         }
 
         return orderProcessor;

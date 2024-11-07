@@ -1,4 +1,7 @@
-package logic;
+package remote;
+
+import logic.Order;
+import logic.Product;
 
 import java.util.ArrayList;
 import java.util.Currency;

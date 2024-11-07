@@ -1,14 +1,17 @@
 package logic;
 
+import remote.Repository;
+
 import java.util.ArrayDeque;
 
 class OrderProcessorImpl implements OrderProcessor {
-    //TODO: When creating the processor, find the last order number
-    private int uniqueNumber = 0;
+    private Repository<Order> orderRepository;
 
+    //TODO: Find a way to sync this with the repository on a regular basis
     private ArrayDeque<Order>[] currentOrders;
 
-    OrderProcessorImpl() {
+    OrderProcessorImpl(Repository<Order> orderRepository) {
+        this.orderRepository = orderRepository;
         currentOrders = new ArrayDeque[State.values().length];
 
         for (int i = 0; i < State.values().length; i++) {
@@ -18,10 +21,7 @@ class OrderProcessorImpl implements OrderProcessor {
 
     @Override
     public synchronized Order createOrder() {
-        Order order = new OrderImpl();
-        order.setOrderNumber(uniqueNumber++);
-
-        return new OrderImpl();
+        return orderRepository.create();
     }
 
     @Override
