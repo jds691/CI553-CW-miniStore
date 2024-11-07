@@ -1,19 +1,20 @@
 package clients.packing;
 
-import catalogue.Basket;
 import debug.DEBUG;
-import middle.MiddleFactory;
-import middle.OrderException;
-import middle.OrderProcessor;
+import logic.LogicFactory;
+import logic.Order;
+import logic.OrderProcessor;
 
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static logic.OrderProcessor.State;
 
 /**
  * Implements the Model of the warehouse packing client
  */
 public class PackingModel extends Observable {
-    private final AtomicReference<Basket> basket = new AtomicReference<>();
+    private final AtomicReference<Order> currentOrder = new AtomicReference<>();
 
     private OrderProcessor orderProcessor = null;
 
@@ -24,14 +25,14 @@ public class PackingModel extends Observable {
      *
      * @param mf The factory to create the connection objects
      */
-    public PackingModel(MiddleFactory mf) {
+    public PackingModel(LogicFactory mf) {
         try {
-            orderProcessor = mf.makeOrderProcessor();
+            orderProcessor = mf.getOrderProcessor();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }
 
-        basket.set(null);
+        currentOrder.set(null);
         // Start a background check to see when a new order can be packed
         new Thread(this::checkForNewOrder).start();
     }
@@ -44,7 +45,7 @@ public class PackingModel extends Observable {
         private boolean held = false;
 
         /**
-         * Claim exclusive access
+         * Claim exclusive remote.access
          *
          * @return true if claimed else false
          */
@@ -71,10 +72,10 @@ public class PackingModel extends Observable {
             try {
                 boolean isFree = worker.claim();
                 if (isFree) {
-                    Basket sb = orderProcessor.getOrderToPack();
+                    Order sb = orderProcessor.popOrder();
                     String prompt = "";
                     if (sb != null) {
-                        basket.set(sb);
+                        currentOrder.set(sb);
                         prompt = "Bought Receipt";
                     } else {
                         worker.free();
@@ -87,7 +88,7 @@ public class PackingModel extends Observable {
 
                 Thread.sleep(2000);
             } catch (Exception e) {
-                DEBUG.error("%s\n%s", "BackGroundCheck.run()\n%s", e.getMessage());
+                e.printStackTrace();
             }
         }
     }
@@ -97,8 +98,8 @@ public class PackingModel extends Observable {
      *
      * @return the basket
      */
-    public Basket getBasket() {
-        return basket.get();
+    public Order getCurrentOrder() {
+        return currentOrder.get();
     }
 
     /**
@@ -107,22 +108,17 @@ public class PackingModel extends Observable {
     public void packOrder() {
         String prompt = "";
 
-        try {
-            Basket basket = this.basket.get();
-            if (basket != null) {
-                this.basket.set(null);
-                int orderNumber = basket.getOrderNumber();
-                orderProcessor.informOrderPacked(orderNumber);
-                prompt = "";
-                worker.free();
-            } else {
-                prompt = "No order";
-            }
-            setChanged();
-            notifyObservers(prompt);
-        } catch (OrderException e) {
-            DEBUG.error("ReceiptModel.doOk()\n%s\n", e.getMessage());
+        Order order = this.currentOrder.get();
+        if (order != null) {
+            this.currentOrder.set(null);
+            orderProcessor.setOrderState(order, State.BEING_PACKED);
+            prompt = "";
+            worker.free();
+        } else {
+            prompt = "No order";
         }
+        setChanged();
+        notifyObservers(prompt);
 
         setChanged();
         notifyObservers(prompt);

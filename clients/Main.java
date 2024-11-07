@@ -12,8 +12,9 @@ import clients.customer.CustomerView;
 import clients.packing.PackingController;
 import clients.packing.PackingModel;
 import clients.packing.PackingView;
-import middle.LocalMiddleFactory;
-import middle.MiddleFactory;
+import debug.DEBUG;
+import logic.LocalLogicFactory;
+import logic.LogicFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,11 +29,10 @@ import java.awt.*;
  */
 class Main {
     public static void main(String[] args) {
-        //DEBUG.set(true); /* Lots of debug info */
-        MiddleFactory factory = new LocalMiddleFactory();  // Direct access
+        DEBUG.set(true);
+        LogicFactory factory = new LocalLogicFactory();  // Direct remote.access
 
         startCustomerGUI_MVC(factory);
-        startCashierGUI_MVC(factory);
         startCashierGUI_MVC(factory);
         startPackingGUI_MVC(factory);
         startBackDoorGUI_MVC(factory);
@@ -41,9 +41,9 @@ class Main {
     /**
      * start the Customer client, -search product
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startCustomerGUI_MVC(MiddleFactory factory) {
+    public static void startCustomerGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
         window.setTitle("Customer Client MVC");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,9 +61,9 @@ class Main {
     /**
      * start the cashier client - customer check stock, buy product
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startCashierGUI_MVC(MiddleFactory factory) {
+    public static void startCashierGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
         window.setTitle("Cashier Client MVC");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -83,9 +83,9 @@ class Main {
     /**
      * start the Packing client - for warehouse staff to pack the bought order for customer, one order at a time
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startPackingGUI_MVC(MiddleFactory factory) {
+    public static void startPackingGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
 
         window.setTitle("Packing Client MVC");
@@ -104,9 +104,9 @@ class Main {
     /**
      * start the BackDoor client - store staff to check and update stock
      *
-     * @param factory A factory to create objects to access the stock list
+     * @param factory A factory to create objects to remote.access the stock list
      */
-    public static void startBackDoorGUI_MVC(MiddleFactory factory) {
+    public static void startBackDoorGUI_MVC(LogicFactory factory) {
         JFrame window = new JFrame();
 
         window.setTitle("BackDoor Client MVC");

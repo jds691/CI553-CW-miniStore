@@ -1,7 +1,7 @@
 package clients;
 
-import dbAccess.DBAccess;
-import dbAccess.DBAccessFactory;
+import remote.access.DBAccess;
+import remote.access.DBAccessFactory;
 
 import java.sql.*;
 import java.util.ArrayList;

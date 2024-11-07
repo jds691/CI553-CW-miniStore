@@ -112,7 +112,8 @@ public class BackDoorView implements Observer {
         String message = (String) arg;
         promptLabel.setText(message);
 
-        messageOutput.setText(model.getBasket().getDetails());
+        //TODO: Reimplement message output
+        //messageOutput.setText(model.getProducts().getRichDescription());
         productNumberInput.requestFocus();
     }
 }

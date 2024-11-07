@@ -1,6 +1,6 @@
 package clients.cashier;
 
-import catalogue.Basket;
+import logic.Order;
 
 import javax.swing.*;
 import java.awt.*;
@@ -106,11 +106,11 @@ public class CashierView implements Observer {
         CashierModel model = (CashierModel) modelC;
         String message = (String) arg;
         promptLabel.setText(message);
-        Basket basket = model.getBasket();
-        if (basket == null)
+        Order order = model.getCurrentOrder();
+        if (order == null)
             messageOutput.setText("Customers order");
         else
-            messageOutput.setText(basket.getDetails());
+            messageOutput.setText(order.getRichDescription());
 
         productNumberInput.requestFocus();
     }
