@@ -35,6 +35,9 @@ public interface OrderProcessor extends Remote {
      */
     void setOrderState(Order order, State state);
 
+    //Querying
+    Order[] getAllOrdersInState(State state);
+
     /**
      * State of an order within the processing queue.
      */

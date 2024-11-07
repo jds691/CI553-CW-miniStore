@@ -38,4 +38,9 @@ class OrderProcessorImpl implements OrderProcessor {
     public void setOrderState(Order order, State state) {
         currentOrders[state.ordinal()].add(order);
     }
+
+    @Override
+    public Order[] getAllOrdersInState(State state) {
+        return currentOrders[state.ordinal()].toArray(new Order[0]);
+    }
 }
