@@ -88,7 +88,7 @@ public class PackingModel extends Observable {
 
                 Thread.sleep(2000);
             } catch (Exception e) {
-                DEBUG.error("%s\n%s", "BackGroundCheck.run()\n%s", e.getMessage());
+                e.printStackTrace();
             }
         }
     }

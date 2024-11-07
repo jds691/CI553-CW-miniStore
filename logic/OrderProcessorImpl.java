@@ -17,7 +17,7 @@ class OrderProcessorImpl implements OrderProcessor {
     }
 
     @Override
-    public Order createOrder() {
+    public synchronized Order createOrder() {
         Order order = new OrderImpl();
         order.setOrderNumber(uniqueNumber++);
 
@@ -25,22 +25,26 @@ class OrderProcessorImpl implements OrderProcessor {
     }
 
     @Override
-    public void addOrderToQueue(Order order) {
+    public synchronized void addOrderToQueue(Order order) {
         currentOrders[State.WAITING.ordinal()].add(order);
     }
 
     @Override
-    public Order popOrder() {
-        return currentOrders[State.WAITING.ordinal()].pop();
+    public synchronized Order popOrder() {
+        if (currentOrders[State.WAITING.ordinal()].isEmpty()) {
+            return null;
+        } else {
+            return currentOrders[State.WAITING.ordinal()].pop();
+        }
     }
 
     @Override
-    public void setOrderState(Order order, State state) {
+    public synchronized void setOrderState(Order order, State state) {
         currentOrders[state.ordinal()].add(order);
     }
 
     @Override
-    public Order[] getAllOrdersInState(State state) {
+    public synchronized Order[] getAllOrdersInState(State state) {
         return currentOrders[state.ordinal()].toArray(new Order[0]);
     }
 }
