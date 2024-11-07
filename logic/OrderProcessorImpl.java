@@ -39,6 +39,15 @@ class OrderProcessorImpl implements OrderProcessor {
     }
 
     @Override
+    public synchronized Order popOrder(State state) {
+        if (currentOrders[state.ordinal()].isEmpty()) {
+            return null;
+        } else {
+            return currentOrders[state.ordinal()].pop();
+        }
+    }
+
+    @Override
     public synchronized void setOrderState(Order order, State state) {
         currentOrders[state.ordinal()].add(order);
     }

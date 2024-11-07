@@ -39,6 +39,11 @@ class OrderProcessorRemoteWrapper
     }
 
     @Override
+    public synchronized Order popOrder(State state) {
+        return origin.popOrder(state);
+    }
+
+    @Override
     public synchronized void setOrderState(Order order, State state) {
         origin.setOrderState(order, state);
     }

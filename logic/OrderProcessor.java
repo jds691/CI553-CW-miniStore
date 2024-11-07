@@ -25,6 +25,12 @@ public interface OrderProcessor extends Remote {
      */
     Order popOrder();
     /**
+     * Pops an order from the top of the processing queue for a specified state. May be null.
+     *
+     * @return Order that needs processed or null.
+     */
+    Order popOrder(State state);
+    /**
      * Sets the state of an order within the system.
      * <p>
      * Expects the order to have been retrieved via {@link OrderProcessor#popOrder()}
