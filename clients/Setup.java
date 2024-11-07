@@ -17,13 +17,18 @@ class Setup {
     /*
     SQL Code to setup database tables
     */
+    /*
+    TODO: These statements function fine under Apache Derby, they will not in MySQL because SQL dialects differ a lot
+    Potentially use a token system to define the differences but oml a pain and a half that would be
+     */
     private static final String[] sqlStatements = {
-            "drop table ProductTable",
             "create table ProductTable (" +
                     "productNo      Char(4)," +
                     "description    Varchar(40)," +
                     "picture        Varchar(80)," +
-                    "price          Float)",
+                    "price          Float,"+
+                    "CONSTRAINT Product_PK PRIMARY KEY (productNo)"+
+            ")",
 
             "insert into ProductTable values " +
                     "('0001', '40 inch LED HD TV', 'images/pic0001.jpg', 269.00)",
@@ -40,10 +45,11 @@ class Setup {
             "insert into ProductTable values " +
                     "('0007', '32Gb USB2 drive',   'images/pic0007.jpg', 6.99)",
 
-            "drop table StockTable",
             "create table StockTable (" +
                     "productNo      Char(4)," +
-                    "stockLevel     Integer)",
+                    "stockLevel     Integer,"+
+                    "CONSTRAINT Stock_Product_FK FOREIGN KEY (productNo) REFERENCES ProductTable (productNo)"+
+            ")",
 
             "insert into StockTable values ( '0001',  90 )",
             "insert into StockTable values ( '0002',  20 )",
@@ -54,7 +60,23 @@ class Setup {
             "insert into StockTable values ( '0007',  01 )",
 
             "select * from StockTable, ProductTable " +
-                    " where StockTable.productNo = ProductTable.productNo"
+                    " where StockTable.productNo = ProductTable.productNo",
+
+            // Order persistence
+            "create table OrderTable (" +
+                "orderId INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)," +
+                "state INTEGER,"+
+                "CONSTRAINT Order_PK PRIMARY KEY (orderId)"+
+            ")",
+
+            "create table OrderProductTable (" +
+                    "orderId INTEGER," +
+                    "productNo Char(4)," +
+                    "quantity INTEGER NOT NULL,"+
+                    "CONSTRAINT OrderProduct_Order_FK FOREIGN KEY (orderId) REFERENCES OrderTable (orderId),"+
+                    "CONSTRAINT OrderProduct_Product_FK FOREIGN KEY (productNo) REFERENCES ProductTable (productNo)," +
+                    "CONSTRAINT OrderProduct_PK PRIMARY KEY (orderId, productNo)"+
+            ")"
     };
 
     public static void main(String[] args) {
