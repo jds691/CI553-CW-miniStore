@@ -31,11 +31,7 @@ class OrderProcessorImpl implements OrderProcessor {
 
     @Override
     public synchronized Order popOrder() {
-        if (currentOrders[State.WAITING.ordinal()].isEmpty()) {
-            return null;
-        } else {
-            return currentOrders[State.WAITING.ordinal()].pop();
-        }
+        return popOrder(State.WAITING);
     }
 
     @Override
