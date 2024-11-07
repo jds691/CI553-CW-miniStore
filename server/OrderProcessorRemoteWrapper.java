@@ -42,4 +42,9 @@ class OrderProcessorRemoteWrapper
     public synchronized void setOrderState(Order order, State state) {
         origin.setOrderState(order, state);
     }
+
+    @Override
+    public Order[] getAllOrdersInState(State state) {
+        return origin.getAllOrdersInState(state);
+    }
 }
