@@ -9,8 +9,8 @@ import java.sql.DriverManager;
 public class SQLRepositoryFactory implements RepositoryFactory {
     private static Connection connection;
 
-    private static Repository<Product, String> productRepository;
-    private static Repository<Product, String> stockRepository;
+    private static Repository<Product> productRepository;
+    private static Repository<Product> stockRepository;
 
     public SQLRepositoryFactory(DBAccess dbAccess) {
         try {
@@ -28,7 +28,7 @@ public class SQLRepositoryFactory implements RepositoryFactory {
         }
     }
 
-    public Repository<Product, String> getProductRepository() {
+    public Repository<Product> getProductRepository() {
         if (productRepository == null) {
             productRepository = new ProductRepository(connection);
         }
@@ -36,7 +36,7 @@ public class SQLRepositoryFactory implements RepositoryFactory {
         return productRepository;
     }
 
-    public Repository<Product, String> getStockRepository() {
+    public Repository<Product> getStockRepository() {
         if (stockRepository == null) {
             stockRepository = new StockRepository(connection);
         }

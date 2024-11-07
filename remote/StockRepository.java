@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-class StockRepository extends Repository<Product, String> {
+class StockRepository extends Repository<Product> {
     public StockRepository(Connection connection) {
         super(connection);
     }

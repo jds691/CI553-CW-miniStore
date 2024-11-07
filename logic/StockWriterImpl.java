@@ -3,9 +3,9 @@ package logic;
 import remote.Repository;
 
 class StockWriterImpl implements StockWriter {
-    private final Repository<Product, String> stockRepository;
+    private final Repository<Product> stockRepository;
 
-    public StockWriterImpl(Repository<Product, String> stockRepository) {
+    public StockWriterImpl(Repository<Product> stockRepository) {
         this.stockRepository = stockRepository;
     }
 

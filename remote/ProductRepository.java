@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-class ProductRepository extends Repository<Product, String> {
+class ProductRepository extends Repository<Product> {
     public ProductRepository(Connection connection) {
         super(connection);
     }

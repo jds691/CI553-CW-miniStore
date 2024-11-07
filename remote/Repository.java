@@ -2,7 +2,7 @@ package remote;
 
 import java.sql.Connection;
 
-public abstract class Repository<Entity, Identifier> {
+public abstract class Repository<Entity> {
     protected final Connection connection;
 
     public Repository(Connection connection) {
@@ -10,7 +10,7 @@ public abstract class Repository<Entity, Identifier> {
     }
 
     public abstract Entity create();
-    public abstract Entity read(Identifier id);
+    public abstract Entity read(String id);
     public abstract boolean update(Entity entity);
     public abstract void delete(Entity entity);
 }
