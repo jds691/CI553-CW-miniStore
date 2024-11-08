@@ -88,6 +88,7 @@ class OrderImpl implements Order {
         return stringBuilder.toString();
     }
 
+    //Internal
     /**
      * Gets the underlying items array for the Order.
      * <p>
@@ -96,8 +97,21 @@ class OrderImpl implements Order {
      *
      * @return ArrayList of items in order
      */
-    //Internal
     public ArrayList<Item> getItems() {
         return items;
+    }
+
+    /**
+     * Sets the underlying items array for the Order.
+     *
+     * <p>
+     *     Should only be called by the {@link OrderRepository}!
+     * </p>
+     *
+     * @param items Items to set
+     */
+    public void setItems(ArrayList<Item> items) {
+        this.items.clear();
+        this.items.addAll(items);
     }
 }
