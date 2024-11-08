@@ -9,7 +9,7 @@ import java.util.Formatter;
 import java.util.Locale;
 
 class OrderImpl implements Order {
-    private final ArrayList<Product> products = new ArrayList<>();
+    private final ArrayList<Item> items = new ArrayList<>();
     private int orderNumber = 0;
 
     @Override
@@ -23,29 +23,36 @@ class OrderImpl implements Order {
     }
 
     @Override
-    public void addProduct(Product product) {
-        //TODO: Update product quantity if products contains it already, then sort based on productNumber
-        products.add(product);
+    public void addItem(Item item) {
+        //TODO: Sort based on productNumber
+        if (items.contains(item)) {
+            int index = items.indexOf(item);
+            Item original = items.get(index);
+            original.setQuantity(original.getQuantity() + item.getQuantity());
+            items.set(index, original);
+        } else {
+            items.add(item);
+        }
     }
 
     @Override
-    public void removeProduct(Product product) {
-        products.remove(product);
+    public void removeItem(Item item) {
+        items.remove(item);
     }
 
     @Override
-    public void removeAllProducts() {
-        products.clear();
+    public void removeAllItems() {
+        items.clear();
     }
 
     @Override
     public boolean containsProduct(Product product) {
-        return products.contains(product);
+        return items.contains(new Item(product, -1));
     }
 
     @Override
     public boolean isEmpty() {
-        return products.isEmpty();
+        return items.isEmpty();
     }
 
     @Override
@@ -59,8 +66,10 @@ class OrderImpl implements Order {
         if (orderNumber != 0)
             formatter.format("Order number: %03d\n", orderNumber);
 
-        if (!products.isEmpty()) {
-            for (Product product : products) {
+        if (!items.isEmpty()) {
+            for (Item item : items) {
+                Product product = item.getProduct();
+
                 int number = product.getQuantity();
                 formatter.format("%-7s", product.getProductNumber());
                 formatter.format("%-14.14s ", product.getDescription());
@@ -77,5 +86,18 @@ class OrderImpl implements Order {
         }
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * Gets the underlying items array for the Order.
+     * <p>
+     *     Should only be called internally to the remote package!
+     * </p>
+     *
+     * @return ArrayList of items in order
+     */
+    //Internal
+    public ArrayList<Item> getItems() {
+        return items;
     }
 }

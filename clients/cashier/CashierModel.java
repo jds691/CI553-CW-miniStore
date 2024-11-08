@@ -99,9 +99,7 @@ public class CashierModel extends Observable {
 
             if (stockBought) {
                 makeBasketIfRequired();
-                //REVIEW: Orders use the product itself to determine how many are being bought. Product.quantity has a dual purpose
-                currentProduct.setQuantity(1);
-                currentOrder.addProduct(currentProduct);
+                currentOrder.addItem(new Order.Item(currentProduct, 1));
                 prompt = "Purchased " + currentProduct.getDescription();
             } else {
                 prompt = "!!! Not in stock";
