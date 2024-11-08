@@ -53,7 +53,7 @@ public interface Order {
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof Item item) {
-                return this.product.getProductNumber().equals(item.product.getProductNumber());
+                return this.product.equals(item.product);
             }
 
             return false;
