@@ -1,5 +1,6 @@
 package remote;
 
+import logic.Order;
 import logic.Product;
 import remote.access.DBAccess;
 
@@ -9,6 +10,7 @@ import java.sql.DriverManager;
 public class SQLRepositoryFactory implements RepositoryFactory {
     private static Connection connection;
 
+    private static Repository<Order> orderRepository;
     private static Repository<Product> productRepository;
     private static Repository<Product> stockRepository;
 
@@ -26,6 +28,14 @@ public class SQLRepositoryFactory implements RepositoryFactory {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Repository<Order> getOrderRepository() {
+        if (orderRepository == null) {
+            orderRepository = new OrderRepository(connection);
+        }
+
+        return orderRepository;
     }
 
     public Repository<Product> getProductRepository() {

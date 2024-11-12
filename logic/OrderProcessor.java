@@ -2,6 +2,8 @@ package logic;
 
 import java.rmi.Remote;
 
+import static logic.Order.State;
+
 /**
  * Responsible for managing and processing orders within the system.
  */
@@ -14,6 +16,9 @@ public interface OrderProcessor extends Remote {
     Order createOrder();
     /**
      * Adds an order to the processing queue.
+     * <p>
+     *     After changing the state of an order. It should be added back to the queue.
+     * </p>
      *
      * @param order Order to process.
      */
@@ -30,26 +35,14 @@ public interface OrderProcessor extends Remote {
      * @return Order that needs processed or null.
      */
     Order popOrder(State state);
-    /**
-     * Sets the state of an order within the system.
-     * <p>
-     * Expects the order to have been retrieved via {@link OrderProcessor#popOrder()}
-     * </p>
-     *
-     * @param order Order to update the state of.
-     * @param state State to set.
-     */
-    void setOrderState(Order order, State state);
 
     //Querying
     Order[] getAllOrdersInState(State state);
 
     /**
-     * State of an order within the processing queue.
+     * Requests that the OrderProcessor re-syncs itself with the underlying data repository.
+     *
+     * @return Whether any data has been refreshed or not.
      */
-    enum State {
-        WAITING,
-        BEING_PACKED,
-        TO_BE_COLLECTED
-    }
+    boolean requestDataRefresh();
 }

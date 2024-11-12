@@ -7,6 +7,8 @@ import java.io.Serial;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import static logic.Order.State;
+
 /**
  * Creates a wrapper around an OrderProcessor instance that allows it to be called and interacted with remotely.
  */
@@ -44,12 +46,12 @@ class OrderProcessorRemoteWrapper
     }
 
     @Override
-    public synchronized void setOrderState(Order order, State state) {
-        origin.setOrderState(order, state);
+    public synchronized Order[] getAllOrdersInState(State state) {
+        return origin.getAllOrdersInState(state);
     }
 
     @Override
-    public Order[] getAllOrdersInState(State state) {
-        return origin.getAllOrdersInState(state);
+    public synchronized boolean requestDataRefresh() {
+        return origin.requestDataRefresh();
     }
 }

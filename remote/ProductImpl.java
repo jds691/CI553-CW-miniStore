@@ -65,4 +65,13 @@ class ProductImpl implements Product {
     public void setImageFilename(String imageFilename) {
         this.imageFilename = imageFilename;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof ProductImpl product) {
+            return product.getProductNumber().equals(this.getProductNumber());
+        }
+
+        return false;
+    }
 }

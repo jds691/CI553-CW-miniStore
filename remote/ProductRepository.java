@@ -57,6 +57,11 @@ class ProductRepository extends Repository<Product> {
     }
 
     @Override
+    public Product[] readAll() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public synchronized boolean update(Product entity) {
         throw new UnsupportedOperationException("Not supported yet.");
     }

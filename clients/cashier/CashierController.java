@@ -37,4 +37,8 @@ public class CashierController {
     public void buyBasket() {
         model.buyBasket();
     }
+
+    public String getOrderDescription() {
+        return model.getOrderDescription();
+    }
 }

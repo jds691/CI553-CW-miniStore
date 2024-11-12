@@ -110,7 +110,7 @@ public class CashierView implements Observer {
         if (order == null)
             messageOutput.setText("Customers order");
         else
-            messageOutput.setText(order.getRichDescription());
+            messageOutput.setText(controller.getOrderDescription());
 
         productNumberInput.requestFocus();
     }

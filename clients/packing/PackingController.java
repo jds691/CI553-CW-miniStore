@@ -10,7 +10,6 @@ public class PackingController {
      * Constructor
      *
      * @param model The model
-     * @param view  The view from which the interaction came
      */
     public PackingController(PackingModel model) {
         this.model = model;
@@ -21,6 +20,11 @@ public class PackingController {
      */
     public void packOrder() {
         model.packOrder();
+    }
+
+    //REVIEW: Will be removed in a future iteration
+    public String getOrderDescription() {
+        return model.getOrderDescription();
     }
 }
 
