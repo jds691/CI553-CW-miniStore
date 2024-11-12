@@ -20,7 +20,7 @@ public class PackingModel extends Observable {
     private OrderProcessor orderProcessor = null;
     private ProductReader productReader = null;
 
-    private final Semaphore worker = new Semaphore();
+    private final Semaphore packingWorker = new Semaphore();
 
     /**
      * Construct the model of the warehouse Packing client
@@ -38,6 +38,7 @@ public class PackingModel extends Observable {
         currentOrder.set(null);
         // Start a background check to see when a new order can be packed
         new Thread(this::checkForNewOrder).start();
+        new Thread(this::refreshOrderData).start();
     }
 
     /**
@@ -73,16 +74,15 @@ public class PackingModel extends Observable {
     private void checkForNewOrder() {
         while (true) {
             try {
-                boolean isFree = worker.claim();
+                boolean isFree = packingWorker.claim();
                 if (isFree) {
-                    orderProcessor.requestDataRefresh();
                     Order sb = orderProcessor.popOrder();
                     String prompt = "";
                     if (sb != null) {
                         currentOrder.set(sb);
                         prompt = "Bought Receipt";
                     } else {
-                        worker.free();
+                        packingWorker.free();
                         prompt = "";
                     }
 
@@ -91,6 +91,18 @@ public class PackingModel extends Observable {
                 }
 
                 Thread.sleep(2000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void refreshOrderData() {
+        while (true) {
+            try {
+                orderProcessor.requestDataRefresh();
+
+                Thread.sleep(10000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -118,7 +130,7 @@ public class PackingModel extends Observable {
             order.setState(State.BEING_PACKED);
             orderProcessor.addOrderToQueue(order);
             prompt = "";
-            worker.free();
+            packingWorker.free();
         } else {
             prompt = "No order";
         }
