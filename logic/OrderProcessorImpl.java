@@ -8,9 +8,8 @@ import java.util.Arrays;
 import static logic.Order.State;
 
 class OrderProcessorImpl implements OrderProcessor {
-    private Repository<Order> orderRepository;
+    private final Repository<Order> orderRepository;
 
-    //TODO: Find a way to sync this with the repository on a regular basis
     private ArrayDeque<Order>[] currentOrders;
 
     OrderProcessorImpl(Repository<Order> orderRepository) {
