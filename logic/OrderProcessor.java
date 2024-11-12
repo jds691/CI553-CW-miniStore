@@ -38,4 +38,11 @@ public interface OrderProcessor extends Remote {
 
     //Querying
     Order[] getAllOrdersInState(State state);
+
+    /**
+     * Requests that the OrderProcessor re-syncs itself with the underlying data repository.
+     *
+     * @return Whether any data has been refreshed or not.
+     */
+    boolean requestDataRefresh();
 }

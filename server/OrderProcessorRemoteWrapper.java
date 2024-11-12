@@ -46,7 +46,12 @@ class OrderProcessorRemoteWrapper
     }
 
     @Override
-    public Order[] getAllOrdersInState(State state) {
+    public synchronized Order[] getAllOrdersInState(State state) {
         return origin.getAllOrdersInState(state);
+    }
+
+    @Override
+    public synchronized boolean requestDataRefresh() {
+        return origin.requestDataRefresh();
     }
 }
