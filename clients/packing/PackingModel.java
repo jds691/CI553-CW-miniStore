@@ -1,14 +1,15 @@
 package clients.packing;
 
 import debug.DEBUG;
-import logic.LogicFactory;
-import logic.Order;
-import logic.OrderProcessor;
+import logic.*;
 
+import java.util.Currency;
+import java.util.Formatter;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static logic.OrderProcessor.State;
+import static logic.Order.State;
 
 /**
  * Implements the Model of the warehouse packing client
@@ -17,6 +18,7 @@ public class PackingModel extends Observable {
     private final AtomicReference<Order> currentOrder = new AtomicReference<>();
 
     private OrderProcessor orderProcessor = null;
+    private ProductReader productReader = null;
 
     private final Semaphore worker = new Semaphore();
 
@@ -28,6 +30,7 @@ public class PackingModel extends Observable {
     public PackingModel(LogicFactory mf) {
         try {
             orderProcessor = mf.getOrderProcessor();
+            productReader = mf.getProductReader();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }
@@ -111,7 +114,8 @@ public class PackingModel extends Observable {
         Order order = this.currentOrder.get();
         if (order != null) {
             this.currentOrder.set(null);
-            orderProcessor.setOrderState(order, State.BEING_PACKED);
+            order.setState(State.BEING_PACKED);
+            orderProcessor.addOrderToQueue(order);
             prompt = "";
             worker.free();
         } else {
@@ -122,6 +126,37 @@ public class PackingModel extends Observable {
 
         setChanged();
         notifyObservers(prompt);
+    }
+
+    public String getOrderDescription() {
+        Locale locale = Locale.UK;
+        StringBuilder stringBuilder = new StringBuilder(256);
+        Formatter formatter = new Formatter(stringBuilder, locale);
+        String currencySymbol = (Currency.getInstance(locale)).getSymbol();
+        double total = 0.00;
+        Order order = this.currentOrder.get();
+
+        if (order.getOrderNumber() != 0)
+            formatter.format("Order number: %03d\n", order.getOrderNumber());
+
+        if (!order.isEmpty()) {
+            for (Order.Item item : order.getAllItems()) {
+                Product product = productReader.getProductDetails(item.getProductNumber());
+                formatter.format("%-7s", product.getProductNumber());
+                formatter.format("%-14.14s ", product.getDescription());
+                formatter.format("(%3d) ", item.getQuantity());
+                formatter.format("%s%7.2f", currencySymbol, product.getPrice() * item.getQuantity());
+                formatter.format("\n");
+                total += product.getPrice() * item.getQuantity();
+            }
+
+            formatter.format("----------------------------\n");
+            formatter.format("Total                       ");
+            formatter.format("%s%7.2f\n", currencySymbol, total);
+            formatter.close();
+        }
+
+        return stringBuilder.toString();
     }
 }
 

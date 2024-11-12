@@ -4,6 +4,9 @@ public interface Order {
     int getOrderNumber();
     void setOrderNumber(int value);
 
+    State getState();
+    void setState(State value);
+
     /**
      * Adds a product and it's desired quantity to the order.
      *
@@ -19,27 +22,31 @@ public interface Order {
     boolean containsProduct(Product product);
     boolean isEmpty();
 
+    Item[] getAllItems();
+
     /**
-     * Returns a description of the products in the basket suitable for printing.
-     *
-     * @return a string description of the basket products
+     * State of an order within the processing queue.
      */
-    String getRichDescription();
+    enum State {
+        WAITING,
+        BEING_PACKED,
+        TO_BE_COLLECTED
+    }
 
     class Item {
-        private Product product;
+        private String productNumber;
         private int quantity;
 
-        public Item(Product product, int quantity) {
-            this.product = product;
+        public Item(String productNumber, int quantity) {
+            this.productNumber = productNumber;
             this.quantity = quantity;
         }
 
-        public Product getProduct() {
-            return product;
+        public String getProductNumber() {
+            return productNumber;
         }
-        public void setProduct(Product product) {
-            this.product = product;
+        public void setProductNumber(String productNumber) {
+            this.productNumber = productNumber;
         }
 
         public int getQuantity() {
@@ -53,7 +60,7 @@ public interface Order {
         @Override
         public boolean equals(Object obj) {
             if (obj instanceof Item item) {
-                return this.product.equals(item.product);
+                return this.productNumber.equals(item.productNumber);
             }
 
             return false;

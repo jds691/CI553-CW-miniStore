@@ -4,6 +4,8 @@ import remote.Repository;
 
 import java.util.ArrayDeque;
 
+import static logic.Order.State;
+
 class OrderProcessorImpl implements OrderProcessor {
     private Repository<Order> orderRepository;
 
@@ -26,7 +28,7 @@ class OrderProcessorImpl implements OrderProcessor {
 
     @Override
     public synchronized void addOrderToQueue(Order order) {
-        currentOrders[State.WAITING.ordinal()].add(order);
+        currentOrders[order.getState().ordinal()].add(order);
     }
 
     @Override
@@ -41,11 +43,6 @@ class OrderProcessorImpl implements OrderProcessor {
         } else {
             return currentOrders[state.ordinal()].pop();
         }
-    }
-
-    @Override
-    public synchronized void setOrderState(Order order, State state) {
-        currentOrders[state.ordinal()].add(order);
     }
 
     @Override

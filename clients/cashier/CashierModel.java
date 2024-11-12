@@ -3,6 +3,9 @@ package clients.cashier;
 import debug.DEBUG;
 import logic.*;
 
+import java.util.Currency;
+import java.util.Formatter;
+import java.util.Locale;
 import java.util.Observable;
 
 /**
@@ -99,7 +102,7 @@ public class CashierModel extends Observable {
 
             if (stockBought) {
                 makeBasketIfRequired();
-                currentOrder.addItem(new Order.Item(currentProduct, 1));
+                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), 1));
                 prompt = "Purchased " + currentProduct.getDescription();
             } else {
                 prompt = "!!! Not in stock";
@@ -137,6 +140,37 @@ public class CashierModel extends Observable {
     public void askForUpdate() {
         setChanged();
         notifyObservers("Welcome");
+    }
+
+    //TODO: See if theres a way to make a unified source for this
+    public String getOrderDescription() {
+        Locale locale = Locale.UK;
+        StringBuilder stringBuilder = new StringBuilder(256);
+        Formatter formatter = new Formatter(stringBuilder, locale);
+        String currencySymbol = (Currency.getInstance(locale)).getSymbol();
+        double total = 0.00;
+
+        if (currentOrder.getOrderNumber() != 0)
+            formatter.format("Order number: %03d\n", currentOrder.getOrderNumber());
+
+        if (!currentOrder.isEmpty()) {
+            for (Order.Item item : currentOrder.getAllItems()) {
+                Product product = productReader.getProductDetails(item.getProductNumber());
+                formatter.format("%-7s", product.getProductNumber());
+                formatter.format("%-14.14s ", product.getDescription());
+                formatter.format("(%3d) ", item.getQuantity());
+                formatter.format("%s%7.2f", currencySymbol, product.getPrice() * item.getQuantity());
+                formatter.format("\n");
+                total += product.getPrice() * item.getQuantity();
+            }
+
+            formatter.format("----------------------------\n");
+            formatter.format("Total                       ");
+            formatter.format("%s%7.2f\n", currencySymbol, total);
+            formatter.close();
+        }
+
+        return stringBuilder.toString();
     }
 
     /**

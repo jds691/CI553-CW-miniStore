@@ -83,7 +83,7 @@ public class PackingView implements Observer {
 
         Order order = model.getCurrentOrder();
         if (order != null) {
-            messageOutput.setText(order.getRichDescription());
+            messageOutput.setText(controller.getOrderDescription());
         } else {
             messageOutput.setText("");
         }
