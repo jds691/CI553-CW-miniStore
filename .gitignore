@@ -27,7 +27,3 @@ hs_err_pid*
 
 # Catshop DB
 /catshop.db
-
-# IntelliJ
-/.idea
-*.iml
