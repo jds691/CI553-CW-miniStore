@@ -50,7 +50,7 @@ class OrderProcessorImpl implements OrderProcessor {
 
     //REVIEW: Oh my god this seems woefully inefficient
     @Override
-    public boolean requestDataRefresh() {
+    public synchronized boolean requestDataRefresh() {
         ArrayDeque<Order>[] newCurrentOrders = createCurrentOrdersDeque();
 
         boolean didRefresh = currentOrders == newCurrentOrders;
@@ -60,7 +60,7 @@ class OrderProcessorImpl implements OrderProcessor {
         return didRefresh;
     }
 
-    private ArrayDeque<Order>[] createCurrentOrdersDeque() {
+    private synchronized ArrayDeque<Order>[] createCurrentOrdersDeque() {
         Order[] orders = orderRepository.readAll();
         ArrayDeque<Order>[] currentOrders = new ArrayDeque[State.values().length];
 

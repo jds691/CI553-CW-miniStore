@@ -75,6 +75,7 @@ public class PackingModel extends Observable {
             try {
                 boolean isFree = worker.claim();
                 if (isFree) {
+                    orderProcessor.requestDataRefresh();
                     Order sb = orderProcessor.popOrder();
                     String prompt = "";
                     if (sb != null) {
