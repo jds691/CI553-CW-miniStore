@@ -3,6 +3,7 @@ package logic;
 import remote.Repository;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 
 import static logic.Order.State;
 
@@ -14,10 +15,16 @@ class OrderProcessorImpl implements OrderProcessor {
 
     OrderProcessorImpl(Repository<Order> orderRepository) {
         this.orderRepository = orderRepository;
+
+        Order[] orders = orderRepository.readAll();
         currentOrders = new ArrayDeque[State.values().length];
 
         for (int i = 0; i < State.values().length; i++) {
             currentOrders[i] = new ArrayDeque<>();
+            int finalI = i;
+            Arrays.stream(orders)
+                    .filter(order -> order.getState().ordinal() == finalI)
+                    .forEach(currentOrders[i]::add);
         }
     }
 
