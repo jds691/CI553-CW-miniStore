@@ -22,6 +22,11 @@ class StockRepository extends Repository<Product> {
     }
 
     @Override
+    public Product[] readAll() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public boolean update(Product product) {
         try {
             try (PreparedStatement statement = connection.prepareStatement(

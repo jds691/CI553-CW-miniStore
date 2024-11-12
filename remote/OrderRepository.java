@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 class OrderRepository extends Repository<Order> {
     public OrderRepository(Connection connection) {
@@ -58,6 +59,53 @@ class OrderRepository extends Repository<Order> {
         }
 
         return order;
+    }
+
+    @Override
+    public Order[] readAll() {
+        ArrayList<Order> orders = new ArrayList<>();
+
+        try {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM ORDERTABLE ORDER BY ORDERID")) {
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    while (resultSet.next()) {
+                        Order order = new OrderImpl();
+                        order.setOrderNumber(resultSet.getInt(1));
+                        order.setState(Order.State.values()[resultSet.getInt(2)]);
+                        orders.add(order);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Order[0];
+        }
+
+        try {
+            try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM ORDERPRODUCTTABLE GROUP BY ORDERID, PRODUCTNO, QUANTITY ORDER BY ORDERID")) {
+                try (ResultSet resultSet = statement.executeQuery()) {
+
+                    /*
+                    * Instead of searching the entire list, manually keep track of indexes via ORDER BY and GROUP BY
+                    */
+                    int lastOrderId = 0;
+                    int currentArrayIndex = -1;
+                    while (resultSet.next()) {
+                        if (lastOrderId != resultSet.getInt(1)) {
+                            currentArrayIndex++;
+                        }
+
+                        Order.Item item = new Order.Item(resultSet.getString(2), resultSet.getInt(3));
+                        orders.get(currentArrayIndex).addItem(item);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return new Order[0];
+        }
+
+        return orders.toArray(new Order[0]);
     }
 
     @Override
