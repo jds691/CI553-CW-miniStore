@@ -171,6 +171,18 @@ public class PackingModel extends Observable {
 
         return stringBuilder.toString();
     }
+
+    public double getOrderCost(Order order) {
+        double total = 0.0;
+
+        for (Order.Item item : order.getAllItems()) {
+            Product product = productReader.getProductDetails(item.getProductNumber());
+
+            total += product.getPrice() * item.getQuantity();
+        }
+
+        return total;
+    }
 }
 
 

@@ -1,5 +1,7 @@
 package clients.packing;
 
+import logic.Order;
+
 /**
  * The Packing Controller
  */
@@ -25,6 +27,10 @@ public class PackingController {
     //REVIEW: Will be removed in a future iteration
     public String getOrderDescription() {
         return model.getOrderDescription();
+    }
+
+    public double getOrderCost(Order order) {
+        return model.getOrderCost(order);
     }
 }
 
