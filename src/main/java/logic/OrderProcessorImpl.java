@@ -26,6 +26,7 @@ class OrderProcessorImpl implements OrderProcessor {
     @Override
     public synchronized void addOrderToQueue(Order order) {
         currentOrders[order.getState().ordinal()].add(order);
+        orderRepository.update(order);
     }
 
     @Override
