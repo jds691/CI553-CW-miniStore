@@ -61,6 +61,7 @@ class OrderRepository extends Repository<Order> {
         return order;
     }
 
+    //TODO: Group by state, Order by OrderID
     @Override
     public Order[] readAll() {
         ArrayList<Order> orders = new ArrayList<>();
@@ -91,8 +92,10 @@ class OrderRepository extends Repository<Order> {
                     int lastOrderId = 0;
                     int currentArrayIndex = -1;
                     while (resultSet.next()) {
-                        if (lastOrderId != resultSet.getInt(1)) {
+                        int newOrderId = resultSet.getInt(1);
+                        if (lastOrderId != newOrderId) {
                             currentArrayIndex++;
+                            lastOrderId = newOrderId;
                         }
 
                         Order.Item item = new Order.Item(resultSet.getString(2), resultSet.getInt(3));
@@ -136,8 +139,8 @@ class OrderRepository extends Repository<Order> {
         } else {
             try {
                 try (PreparedStatement statement = connection.prepareStatement("UPDATE ORDERTABLE SET STATE = ? WHERE ORDERID = ?")) {
-                    statement.setInt(1, order.getOrderNumber());
-                    statement.setInt(2, order.getState().ordinal());
+                    statement.setInt(1, order.getState().ordinal());
+                    statement.setInt(2, order.getOrderNumber());
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {
@@ -187,10 +190,17 @@ class OrderRepository extends Repository<Order> {
         try {
             String valueInsertions = "";
             for (int i = 0; i < order.getAllItems().length; i++) {
-                valueInsertions += " (?, ?, ?)";
+                valueInsertions += " (?, ?, ?),";
             }
 
-            try (PreparedStatement statement = connection.prepareStatement("INSERT INTO ORDERPRODUCTTABLE VALUES" + valueInsertions)) {
+            String finalStatement = "INSERT INTO ORDERPRODUCTTABLE VALUES" + valueInsertions;
+            if (finalStatement.endsWith(",")) {
+                int index = finalStatement.lastIndexOf(",");
+                // This is a stupid fucking way of removing the last comma
+                finalStatement = finalStatement.substring(0, index);
+            }
+
+            try (PreparedStatement statement = connection.prepareStatement(finalStatement)) {
                 int parameterIndex = 1;
                 for (Order.Item item : order.getAllItems()) {
                     statement.setInt(parameterIndex, order.getOrderNumber());

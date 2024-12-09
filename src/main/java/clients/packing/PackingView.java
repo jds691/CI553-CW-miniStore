@@ -34,7 +34,8 @@ public class PackingView implements Observer {
      * @param x   x-coordinate of position of window on screen
      * @param y   y-coordinate of position of window on screen
      */
-    public PackingView(RootPaneContainer rootPane, int x, int y) {
+    public PackingView(RootPaneContainer rootPane, PackingController controller, int x, int y) {
+        this.controller = controller;
         // Content Pane
         Container contentPane = rootPane.getContentPane();
         Container rootWindow = (Container) rootPane;
@@ -71,6 +72,9 @@ public class PackingView implements Observer {
         messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         contentPane.add(messageScrollPane);
 
+        Order[][] orders = controller.getAllOrders();
+        renderOrderListViewport(orders);
+
         rootWindow.setVisible(true);
     }
 
@@ -90,19 +94,26 @@ public class PackingView implements Observer {
         String message = (String) arg;
         promptLabel.setText(message);
 
-        Order order = model.getCurrentOrder();
+        Order[][] orders = model.getAllOrders();
+        renderOrderListViewport(orders);
+    }
+
+    /**
+     * Removes all controls from the orderListViewport and adds all of them in from the OrderProcessor
+     */
+    private void renderOrderListViewport(Order[][] orders) {
+        if (orders == null)
+            return;
 
         orderListViewport.removeAll();
-        if (order != null) {
-            orderListViewport.add(createOrderRow(order));
-
-            orderListViewport.revalidate();
-            orderListViewport.repaint();
-
-            //messageOutput.setText(controller.getOrderDescription());
-        } else {
-            //messageOutput.setText("");
+        for (Order[] orderCollection : orders) {
+            for (Order order : orderCollection) {
+                orderListViewport.add(createOrderRow(order));
+            }
         }
+
+        orderListViewport.revalidate();
+        orderListViewport.repaint();
     }
 
     /**
@@ -165,7 +176,6 @@ public class PackingView implements Observer {
         String[] states = new String[] { "Waiting", "Being Packed", "To Be Collected" };
         JComboBox stateComboBox = new JComboBox(states);
         stateComboBox.setSelectedIndex(order.getState().ordinal());
-        //TODO: Add action listener
         stateComboBox.addActionListener((actionEvent) -> {
             order.setState(Order.State.values()[stateComboBox.getSelectedIndex()]);
             controller.updateOrderState(order);

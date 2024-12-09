@@ -13,6 +13,7 @@ class DerbyCreateAccess extends DBAccess {
 
     public void loadDriver() throws Exception {
         Class.forName(DRIVER).newInstance();
+        System.setProperty("derby.language.sequence.preallocator", "1");
     }
 
     @Override

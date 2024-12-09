@@ -34,9 +34,8 @@ public class PackingClient {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         PackingModel model = new PackingModel(factory);
-        PackingView view = new PackingView(window, 0, 0);
         PackingController controller = new PackingController(model);
-        view.setController(controller);
+        PackingView view = new PackingView(window, controller,0, 0);
 
         model.addObserver(view);
         window.setVisible(true);
