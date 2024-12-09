@@ -53,7 +53,7 @@ class OrderProcessorImpl implements OrderProcessor {
     public synchronized boolean requestDataRefresh() {
         ArrayDeque<Order>[] newCurrentOrders = createCurrentOrdersDeque();
 
-        boolean didRefresh = currentOrders == newCurrentOrders;
+        boolean didRefresh = currentOrders != newCurrentOrders;
 
         currentOrders = newCurrentOrders;
 
