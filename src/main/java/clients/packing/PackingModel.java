@@ -183,6 +183,10 @@ public class PackingModel extends Observable {
 
         return total;
     }
+
+    public void updateOrderState(Order order) {
+        orderProcessor.addOrderToQueue(order);
+    }
 }
 
 

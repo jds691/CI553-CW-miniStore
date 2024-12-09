@@ -21,7 +21,8 @@ public class PackingView implements Observer {
 
     private final JLabel pageTitle = new JLabel();
     private final JLabel promptLabel = new JLabel();
-    private final JScrollPane messageScrollPane = new JScrollPane();
+    private final JPanel orderListViewport;
+    private final JScrollPane messageScrollPane;
     private final JButton packButton = new JButton(PACKED);
 
     private PackingController controller = null;
@@ -57,7 +58,17 @@ public class PackingView implements Observer {
         promptLabel.setText("");
         contentPane.add(promptLabel);
 
+        orderListViewport = new JPanel(new GridLayout(0, 1, 1, 1));
+
+        JPanel outerPanel = new JPanel(new BorderLayout());
+        outerPanel.add(orderListViewport, BorderLayout.PAGE_START);
+
+        // This sets the initial view of the viewport not what the viewport itself is
+        // Find a way to change the contents of the viewport view AND have the viewport update
+        messageScrollPane = new JScrollPane(outerPanel);
         messageScrollPane.setBounds(16, 55, 368, 205);
+        messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         contentPane.add(messageScrollPane);
 
         rootWindow.setVisible(true);
@@ -81,17 +92,12 @@ public class PackingView implements Observer {
 
         Order order = model.getCurrentOrder();
 
-        messageScrollPane.getViewport().removeAll();
+        orderListViewport.removeAll();
         if (order != null) {
+            orderListViewport.add(createOrderRow(order));
 
-            JComponent cachedRow = createOrderRow(order);
-
-            messageScrollPane.getViewport().add(cachedRow);
-            messageScrollPane.getViewport().add(cachedRow);
-            messageScrollPane.getViewport().add(cachedRow);
-            messageScrollPane.getViewport().add(cachedRow);
-            messageScrollPane.getViewport().add(cachedRow);
-            messageScrollPane.getViewport().add(cachedRow);
+            orderListViewport.revalidate();
+            orderListViewport.repaint();
 
             //messageOutput.setText(controller.getOrderDescription());
         } else {
@@ -156,9 +162,14 @@ public class PackingView implements Observer {
         constraints.ipadx = 0;
         constraints.anchor = GridBagConstraints.LINE_END;
 
-        JComboBox stateComboBox = new JComboBox(Order.State.values());
-        stateComboBox.setSelectedItem(order.getState().ordinal());
+        String[] states = new String[] { "Waiting", "Being Packed", "To Be Collected" };
+        JComboBox stateComboBox = new JComboBox(states);
+        stateComboBox.setSelectedIndex(order.getState().ordinal());
         //TODO: Add action listener
+        stateComboBox.addActionListener((actionEvent) -> {
+            order.setState(Order.State.values()[stateComboBox.getSelectedIndex()]);
+            controller.updateOrderState(order);
+        });
 
         orderRowPanel.add(stateComboBox, constraints);
 

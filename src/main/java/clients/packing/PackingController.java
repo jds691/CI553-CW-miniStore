@@ -32,5 +32,9 @@ public class PackingController {
     public double getOrderCost(Order order) {
         return model.getOrderCost(order);
     }
+
+    public void updateOrderState(Order order) {
+        model.updateOrderState(order);
+    }
 }
 
