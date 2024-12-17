@@ -53,9 +53,20 @@ class OrderProcessorImpl implements OrderProcessor {
     public synchronized boolean requestDataRefresh() {
         ArrayDeque<Order>[] newCurrentOrders = createCurrentOrdersDeque();
 
-        boolean didRefresh = currentOrders != newCurrentOrders;
+        boolean didRefresh = false;
+        for (int i = 0; i < State.values().length; i++) {
+            // If the number of orders in a state changes between refreshes then either:
+            // - An order has changed state
+            // - An order was added
+            // - An order was externally removed
+            if (newCurrentOrders[i].size() != currentOrders[i].size()) {
+                didRefresh = true;
+                break;
+            }
+        }
 
-        currentOrders = newCurrentOrders;
+        if (didRefresh)
+            currentOrders = newCurrentOrders;
 
         return didRefresh;
     }

@@ -17,8 +17,6 @@ public class PackingModel extends Observable {
     private OrderProcessor orderProcessor = null;
     private ProductReader productReader = null;
 
-    private final Semaphore packingWorker = new Semaphore();
-
     /**
      * Construct the model of the warehouse Packing client
      *
@@ -62,47 +60,11 @@ public class PackingModel extends Observable {
         }
     }
 
-    /*
-    /**
-     * Method run in a separate thread to check if there
-     * is a new order waiting to be packed and we have
-     * nothing to do.
-
-    private void checkForNewOrder() {
-        while (true) {
-            try {
-                boolean isFree = packingWorker.claim();
-                if (isFree) {
-                    Order[][] allOrders = new Order[State.values().length][];
-                    for (Order.State state : Order.State.values()) {
-                        allOrders[state.ordinal()] = orderProcessor.getAllOrdersInState(state);
-                    }
-
-                    String prompt = "";
-                    if (sb != null) {
-                        allOrders.set(sb);
-                        prompt = "Bought Receipt";
-                    } else {
-                        packingWorker.free();
-                        prompt = "";
-                    }
-
-                    setChanged();
-                    notifyObservers(prompt);
-                }
-
-                Thread.sleep(2000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    */
-
     private void refreshOrderData() {
         while (true) {
             try {
-                if (orderProcessor.requestDataRefresh()) {
+                boolean didRefresh = orderProcessor.requestDataRefresh();
+                if (didRefresh || allOrders.get() == null) {
                     Order[][] allOrders = new Order[State.values().length][];
                     for (Order.State state : Order.State.values()) {
                         allOrders[state.ordinal()] = orderProcessor.getAllOrdersInState(state);
