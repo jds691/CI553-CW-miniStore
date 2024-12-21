@@ -1,5 +1,6 @@
 package clients.packing;
 
+import logic.LogicFactory;
 import logic.Order;
 
 /**
@@ -15,6 +16,10 @@ public class PackingController {
      */
     public PackingController(PackingModel model) {
         this.model = model;
+    }
+
+    public LogicFactory getFactory() {
+        return model.getFactory();
     }
 
     public double getOrderCost(Order order) {

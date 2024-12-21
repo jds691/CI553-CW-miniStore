@@ -14,6 +14,7 @@ import static logic.Order.State;
 public class PackingModel extends Observable {
     private final AtomicReference<Order[][]> allOrders = new AtomicReference<>();
 
+    private final LogicFactory factory;
     private OrderProcessor orderProcessor = null;
     private ProductReader productReader = null;
 
@@ -23,6 +24,7 @@ public class PackingModel extends Observable {
      * @param mf The factory to create the connection objects
      */
     public PackingModel(LogicFactory mf) {
+        this.factory = mf;
         try {
             orderProcessor = mf.getOrderProcessor();
             productReader = mf.getProductReader();
@@ -33,6 +35,10 @@ public class PackingModel extends Observable {
         allOrders.set(null);
         // Start a background check to see when a new order can be packed
         new Thread(this::refreshOrderData).start();
+    }
+
+    public LogicFactory getFactory() {
+        return this.factory;
     }
 
     /**

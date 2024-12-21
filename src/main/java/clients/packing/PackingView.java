@@ -4,6 +4,8 @@ import logic.Order;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -182,8 +184,27 @@ public class PackingView implements Observer {
         });
 
         orderRowPanel.add(stateComboBox, constraints);
+        orderRowPanel.addMouseListener(
+                new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 2) {
+                            createFrameForOrder(order);
+                        }
+                    }
+                }
+        );
 
         return orderRowPanel;
+    }
+
+    private void createFrameForOrder(Order order) {
+
+        PackingOrderModel packingOrderModel = new PackingOrderModel(this.controller.getFactory());
+        PackingOrderController packingOrderController = new PackingOrderController(packingOrderModel);
+
+        JFrame orderFrame = new PackingOrderFrame(order, packingOrderController);
+        orderFrame.setVisible(true);
     }
 }
 
