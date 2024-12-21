@@ -47,8 +47,10 @@ public class PackingView implements Observer {
 
         Font monospaceFont = new Font("Monospaced", Font.PLAIN, 12);
 
+        Font pageTitleFont = new Font("Dialog", Font.BOLD, 18);
         pageTitle.setBounds(16, 0, 368, 20);
-        pageTitle.setText("Packing Bought Order");
+        pageTitle.setText("All Orders");
+        pageTitle.setFont(pageTitleFont);
         contentPane.add(pageTitle);
 
         /*packButton.setBounds(16, 25, 80, 40);
@@ -58,7 +60,6 @@ public class PackingView implements Observer {
         contentPane.add(packButton);*/
 
         promptLabel.setBounds(16, 25, 368, 20);
-        promptLabel.setText("");
         contentPane.add(promptLabel);
 
         orderListViewport = new JPanel(new GridLayout(0, 1, 1, 1));
@@ -93,8 +94,6 @@ public class PackingView implements Observer {
     @Override
     public void update(Observable modelC, Object arg) {
         PackingModel model = (PackingModel) modelC;
-        String message = (String) arg;
-        promptLabel.setText(message);
 
         Order[][] orders = model.getAllOrders();
         renderOrderListViewport(orders);
@@ -104,15 +103,22 @@ public class PackingView implements Observer {
      * Removes all controls from the orderListViewport and adds all of them in from the OrderProcessor
      */
     private void renderOrderListViewport(Order[][] orders) {
-        if (orders == null)
+        if (orders == null) {
+            promptLabel.setText("An error has occurred.");
             return;
+        }
+
+        int totalOrders = 0;
 
         orderListViewport.removeAll();
         for (Order[] orderCollection : orders) {
             for (Order order : orderCollection) {
+                totalOrders++;
                 orderListViewport.add(createOrderRow(order));
             }
         }
+
+        promptLabel.setText(totalOrders == 1 ? "1 Order" : totalOrders + " Orders");
 
         orderListViewport.revalidate();
         orderListViewport.repaint();
