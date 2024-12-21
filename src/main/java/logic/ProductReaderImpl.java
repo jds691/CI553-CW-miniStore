@@ -3,6 +3,7 @@ package logic;
 import remote.Repository;
 
 import javax.swing.*;
+import java.nio.file.Path;
 
 class ProductReaderImpl implements ProductReader {
     private final Repository<Product> productRepository;
@@ -28,7 +29,8 @@ class ProductReaderImpl implements ProductReader {
         if (filename.isEmpty()) {
             return new ImageIcon("default.jpg");
         } else {
-            return new ImageIcon(filename);
+            //TODO: Move images into resources or something to remove the need for this
+            return new ImageIcon(Path.of("src", "main", "java", filename).toString());
         }
     }
 }

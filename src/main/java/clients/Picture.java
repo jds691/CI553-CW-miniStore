@@ -61,7 +61,7 @@ public class Picture extends Canvas {
         g.setPaint(Color.white);
         g.fill(new Rectangle2D.Double(0, 0, width, height));
         if (image != null) {
-            g.drawImage(image, 0, 0, null);
+            g.drawImage(image, 0, 0, width, height, null);
         }
     }
 }

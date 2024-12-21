@@ -1,5 +1,8 @@
 package clients.packing;
 
+import logic.LogicFactory;
+import logic.Order;
+
 /**
  * The Packing Controller
  */
@@ -15,16 +18,20 @@ public class PackingController {
         this.model = model;
     }
 
-    /**
-     * Picked interaction from view
-     */
-    public void packOrder() {
-        model.packOrder();
+    public LogicFactory getFactory() {
+        return model.getFactory();
     }
 
-    //REVIEW: Will be removed in a future iteration
-    public String getOrderDescription() {
-        return model.getOrderDescription();
+    public double getOrderCost(Order order) {
+        return model.getOrderCost(order);
+    }
+
+    public void updateOrderState(Order order) {
+        model.updateOrderState(order);
+    }
+
+    public Order[][] getAllOrders() {
+        return model.getAllOrders();
     }
 }
 

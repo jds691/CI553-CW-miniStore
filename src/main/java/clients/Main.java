@@ -93,9 +93,8 @@ class Main {
         Dimension pos = PosOnScrn.getPos();
 
         PackingModel model = new PackingModel(factory);
-        PackingView view = new PackingView(window, pos.width, pos.height);
         PackingController controller = new PackingController(model);
-        view.setController(controller);
+        PackingView view = new PackingView(window, controller, pos.width, pos.height);
 
         model.addObserver(view);
         window.setVisible(true);
