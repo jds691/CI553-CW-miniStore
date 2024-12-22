@@ -7,8 +7,10 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 class StockRepository extends Repository<Product> {
+    private final Connection connection;
+
     public StockRepository(Connection connection) {
-        super(connection);
+        this.connection = connection;
     }
 
     @Override

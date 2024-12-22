@@ -8,8 +8,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 class ProductRepository extends Repository<Product> {
+    private final Connection connection;
+
     public ProductRepository(Connection connection) {
-        super(connection);
+        this.connection = connection;
     }
 
     @Override
