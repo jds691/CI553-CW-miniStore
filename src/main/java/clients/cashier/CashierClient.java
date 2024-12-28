@@ -33,7 +33,6 @@ public class CashierClient {
         CashierController controller = new CashierController(model);
         view.setController(controller);
 
-        model.addObserver(view);
         window.setVisible(true);
         model.askForUpdate();
     }

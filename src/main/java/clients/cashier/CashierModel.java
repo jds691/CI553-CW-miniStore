@@ -3,15 +3,17 @@ package clients.cashier;
 import debug.DEBUG;
 import logic.*;
 
+import javax.swing.*;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Currency;
 import java.util.Formatter;
 import java.util.Locale;
-import java.util.Observable;
 
 /**
  * Implements the Model of the cashier client
  */
-public class CashierModel extends Observable {
+public class CashierModel {
     /**
      * Current state of the model
      */
@@ -25,6 +27,8 @@ public class CashierModel extends Observable {
     private StockWriter stockWriter = null;
     // Process order
     private OrderProcessor orderProcessor = null;
+
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Construct the model of the Cashier
@@ -44,12 +48,74 @@ public class CashierModel extends Observable {
     }
 
     /**
-     * Get the Basket of products
+     * Get the current order being edited
      *
-     * @return basket
+     * @return Order being edited
      */
     public Order getCurrentOrder() {
         return currentOrder;
+    }
+
+    /**
+     * Updates an items quantity inside the order if it is already contained.
+     *
+     * @param item Item to update quantity of
+     */
+    public void updateOrderItem(Order.Item item) {
+        updateOrderItem(item, false);
+    }
+
+    /**
+     * Updates an items quantity inside the order if it is already contained.
+     *
+     * @param item Item to update quantity of
+     * @param automatic Whether an update was performed on behalf of the user e.g. Adding the same item twice
+     */
+    public void updateOrderItem(Order.Item item, boolean automatic) {
+        if (currentOrder != null && currentOrder.getItem(item.getProductNumber()) != null) {
+            currentOrder.updateItem(item);
+
+            propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
+
+            if (automatic) {
+                // Called by add button instead of OrderItemEditRow
+                currentState = State.PROCESS;
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+            }
+        }
+    }
+
+    /**
+     * Removes the specified item from the order
+     *
+     * @param item Item to remove
+     */
+    public void removeOrderItem(Order.Item item) {
+        if (currentOrder != null && currentOrder.getItem(item.getProductNumber()) != null) {
+            currentOrder.removeItem(item);
+
+            propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
+        }
+    }
+
+    /**
+     * Gets the last product checked by the user
+     *
+     * @return Last product checked
+     */
+    public Product getCurrentProduct() {
+        return currentProduct;
+    }
+
+    /**
+     * Clears the current order and resets the model and view
+     */
+    public void clearCurrentOrder() {
+        currentOrder = null;
+        currentState = State.PROCESS;
+
+        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+        propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
     }
 
     /**
@@ -60,6 +126,7 @@ public class CashierModel extends Observable {
     public void queryProduct(String productNumber) {
         String prompt;
         currentState = State.PROCESS;
+
         // Product being processed
         productNumber = productNumber.trim();
         int amount = 1;
@@ -78,31 +145,35 @@ public class CashierModel extends Observable {
                 currentProduct = product;
                 //   OK await BUY
                 currentState = State.CHECKED;
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             } else {
                 prompt = product.getDescription() + " not in stock";
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             }
         } else {
             prompt = "Unknown product number " + productNumber;
+            propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
         }
 
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
      * Buy the product
      */
-    public void buyCurrentProduct() {
+    public void buyCurrentProduct(int quantity) {
         String prompt;
 
         if (currentState != State.CHECKED) {
             prompt = "please check its availability";
         } else {
-            boolean stockBought = stockWriter.buyStock(currentProduct, 1);
+            //TODO: WHY DO WE DIRECTLY BUY STOCK BEFORE THE ORDER IS BOUGHT???
+            boolean stockBought = stockWriter.buyStock(currentProduct, quantity);
 
             if (stockBought) {
                 makeBasketIfRequired();
-                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), 1));
+                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
+                propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
                 prompt = "Purchased " + currentProduct.getDescription();
             } else {
                 prompt = "!!! Not in stock";
@@ -111,8 +182,8 @@ public class CashierModel extends Observable {
 
         // Return to State.PROCESS when done
         currentState = State.PROCESS;
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
@@ -127,10 +198,12 @@ public class CashierModel extends Observable {
 
         prompt = "Start New Order";
         currentState = State.PROCESS;
+        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
 
         currentOrder = null;
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
+
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
@@ -138,8 +211,7 @@ public class CashierModel extends Observable {
      * or after system reset
      */
     public void askForUpdate() {
-        setChanged();
-        notifyObservers("Welcome");
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, "Welcome!");
     }
 
     //TODO: See if theres a way to make a unified source for this
@@ -174,6 +246,36 @@ public class CashierModel extends Observable {
     }
 
     /**
+     * Gets the quantity of the specified item currently in stock
+     *
+     * @param productNumber Product number of product to check
+     * @return Quantity in stock
+     */
+    public int getProductQuantity(String productNumber) {
+        return productReader.getProductDetails(productNumber).getQuantity();
+    }
+
+    /**
+     * Returns the image of a product
+     *
+     * @param item Item that the product is associated with
+     * @return Image to display in a {@link clients.Picture}
+     */
+    public ImageIcon getItemIcon(Order.Item item) {
+        return productReader.getProductImage(item.getProductNumber());
+    }
+
+    /**
+     * Returns the name of a product
+     *
+     * @param item Item that the product is associated with
+     * @return Name of product
+     */
+    public String getProductName(Order.Item item) {
+        return productReader.getProductDetails(item.getProductNumber()).getDescription();
+    }
+
+    /**
      * make a Basket when required
      */
     private void makeBasketIfRequired() {
@@ -182,9 +284,29 @@ public class CashierModel extends Observable {
         }
     }
 
-    private enum State {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    /**
+     * Current state of the model
+     */
+    public enum State {
         PROCESS,
         CHECKED
+    }
+
+    /**
+     * Properties that can be updated via {@link PropertyChangeSupport}
+     */
+    public final static class Property {
+        public static final String PROMPT = "prompt";
+        public static final String STATE = "currentState";
+        public static final String ORDER_CONTENTS = "orderContents";
     }
 }
   

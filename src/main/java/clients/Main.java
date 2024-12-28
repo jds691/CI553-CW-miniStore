@@ -74,7 +74,6 @@ class Main {
         CashierController cont = new CashierController(model);
         view.setController(cont);
 
-        model.addObserver(view);
         window.setVisible(true);
         // Initial display
         model.askForUpdate();
