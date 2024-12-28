@@ -34,11 +34,36 @@ public class CashierController {
      * Buy interaction from view
      */
     public void buyCurrentProduct(int quantity) {
+        Order order = getCurrentOrder();
+
+        if (order != null) {
+            Order.Item item = order.getItem(getCurrentProduct().getProductNumber());
+
+            // Update item as long as we don't exceed max quantity
+            if (item.getQuantity() + quantity <= getCurrentProduct().getQuantity()) {
+                item.setQuantity(item.getQuantity() + quantity);
+                updateOrderItem(item, true);
+            }
+            return;
+        }
+
         model.buyCurrentProduct(quantity);
     }
 
     public Order getCurrentOrder() {
         return model.getCurrentOrder();
+    }
+
+    public void updateOrderItem(Order.Item item) {
+        updateOrderItem(item, false);
+    }
+
+    public void updateOrderItem(Order.Item item, boolean automatic) {
+        model.updateOrderItem(item);
+    }
+
+    public void removeOrderItem(Order.Item item) {
+        model.removeOrderItem(item);
     }
 
     public Product getCurrentProduct() {

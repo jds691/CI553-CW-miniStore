@@ -18,8 +18,9 @@ public interface Order {
      */
     void addItem(Item item);
     void removeItem(Item item);
+    Item getItem(String productNumber);
+    void updateItem(Item item);
     void removeAllItems();
-    boolean containsProduct(Product product);
     boolean isEmpty();
 
     Item[] getAllItems();

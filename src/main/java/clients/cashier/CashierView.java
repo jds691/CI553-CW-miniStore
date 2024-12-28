@@ -158,39 +158,41 @@ public class CashierView implements PropertyChangeListener {
 
                 break;
             case CashierModel.Property.ORDER_CONTENTS:
-                scrollPaneViewport.removeAll();
-
                 Order order = (Order) evt.getNewValue();
-
-                if (order != null) {
-                    Order.Item[] items = order.getAllItems();
-
-                    int itemCount = 0;
-
-                    for (Order.Item item : items) {
-                        itemCount += item.getQuantity();
-                        JComponent row = createItemEditRow(item);
-                        scrollPaneViewport.add(row);
-                    }
-
-                    quantityLabel.setText(
-                            itemCount == 1 ? "1 Item" : itemCount + " Items"
-                    );
-
-                    buyButton.setEnabled(true);
-                } else {
-                    quantityLabel.setText("0 Items");
-                    buyButton.setEnabled(false);
-                }
-
-                scrollPaneViewport.revalidate();
-                scrollPaneViewport.repaint();
-
+                generateItemRowList(order);
                 break;
             default:
                 break;
                 //throw new IllegalStateException("Unexpected value: " + property);
         }
+    }
+
+    private void generateItemRowList(Order order) {
+        scrollPaneViewport.removeAll();
+
+        if (order != null) {
+            Order.Item[] items = order.getAllItems();
+
+            int itemCount = 0;
+
+            for (Order.Item item : items) {
+                itemCount += item.getQuantity();
+                JComponent row = createItemEditRow(item);
+                scrollPaneViewport.add(row);
+            }
+
+            quantityLabel.setText(
+                    itemCount == 1 ? "1 Item" : itemCount + " Items"
+            );
+
+            buyButton.setEnabled(true);
+        } else {
+            quantityLabel.setText("0 Items");
+            buyButton.setEnabled(false);
+        }
+
+        scrollPaneViewport.revalidate();
+        scrollPaneViewport.repaint();
     }
 
     private JComponent createItemEditRow(Order.Item item) {
@@ -243,7 +245,15 @@ public class CashierView implements PropertyChangeListener {
         constraints.ipadx = 0;
         constraints.anchor = GridBagConstraints.LINE_START;
 
-        JSpinner quantityInput = new JSpinner(new SpinnerNumberModel(item.getQuantity(), 1, this.controller.getProductQuantity(item.getProductNumber()), 1));
+        SpinnerNumberModel model = new SpinnerNumberModel(item.getQuantity(), 1, this.controller.getProductQuantity(item.getProductNumber()), 1);
+        model.addChangeListener(
+                e -> {
+                    item.setQuantity(model.getNumber().intValue());
+                    controller.updateOrderItem(item);
+                }
+        );
+
+        JSpinner quantityInput = new JSpinner(model);
         itemEditRowPanel.add(quantityInput, constraints);
 
         constraints.gridx = 3;
@@ -253,7 +263,9 @@ public class CashierView implements PropertyChangeListener {
         constraints.anchor = GridBagConstraints.LINE_START;
 
         JButton removeButton = new JButton("Remove");
-        //removeButton.addActionListener();
+        removeButton.addActionListener(
+                e -> controller.removeOrderItem(item)
+        );
         itemEditRowPanel.add(removeButton, constraints);
 
         return itemEditRowPanel;

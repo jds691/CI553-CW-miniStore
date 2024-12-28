@@ -56,6 +56,32 @@ public class CashierModel {
         return currentOrder;
     }
 
+    public void updateOrderItem(Order.Item item) {
+        updateOrderItem(item, false);
+    }
+
+    public void updateOrderItem(Order.Item item, boolean automatic) {
+        if (currentOrder != null && currentOrder.getItem(item.getProductNumber()) != null) {
+            currentOrder.updateItem(item);
+
+            propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
+
+            if (automatic) {
+                // Called by add button instead of OrderItemEditRow
+                currentState = State.PROCESS;
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+            }
+        }
+    }
+
+    public void removeOrderItem(Order.Item item) {
+        if (currentOrder != null && currentOrder.getItem(item.getProductNumber()) != null) {
+            currentOrder.removeItem(item);
+
+            propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
+        }
+    }
+
     public Product getCurrentProduct() {
         return currentProduct;
     }
