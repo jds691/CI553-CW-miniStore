@@ -1,16 +1,14 @@
 package clients.cashier;
 
-import logic.Order;
-
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * View of the model
  */
-public class CashierView implements Observer {
+public class CashierView implements PropertyChangeListener {
     private static final int HEIGHT = 300;
     private static final int WIDTH = 400;
 
@@ -114,17 +112,12 @@ public class CashierView implements Observer {
      */
     public void setController(CashierController controller) {
         this.controller = controller;
+        this.controller.addPropertyChangeListener(this);
     }
 
-    /**
-     * Update the view
-     *
-     * @param modelC The observed model
-     * @param arg    Specific args
-     */
     @Override
-    public void update(Observable modelC, Object arg) {
-        /*CashierModel model = (CashierModel) modelC;
+    public void propertyChange(PropertyChangeEvent evt) {
+         /*CashierModel model = (CashierModel) modelC;
         String message = (String) arg;
         promptLabel.setText(message);
         Order order = model.getCurrentOrder();
@@ -134,5 +127,17 @@ public class CashierView implements Observer {
             messageOutput.setText(controller.getOrderDescription());
 
         productNumberInput.requestFocus();*/
+
+        String property = evt.getPropertyName();
+
+        switch (property) {
+            case CashierModel.Property.PROMPT:
+                break;
+            case CashierModel.Property.STATE:
+                break;
+            default:
+                break;
+                //throw new IllegalStateException("Unexpected value: " + property);
+        }
     }
 }

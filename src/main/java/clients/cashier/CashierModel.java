@@ -3,15 +3,16 @@ package clients.cashier;
 import debug.DEBUG;
 import logic.*;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.util.Currency;
 import java.util.Formatter;
 import java.util.Locale;
-import java.util.Observable;
 
 /**
  * Implements the Model of the cashier client
  */
-public class CashierModel extends Observable {
+public class CashierModel {
     /**
      * Current state of the model
      */
@@ -25,6 +26,8 @@ public class CashierModel extends Observable {
     private StockWriter stockWriter = null;
     // Process order
     private OrderProcessor orderProcessor = null;
+
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Construct the model of the Cashier
@@ -85,8 +88,7 @@ public class CashierModel extends Observable {
             prompt = "Unknown product number " + productNumber;
         }
 
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT.toString(), null, prompt);
     }
 
     /**
@@ -111,8 +113,8 @@ public class CashierModel extends Observable {
 
         // Return to State.PROCESS when done
         currentState = State.PROCESS;
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
@@ -127,10 +129,11 @@ public class CashierModel extends Observable {
 
         prompt = "Start New Order";
         currentState = State.PROCESS;
+        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
 
         currentOrder = null;
-        setChanged();
-        notifyObservers(prompt);
+
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
@@ -138,8 +141,7 @@ public class CashierModel extends Observable {
      * or after system reset
      */
     public void askForUpdate() {
-        setChanged();
-        notifyObservers("Welcome");
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, "Welcome!");
     }
 
     //TODO: See if theres a way to make a unified source for this
@@ -182,9 +184,22 @@ public class CashierModel extends Observable {
         }
     }
 
-    private enum State {
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        this.propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public enum State {
         PROCESS,
         CHECKED
+    }
+
+    public final static class Property {
+        public static final String PROMPT = "prompt";
+        public static final String STATE = "currentState";
     }
 }
   

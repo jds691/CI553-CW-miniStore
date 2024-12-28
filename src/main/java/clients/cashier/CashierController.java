@@ -1,5 +1,7 @@
 package clients.cashier;
 
+import java.beans.PropertyChangeListener;
+
 /**
  * The Cashier Controller
  */
@@ -40,5 +42,13 @@ public class CashierController {
 
     public String getOrderDescription() {
         return model.getOrderDescription();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        model.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        model.removePropertyChangeListener(listener);
     }
 }
