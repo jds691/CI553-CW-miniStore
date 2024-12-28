@@ -1,5 +1,7 @@
 package clients.cashier;
 
+import logic.Order;
+
 import java.beans.PropertyChangeListener;
 
 /**
@@ -29,8 +31,12 @@ public class CashierController {
     /**
      * Buy interaction from view
      */
-    public void buyCurrentProduct() {
-        model.buyCurrentProduct();
+    public void buyCurrentProduct(int quantity) {
+        model.buyCurrentProduct(quantity);
+    }
+
+    public Order getCurrentOrder() {
+        return model.getCurrentOrder();
     }
 
     /**
@@ -42,6 +48,10 @@ public class CashierController {
 
     public String getOrderDescription() {
         return model.getOrderDescription();
+    }
+
+    public int getCurrentProductQuantity() {
+        return model.getCurrentProductQuantity();
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {

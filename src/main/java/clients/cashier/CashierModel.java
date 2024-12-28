@@ -63,6 +63,7 @@ public class CashierModel {
     public void queryProduct(String productNumber) {
         String prompt;
         currentState = State.PROCESS;
+
         // Product being processed
         productNumber = productNumber.trim();
         int amount = 1;
@@ -81,30 +82,34 @@ public class CashierModel {
                 currentProduct = product;
                 //   OK await BUY
                 currentState = State.CHECKED;
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             } else {
                 prompt = product.getDescription() + " not in stock";
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             }
         } else {
             prompt = "Unknown product number " + productNumber;
+            propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
         }
 
-        propertyChangeSupport.firePropertyChange(Property.PROMPT.toString(), null, prompt);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
      * Buy the product
      */
-    public void buyCurrentProduct() {
+    public void buyCurrentProduct(int quantity) {
         String prompt;
 
         if (currentState != State.CHECKED) {
             prompt = "please check its availability";
         } else {
-            boolean stockBought = stockWriter.buyStock(currentProduct, 1);
+            //TODO: WHY DO WE DIRECTLY BUY STOCK BEFORE THE ORDER IS BOUGHT???
+            boolean stockBought = stockWriter.buyStock(currentProduct, quantity);
 
             if (stockBought) {
                 makeBasketIfRequired();
-                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), 1));
+                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
                 prompt = "Purchased " + currentProduct.getDescription();
             } else {
                 prompt = "!!! Not in stock";
@@ -175,6 +180,10 @@ public class CashierModel {
         return stringBuilder.toString();
     }
 
+    public int getCurrentProductQuantity() {
+        return currentProduct.getQuantity();
+    }
+
     /**
      * make a Basket when required
      */
@@ -200,6 +209,7 @@ public class CashierModel {
     public final static class Property {
         public static final String PROMPT = "prompt";
         public static final String STATE = "currentState";
+        public static final String ORDER_CONTENTS = "orderContents";
     }
 }
   

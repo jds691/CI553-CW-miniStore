@@ -5,6 +5,8 @@ import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import static clients.cashier.CashierModel.State;
+
 /**
  * View of the model
  */
@@ -71,7 +73,10 @@ public class CashierView implements PropertyChangeListener {
         contentPane.add(quantityInput);
 
         addButton.setBounds(304, 32, 80, 40);
-        //addButton.addActionListener();
+        addButton.setEnabled(false);
+        addButton.addActionListener(
+                e -> controller.buyCurrentProduct(quantityInputModel.getNumber().intValue())
+        );
         contentPane.add(addButton);
 
         quantityLabel.setBounds(16, 80, 368, 20);
@@ -90,9 +95,9 @@ public class CashierView implements PropertyChangeListener {
         contentPane.add(scrollPane);
 
         buyButton.setBounds(300, 230, 80, 30);
-        /*buyButton.addActionListener(
-                e -> controller.buyCurrentProduct()
-        );*/
+        buyButton.addActionListener(
+                e -> controller.buyBasket()
+        );
         contentPane.add(buyButton);
 
         clearAllButton.setBounds(16, 230, 80, 30);
@@ -134,6 +139,21 @@ public class CashierView implements PropertyChangeListener {
             case CashierModel.Property.PROMPT:
                 break;
             case CashierModel.Property.STATE:
+                State state = (State) evt.getNewValue();
+
+                if (state == State.CHECKED) {
+                    quantityInputModel = new SpinnerNumberModel(1, 1, controller.getCurrentProductQuantity(), 1);
+                    quantityInput.setModel(quantityInputModel);
+                    addButton.setEnabled(true);
+                    quantityInput.setEnabled(true);
+                } else if (state == State.PROCESS) {
+                    productNumberInput.setText("");
+                    addButton.setEnabled(false);
+                    quantityInput.setEnabled(false);
+                }
+
+                break;
+            case CashierModel.Property.ORDER_CONTENTS:
                 break;
             default:
                 break;
