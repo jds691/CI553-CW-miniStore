@@ -8,6 +8,7 @@ import java.util.Arrays;
 import static logic.Order.State;
 
 class OrderProcessorImpl implements OrderProcessor {
+    private boolean didManuallyUpdate = false;
     private final Repository<Order> orderRepository;
 
     private ArrayDeque<Order>[] currentOrders;
@@ -27,6 +28,7 @@ class OrderProcessorImpl implements OrderProcessor {
     public synchronized void addOrderToQueue(Order order) {
         currentOrders[order.getState().ordinal()].add(order);
         orderRepository.update(order);
+        didManuallyUpdate = true;
     }
 
     @Override
@@ -39,6 +41,7 @@ class OrderProcessorImpl implements OrderProcessor {
         if (currentOrders[state.ordinal()].isEmpty()) {
             return null;
         } else {
+            didManuallyUpdate = true;
             return currentOrders[state.ordinal()].pop();
         }
     }
@@ -67,6 +70,11 @@ class OrderProcessorImpl implements OrderProcessor {
 
         if (didRefresh)
             currentOrders = newCurrentOrders;
+
+        if (didManuallyUpdate) {
+            didManuallyUpdate = false;
+            return true;
+        }
 
         return didRefresh;
     }
