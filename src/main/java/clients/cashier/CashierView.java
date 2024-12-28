@@ -101,12 +101,13 @@ public class CashierView implements PropertyChangeListener {
         buyButton.addActionListener(
                 e -> controller.buyBasket()
         );
+        buyButton.setEnabled(false);
         contentPane.add(buyButton);
 
         clearAllButton.setBounds(16, 230, 80, 30);
-        /*clearAllButton.addActionListener(
-                e -> controller.buyCurrentProduct()
-        );*/
+        clearAllButton.addActionListener(
+                e -> controller.clearCurrentOrder()
+        );
         contentPane.add(clearAllButton);
 
         rootWindow.setVisible(true);
@@ -160,19 +161,27 @@ public class CashierView implements PropertyChangeListener {
                 scrollPaneViewport.removeAll();
 
                 Order order = (Order) evt.getNewValue();
-                Order.Item[] items = order.getAllItems();
 
-                int itemCount = 0;
+                if (order != null) {
+                    Order.Item[] items = order.getAllItems();
 
-                for (Order.Item item : items) {
-                    itemCount += item.getQuantity();
-                    JComponent row = createItemEditRow(item);
-                    scrollPaneViewport.add(row);
+                    int itemCount = 0;
+
+                    for (Order.Item item : items) {
+                        itemCount += item.getQuantity();
+                        JComponent row = createItemEditRow(item);
+                        scrollPaneViewport.add(row);
+                    }
+
+                    quantityLabel.setText(
+                            itemCount == 1 ? "1 Item" : itemCount + " Items"
+                    );
+
+                    buyButton.setEnabled(true);
+                } else {
+                    quantityLabel.setText("0 Items");
+                    buyButton.setEnabled(false);
                 }
-
-                quantityLabel.setText(
-                        itemCount == 1 ? "1 Item" : itemCount + " Items"
-                );
 
                 scrollPaneViewport.revalidate();
                 scrollPaneViewport.repaint();

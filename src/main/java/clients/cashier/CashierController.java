@@ -45,11 +45,16 @@ public class CashierController {
         return model.getCurrentProduct();
     }
 
+    public void clearCurrentOrder() {
+        model.clearCurrentOrder();
+    }
+
     /**
      * Bought interaction from view
      */
     public void buyBasket() {
         model.buyBasket();
+        clearCurrentOrder();
     }
 
     public String getOrderDescription() {

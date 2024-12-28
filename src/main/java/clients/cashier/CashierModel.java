@@ -60,6 +60,14 @@ public class CashierModel {
         return currentProduct;
     }
 
+    public void clearCurrentOrder() {
+        currentOrder = null;
+        currentState = State.PROCESS;
+
+        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+        propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
+    }
+
     /**
      * Queries the product's description, price and quantity and outputs it to observers.
      *
@@ -143,6 +151,7 @@ public class CashierModel {
         propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
 
         currentOrder = null;
+        propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
 
         propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
