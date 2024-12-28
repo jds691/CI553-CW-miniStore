@@ -32,7 +32,6 @@ class OrderImpl implements Order {
 
     @Override
     public void addItem(Item item) {
-        //TODO: Sort based on productNumber
         if (items.contains(item)) {
             int index = items.indexOf(item);
             Item original = items.get(index);
@@ -75,11 +74,6 @@ class OrderImpl implements Order {
         return items.isEmpty();
     }
 
-    /**
-     * Gets the underlying items array for the Order for recursion.
-     *
-     * @return Array of items in order
-     */
     @Override
     public Item[] getAllItems() {
         return items.toArray(new Item[0]);

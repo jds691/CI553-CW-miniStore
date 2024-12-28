@@ -17,12 +17,40 @@ public interface Order {
      * @param item Item to add to order.
      */
     void addItem(Item item);
+    /**
+     * Removes the specified item from the order
+     *
+     * @param item Item to remove
+     */
     void removeItem(Item item);
+    /**
+     * Finds an instance of {@link Order.Item} in the order for a given product number
+     *
+     * @param productNumber Product number linked to this item
+     * @return Item if it was found or null
+     */
     Item getItem(String productNumber);
+    /**
+     * Updates the quantity of the item within the order whilst maintaining its index position
+     *
+     * @param item Item to update
+     */
     void updateItem(Item item);
+    /**
+     * Removes all items from the order
+     */
     void removeAllItems();
+    /**
+     * Returns whether the order contains any items or not
+     *
+     * @return If order contains items
+     */
     boolean isEmpty();
-
+    /**
+     * Gets the underlying items collection for the Order for recursion.
+     *
+     * @return Collection of items in order
+     */
     Item[] getAllItems();
 
     /**

@@ -48,18 +48,29 @@ public class CashierModel {
     }
 
     /**
-     * Get the Basket of products
+     * Get the current order being edited
      *
-     * @return basket
+     * @return Order being edited
      */
     public Order getCurrentOrder() {
         return currentOrder;
     }
 
+    /**
+     * Updates an items quantity inside the order if it is already contained.
+     *
+     * @param item Item to update quantity of
+     */
     public void updateOrderItem(Order.Item item) {
         updateOrderItem(item, false);
     }
 
+    /**
+     * Updates an items quantity inside the order if it is already contained.
+     *
+     * @param item Item to update quantity of
+     * @param automatic Whether an update was performed on behalf of the user e.g. Adding the same item twice
+     */
     public void updateOrderItem(Order.Item item, boolean automatic) {
         if (currentOrder != null && currentOrder.getItem(item.getProductNumber()) != null) {
             currentOrder.updateItem(item);
@@ -74,6 +85,11 @@ public class CashierModel {
         }
     }
 
+    /**
+     * Removes the specified item from the order
+     *
+     * @param item Item to remove
+     */
     public void removeOrderItem(Order.Item item) {
         if (currentOrder != null && currentOrder.getItem(item.getProductNumber()) != null) {
             currentOrder.removeItem(item);
@@ -82,10 +98,18 @@ public class CashierModel {
         }
     }
 
+    /**
+     * Gets the last product checked by the user
+     *
+     * @return Last product checked
+     */
     public Product getCurrentProduct() {
         return currentProduct;
     }
 
+    /**
+     * Clears the current order and resets the model and view
+     */
     public void clearCurrentOrder() {
         currentOrder = null;
         currentState = State.PROCESS;
@@ -221,14 +245,32 @@ public class CashierModel {
         return stringBuilder.toString();
     }
 
+    /**
+     * Gets the quantity of the specified item currently in stock
+     *
+     * @param productNumber Product number of product to check
+     * @return Quantity in stock
+     */
     public int getProductQuantity(String productNumber) {
         return productReader.getProductDetails(productNumber).getQuantity();
     }
 
+    /**
+     * Returns the image of a product
+     *
+     * @param item Item that the product is associated with
+     * @return Image to display in a {@link clients.Picture}
+     */
     public ImageIcon getItemIcon(Order.Item item) {
         return productReader.getProductImage(item.getProductNumber());
     }
 
+    /**
+     * Returns the name of a product
+     *
+     * @param item Item that the product is associated with
+     * @return Name of product
+     */
     public String getProductName(Order.Item item) {
         return productReader.getProductDetails(item.getProductNumber()).getDescription();
     }
@@ -250,11 +292,17 @@ public class CashierModel {
         this.propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
+    /**
+     * Current state of the model
+     */
     public enum State {
         PROCESS,
         CHECKED
     }
 
+    /**
+     * Properties that can be updated via {@link PropertyChangeSupport}
+     */
     public final static class Property {
         public static final String PROMPT = "prompt";
         public static final String STATE = "currentState";

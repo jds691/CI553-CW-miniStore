@@ -167,6 +167,11 @@ public class CashierView implements PropertyChangeListener {
         }
     }
 
+    /**
+     * Generates a list of OrderItemEditRow objects for the current order in the scrollPaneViewport
+     *
+     * @param order Order to generate list for
+     */
     private void generateItemRowList(Order order) {
         scrollPaneViewport.removeAll();
 
@@ -195,6 +200,12 @@ public class CashierView implements PropertyChangeListener {
         scrollPaneViewport.repaint();
     }
 
+    /**
+     * Creates an editable GUI object for a {@link Order.Item}
+     *
+     * @param item Item to link row to
+     * @return Constructed row component
+     */
     private JComponent createItemEditRow(Order.Item item) {
         JPanel itemEditRowPanel = new JPanel(new GridBagLayout());
         itemEditRowPanel.setMinimumSize(new Dimension(368, 0));
