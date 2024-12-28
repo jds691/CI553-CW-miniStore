@@ -1,5 +1,8 @@
 package clients.cashier;
 
+import clients.Picture;
+import logic.Order;
+
 import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
@@ -142,7 +145,7 @@ public class CashierView implements PropertyChangeListener {
                 State state = (State) evt.getNewValue();
 
                 if (state == State.CHECKED) {
-                    quantityInputModel = new SpinnerNumberModel(1, 1, controller.getCurrentProductQuantity(), 1);
+                    quantityInputModel = new SpinnerNumberModel(1, 1, controller.getProductQuantity(controller.getCurrentProduct().getProductNumber()), 1);
                     quantityInput.setModel(quantityInputModel);
                     addButton.setEnabled(true);
                     quantityInput.setEnabled(true);
@@ -154,10 +157,96 @@ public class CashierView implements PropertyChangeListener {
 
                 break;
             case CashierModel.Property.ORDER_CONTENTS:
+                scrollPaneViewport.removeAll();
+
+                Order order = (Order) evt.getNewValue();
+                Order.Item[] items = order.getAllItems();
+
+                int itemCount = 0;
+
+                for (Order.Item item : items) {
+                    itemCount += item.getQuantity();
+                    JComponent row = createItemEditRow(item);
+                    scrollPaneViewport.add(row);
+                }
+
+                quantityLabel.setText(
+                        itemCount == 1 ? "1 Item" : itemCount + " Items"
+                );
+
+                scrollPaneViewport.revalidate();
+                scrollPaneViewport.repaint();
+
                 break;
             default:
                 break;
                 //throw new IllegalStateException("Unexpected value: " + property);
         }
+    }
+
+    private JComponent createItemEditRow(Order.Item item) {
+        JPanel itemEditRowPanel = new JPanel(new GridBagLayout());
+        itemEditRowPanel.setMinimumSize(new Dimension(368, 0));
+        GridBagConstraints constraints = new GridBagConstraints();
+
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+        constraints.gridheight = 2;
+        constraints.ipadx = 8;
+        constraints.anchor = GridBagConstraints.CENTER;
+
+        Picture itemIcon = new Picture(42, 42);
+        itemIcon.clear();
+        itemIcon.set(controller.getItemIcon(item));
+
+        itemEditRowPanel.add(itemIcon, constraints);
+
+        constraints.gridx = 1;
+        constraints.gridy = 0;
+        constraints.gridheight = 1;
+        constraints.ipadx = 0;
+        constraints.anchor = GridBagConstraints.LINE_START;
+
+        Font boldFont = new Font("Dialog", Font.BOLD, 14);
+
+        JLabel productNameLabel = new JLabel(
+                controller.getProductName(item)
+        );
+        productNameLabel.setFont(boldFont);
+
+        itemEditRowPanel.add(productNameLabel, constraints);
+
+        constraints.gridx = 1;
+        constraints.gridy = 1;
+        constraints.gridheight = 1;
+        constraints.ipadx = 0;
+        constraints.anchor = GridBagConstraints.LINE_START;
+
+        JLabel productNumberLabel = new JLabel(
+                String.format("#%s", item.getProductNumber())
+        );
+
+        itemEditRowPanel.add(productNumberLabel, constraints);
+
+        constraints.gridx = 2;
+        constraints.gridy = 0;
+        constraints.gridheight = 2;
+        constraints.ipadx = 0;
+        constraints.anchor = GridBagConstraints.LINE_START;
+
+        JSpinner quantityInput = new JSpinner(new SpinnerNumberModel(item.getQuantity(), 1, this.controller.getProductQuantity(item.getProductNumber()), 1));
+        itemEditRowPanel.add(quantityInput, constraints);
+
+        constraints.gridx = 3;
+        constraints.gridy = 0;
+        constraints.gridheight = 2;
+        constraints.ipadx = 0;
+        constraints.anchor = GridBagConstraints.LINE_START;
+
+        JButton removeButton = new JButton("Remove");
+        //removeButton.addActionListener();
+        itemEditRowPanel.add(removeButton, constraints);
+
+        return itemEditRowPanel;
     }
 }

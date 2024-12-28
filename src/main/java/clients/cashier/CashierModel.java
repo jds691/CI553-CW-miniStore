@@ -3,6 +3,7 @@ package clients.cashier;
 import debug.DEBUG;
 import logic.*;
 
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Currency;
@@ -53,6 +54,10 @@ public class CashierModel {
      */
     public Order getCurrentOrder() {
         return currentOrder;
+    }
+
+    public Product getCurrentProduct() {
+        return currentProduct;
     }
 
     /**
@@ -110,6 +115,7 @@ public class CashierModel {
             if (stockBought) {
                 makeBasketIfRequired();
                 currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
+                propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
                 prompt = "Purchased " + currentProduct.getDescription();
             } else {
                 prompt = "!!! Not in stock";
@@ -180,8 +186,16 @@ public class CashierModel {
         return stringBuilder.toString();
     }
 
-    public int getCurrentProductQuantity() {
-        return currentProduct.getQuantity();
+    public int getProductQuantity(String productNumber) {
+        return productReader.getProductDetails(productNumber).getQuantity();
+    }
+
+    public ImageIcon getItemIcon(Order.Item item) {
+        return productReader.getProductImage(item.getProductNumber());
+    }
+
+    public String getProductName(Order.Item item) {
+        return productReader.getProductDetails(item.getProductNumber()).getDescription();
     }
 
     /**

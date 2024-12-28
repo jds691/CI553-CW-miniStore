@@ -1,7 +1,9 @@
 package clients.cashier;
 
 import logic.Order;
+import logic.Product;
 
+import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
 /**
@@ -39,6 +41,10 @@ public class CashierController {
         return model.getCurrentOrder();
     }
 
+    public Product getCurrentProduct() {
+        return model.getCurrentProduct();
+    }
+
     /**
      * Bought interaction from view
      */
@@ -50,8 +56,16 @@ public class CashierController {
         return model.getOrderDescription();
     }
 
-    public int getCurrentProductQuantity() {
-        return model.getCurrentProductQuantity();
+    public ImageIcon getItemIcon(Order.Item item) {
+        return model.getItemIcon(item);
+    }
+
+    public String getProductName(Order.Item item) {
+        return model.getProductName(item);
+    }
+
+    public int getProductQuantity(String productNumber) {
+        return model.getProductQuantity(productNumber);
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
