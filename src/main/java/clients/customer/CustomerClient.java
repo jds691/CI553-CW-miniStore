@@ -29,7 +29,6 @@ public class CustomerClient {
         CustomerController controller = new CustomerController(model);
         view.setController(controller);
 
-        model.addObserver(view);
         window.setVisible(true);
     }
 }

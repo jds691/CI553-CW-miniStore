@@ -24,26 +24,28 @@ class Setup {
     private static final String[] sqlStatements = {
             "create table ProductTable (" +
                     "productNo      Char(4)," +
-                    "description    Varchar(40)," +
+                    "name    Varchar(40)," +
+                    // Based on Figma testing
+                    "description    Varchar(120)," +
                     "picture        Varchar(80)," +
                     "price          Float,"+
                     "CONSTRAINT Product_PK PRIMARY KEY (productNo)"+
             ")",
 
             "insert into ProductTable values " +
-                    "('0001', '40 inch LED HD TV', 'images/pic0001.jpg', 269.00)",
+                    "('0001', '40 inch LED HD TV', 'Discover over 500,000 movies and shows from the likes of Netflix, Prime Video, and Disney+ with the best TV around!', 'images/pic0001.jpg', 269.00)",
             "insert into ProductTable values " +
-                    "('0002', 'DAB Radio',         'images/pic0002.jpg', 29.99)",
+                    "('0002', 'DAB Radio', 'Enjoy your favourite radio stations on the go, at home, and in style with the Play 11 from loved radio experts Roberts.', 'images/pic0002.jpg', 29.99)",
             "insert into ProductTable values " +
-                    "('0003', 'Toaster',           'images/pic0003.jpg', 19.99)",
+                    "('0003', 'Toaster', '5 different settings for all of your toasting needs.','images/pic0003.jpg', 19.99)",
             "insert into ProductTable values " +
-                    "('0004', 'Watch',             'images/pic0004.jpg', 29.99)",
+                    "('0004', 'Watch', 'A fashionable timepiece that is always for you.', 'images/pic0004.jpg', 29.99)",
             "insert into ProductTable values " +
-                    "('0005', 'Digital Camera',    'images/pic0005.jpg', 89.99)",
+                    "('0005', 'Digital Camera', 'Take crystal clear images images with the latest and greatest 24MP camera.', 'images/pic0005.jpg', 89.99)",
             "insert into ProductTable values " +
-                    "('0006', 'MP3 player',        'images/pic0006.jpg', 7.99)",
+                    "('0006', 'MP3 player', 'Listen to your whole music collection in stunning 128kp/s quality.', 'images/pic0006.jpg', 7.99)",
             "insert into ProductTable values " +
-                    "('0007', '32Gb USB2 drive',   'images/pic0007.jpg', 6.99)",
+                    "('0007', '32Gb USB2 drive', 'High read-write speeds for all your work needs wth reliable USB 3.1.', 'images/pic0007.jpg', 6.99)",
 
             "create table StockTable (" +
                     "productNo      Char(4)," +

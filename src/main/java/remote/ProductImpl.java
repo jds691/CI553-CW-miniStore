@@ -4,13 +4,15 @@ import logic.Product;
 
 class ProductImpl implements Product {
     private String productNumber;
+    private String name;
     private String description;
     private double price;
     private int quantity;
     private String imageFilename;
 
-    public ProductImpl(String productNumber, String description, double price, int quantity, String imageFilename) {
+    public ProductImpl(String productNumber, String name, String description, double price, int quantity, String imageFilename) {
         this.productNumber = productNumber;
+        this.name = name;
         this.description = description;
         this.price = price;
         this.quantity = quantity;
@@ -25,6 +27,16 @@ class ProductImpl implements Product {
     @Override
     public void setProductNumber(String value) {
         productNumber = value;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String value) {
+        name = value;
     }
 
     @Override

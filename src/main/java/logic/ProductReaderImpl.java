@@ -14,7 +14,7 @@ class ProductReaderImpl implements ProductReader {
 
     @Override
     public boolean doesProductExist(String productNumber) {
-        return productRepository.read(productNumber) != null;
+        return !productRepository.read(productNumber).getProductNumber().equals("0");
     }
 
     @Override

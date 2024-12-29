@@ -23,6 +23,7 @@ class ProductRepository extends Repository<Product> {
             ProductImpl product = new ProductImpl(
                     "0",
                     "",
+                    "",
                     0.00,
                     0,
                     "default.jpg"
@@ -30,7 +31,7 @@ class ProductRepository extends Repository<Product> {
 
             ResultSet results;
             try (PreparedStatement statement = connection.prepareStatement(
-                    "select description, price, stockLevel, picture from ProductTable, StockTable where  ProductTable.productNo = ? and StockTable.productNo = ?"
+                    "select name, description, price, stockLevel, picture from ProductTable, StockTable where  ProductTable.productNo = ? and StockTable.productNo = ?"
             )) {
                 statement.setString(1, id);
                 statement.setString(2, id);
@@ -39,6 +40,7 @@ class ProductRepository extends Repository<Product> {
 
                 if (results.next()) {
                     product.setProductNumber(id);
+                    product.setName(results.getString("name"));
                     product.setDescription(results.getString("description"));
                     product.setPrice(results.getDouble("price"));
                     product.setQuantity(results.getInt("stockLevel"));

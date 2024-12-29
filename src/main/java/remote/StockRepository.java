@@ -32,7 +32,7 @@ class StockRepository extends Repository<Product> {
             try (PreparedStatement statement = connection.prepareStatement(
                     "update ProductTable set description = ?, price = ? where productNo = ?"
             )) {
-                statement.setString(1, product.getDescription());
+                statement.setString(1, product.getName());
                 statement.setDouble(2, product.getPrice());
                 statement.setString(3, product.getProductNumber());
 

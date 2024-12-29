@@ -136,7 +136,7 @@ public class CashierModel {
             if (product.getQuantity() >= amount) {
                 prompt = String.format(
                         "%s : %7.2f (%2d) ",
-                        product.getDescription(),
+                        product.getName(),
                         product.getPrice(),
                         product.getQuantity()
                 );
@@ -147,7 +147,7 @@ public class CashierModel {
                 currentState = State.CHECKED;
                 propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             } else {
-                prompt = product.getDescription() + " not in stock";
+                prompt = product.getName() + " not in stock";
                 propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             }
         } else {
@@ -174,7 +174,7 @@ public class CashierModel {
                 makeBasketIfRequired();
                 currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
                 propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
-                prompt = "Purchased " + currentProduct.getDescription();
+                prompt = "Purchased " + currentProduct.getName();
             } else {
                 prompt = "!!! Not in stock";
             }
@@ -229,7 +229,7 @@ public class CashierModel {
             for (Order.Item item : currentOrder.getAllItems()) {
                 Product product = productReader.getProductDetails(item.getProductNumber());
                 formatter.format("%-7s", product.getProductNumber());
-                formatter.format("%-14.14s ", product.getDescription());
+                formatter.format("%-14.14s ", product.getName());
                 formatter.format("(%3d) ", item.getQuantity());
                 formatter.format("%s%7.2f", currencySymbol, product.getPrice() * item.getQuantity());
                 formatter.format("\n");
@@ -272,7 +272,7 @@ public class CashierModel {
      * @return Name of product
      */
     public String getProductName(Order.Item item) {
-        return productReader.getProductDetails(item.getProductNumber()).getDescription();
+        return productReader.getProductDetails(item.getProductNumber()).getName();
     }
 
     /**

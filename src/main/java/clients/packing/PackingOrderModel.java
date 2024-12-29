@@ -34,6 +34,6 @@ public class PackingOrderModel {
     }
 
     public String getProductName(Order.Item item) {
-        return productReader.getProductDetails(item.getProductNumber()).getDescription();
+        return productReader.getProductDetails(item.getProductNumber()).getName();
     }
 }

@@ -62,7 +62,7 @@ public class BackDoorModel extends Observable {
             Product product = productReader.getProductDetails(this.productNumber);
             prompt = String.format(
                     "%s : %7.2f (%2d) ",
-                    product.getDescription(),
+                    product.getName(),
                     product.getPrice(),
                     product.getQuantity()
             );
