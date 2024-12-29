@@ -22,14 +22,15 @@ public class CustomerView implements Observer {
     private static final int WIDTH = 400;
 
     private final JLabel pageTitle = new JLabel();
-    private final JLabel promptLabel = new JLabel();
+    private final Picture productPicture = new Picture(120, 120);
+    private final JLabel productNameLabel = new JLabel();
+    private final JLabel productMetadataLabel = new JLabel();
+    private final JLabel productDescriptionLabel = new JLabel();
+    private final JLabel productNumberPromptLabel = new JLabel();
     private final JTextField productNumberInput = new JTextField();
-    private final JTextArea messageOutput = new JTextArea();
-    private final JScrollPane messageScrollPane = new JScrollPane();
-    private final JButton checkButton = new JButton(Name.CHECK);
-    private final JButton clearButton = new JButton(Name.CLEAR);
+    private final JButton searchButton = new JButton("Search");
 
-    private final Picture productPicture = new Picture(80, 80);
+
     private CustomerController controller = null;
 
     /**
@@ -46,42 +47,42 @@ public class CustomerView implements Observer {
         rootWindow.setSize(WIDTH, HEIGHT);
         rootWindow.setLocation(x, y);
 
-        Font monospaceFont = new Font("Monospaced", Font.PLAIN, 12);
-
-        pageTitle.setBounds(110, 0, 270, 20);
-        pageTitle.setText("Search products");
+        Font pageTitleFont = new Font("Dialog", Font.BOLD, 18);
+        pageTitle.setBounds(16, 16, 368, 20);
+        pageTitle.setFont(pageTitleFont);
+        pageTitle.setText("Product Search");
         contentPane.add(pageTitle);
 
-        checkButton.setBounds(16, 25, 80, 40);
-        checkButton.addActionListener(
-                e -> controller.doCheck(productNumberInput.getText())
-        );
-        contentPane.add(checkButton);
-
-        clearButton.setBounds(16, 25 + 60, 80, 40);
-        clearButton.addActionListener(
-                e -> controller.reset()
-        );
-        contentPane.add(clearButton);
-
-        promptLabel.setBounds(110, 25, 270, 20);
-        promptLabel.setText("");
-        contentPane.add(promptLabel);
-
-        productNumberInput.setBounds(110, 50, 270, 40);
-        productNumberInput.setText("");
-        contentPane.add(productNumberInput);
-
-        messageScrollPane.setBounds(110, 100, 270, 160);
-        messageOutput.setText("");
-        messageOutput.setFont(monospaceFont);
-        contentPane.add(messageScrollPane);
-        messageScrollPane.getViewport().add(messageOutput);
-
-        // Picture area
-        productPicture.setBounds(16, 25 + 60 * 2, 80, 80);
+        productPicture.setBounds(16, 56, 120, 120);
         contentPane.add(productPicture);
         productPicture.clear();
+
+        Font productNameFont = new Font("Dialog", Font.BOLD, 14);
+        productNameLabel.setBounds(152, 56, 232, 16);
+        productNameLabel.setFont(productNameFont);
+        contentPane.add(productNameLabel);
+
+        Font productMetadataFont = new Font("Dialog", Font.PLAIN, 10);
+        productMetadataLabel.setBounds(152, 72, 232, 12);
+        productMetadataLabel.setFont(productMetadataFont);
+        contentPane.add(productMetadataLabel);
+
+        productDescriptionLabel.setBounds(152, 89, 232, 87);
+        contentPane.add(productDescriptionLabel);
+
+        searchButton.setBounds(304, 214, 80, 40);
+        searchButton.addActionListener(
+                e -> controller.doCheck(productNumberInput.getText())
+        );
+        contentPane.add(searchButton);
+
+        productNumberPromptLabel.setBounds(16, 195, 270, 20);
+        productNumberPromptLabel.setText("Product Name/ID");
+        contentPane.add(productNumberPromptLabel);
+
+        productNumberInput.setBounds(16, 214, 270, 40);
+        productNumberInput.setText("");
+        contentPane.add(productNumberInput);
 
         rootWindow.setVisible(true);
         productNumberInput.requestFocus();
@@ -105,7 +106,7 @@ public class CustomerView implements Observer {
     public void update(Observable modelC, Object arg) {
         CustomerModel model = (CustomerModel) modelC;
         String message = (String) arg;
-        promptLabel.setText(message);
+        //promptLabel.setText(message);
         ImageIcon image = model.getPicture();
 
         if (image == null) {
