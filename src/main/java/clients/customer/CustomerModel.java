@@ -6,17 +6,15 @@ import logic.Product;
 import logic.ProductReader;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.Observable;
 
 /**
  * Implements the Model of the customer client
  */
 public class CustomerModel extends Observable {
-    // Bought items
-    private ArrayList<Product> products = null;
     private ProductReader productReader = null;
     private ImageIcon image = null;
+    private Product selectedProduct = null;
 
     /**
      * Construct the model of the Customer
@@ -25,23 +23,10 @@ public class CustomerModel extends Observable {
      */
     public CustomerModel(LogicFactory factory) {
         try {
-            // Database remote.access
             productReader = factory.getProductReader();
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
         }
-
-        // Initial Basket
-        products = new ArrayList<>();
-    }
-
-    /**
-     * return the Basket of products
-     *
-     * @return the basket of products
-     */
-    public ArrayList<Product> getProducts() {
-        return products;
     }
 
     /**
@@ -50,28 +35,14 @@ public class CustomerModel extends Observable {
      * @param productNumber The product number
      */
     public void queryProduct(String productNumber) {
-        products.clear();
+        selectedProduct = null;
+
         String prompt = "";
         // Product being processed
         productNumber = productNumber.trim();
-        int amount = 1;
         if (productReader.doesProductExist(productNumber)) {
-            Product product = productReader.getProductDetails(productNumber);
-            //  In stock?
-            if (product.getQuantity() >= amount) {
-                prompt = String.format(
-                        "%s : %7.2f (%2d) ",
-                        product.getDescription(),
-                        product.getPrice(),
-                        product.getQuantity()
-                );
-                //   Require 1
-                product.setQuantity(amount);
-                products.add(product);
-                image = productReader.getProductImage(productNumber);
-            } else {
-                prompt = product.getDescription() + " not in stock";
-            }
+            selectedProduct = productReader.getProductDetails(productNumber);
+            image = productReader.getProductImage(productNumber);
         } else {
             prompt = "Unknown product number " + productNumber;
         }
@@ -81,31 +52,26 @@ public class CustomerModel extends Observable {
     }
 
     /**
-     * Clear the products from the basket
-     */
-    public void reset() {
-        String prompt = "Enter Product Number";
-        products.clear();
-        image = null;
-        setChanged();
-        notifyObservers(prompt);
-    }
-
-    /**
      * Return a picture of the product
      *
      * @return An instance of an ImageIcon
      */
-    public ImageIcon getPicture() {
+    public ImageIcon getProductImage() {
         return image;
     }
 
-    /**
-     * ask for update of view callled at start
-     */
-    private void askForUpdate() {
-        setChanged();
-        notifyObservers("START only");
+    public String getProductName() {
+        return selectedProduct != null ? selectedProduct.getDescription() : null;
+    }
+
+    public String getProductMetadata() {
+        return selectedProduct != null ?
+                String.format("£%.2f • %d in stock", selectedProduct.getPrice(), selectedProduct.getQuantity()) :
+                null;
+    }
+
+    public String getProductDescription() {
+        return "Not implemented.";
     }
 }
 

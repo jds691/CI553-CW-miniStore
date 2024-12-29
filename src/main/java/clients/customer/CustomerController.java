@@ -11,7 +11,6 @@ public class CustomerController {
      * Constructor
      *
      * @param model The model
-     * @param view  The view from which the interaction came
      */
     public CustomerController(CustomerModel model) {
         this.model = model;
@@ -22,15 +21,20 @@ public class CustomerController {
      *
      * @param productNumber The product number to be checked
      */
-    public void doCheck(String productNumber) {
+    public void queryProduct(String productNumber) {
         model.queryProduct(productNumber);
     }
 
-    /**
-     * Clear interaction from view
-     */
-    public void reset() {
-        model.reset();
+    public String getProductName() {
+        return model.getProductName();
+    }
+
+    public String getProductMetadata() {
+        return model.getProductMetadata();
+    }
+
+    public String getProductDescription() {
+        return model.getProductDescription();
     }
 }
 

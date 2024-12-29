@@ -12,12 +12,6 @@ import java.util.Observer;
  */
 
 public class CustomerView implements Observer {
-    // Names of buttons
-    class Name {
-        public static final String CHECK = "Check";
-        public static final String CLEAR = "Clear";
-    }
-
     private static final int HEIGHT = 300;
     private static final int WIDTH = 400;
 
@@ -72,7 +66,7 @@ public class CustomerView implements Observer {
 
         searchButton.setBounds(304, 214, 80, 40);
         searchButton.addActionListener(
-                e -> controller.doCheck(productNumberInput.getText())
+                e -> controller.queryProduct(productNumberInput.getText())
         );
         contentPane.add(searchButton);
 
@@ -107,7 +101,7 @@ public class CustomerView implements Observer {
         CustomerModel model = (CustomerModel) modelC;
         String message = (String) arg;
         //promptLabel.setText(message);
-        ImageIcon image = model.getPicture();
+        ImageIcon image = model.getProductImage();
 
         if (image == null) {
             productPicture.clear();
