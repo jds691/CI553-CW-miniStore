@@ -4,6 +4,9 @@ public interface Product {
     String getProductNumber();
     void setProductNumber(String value);
 
+    String getName();
+    void setName(String value);
+
     String getDescription();
     void setDescription(String value);
 

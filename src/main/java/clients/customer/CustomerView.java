@@ -21,7 +21,7 @@ public class CustomerView implements PropertyChangeListener {
     private final Picture productPicture = new Picture(120, 120);
     private final JLabel productNameLabel = new JLabel();
     private final JLabel productMetadataLabel = new JLabel();
-    private final JLabel productDescriptionLabel = new JLabel();
+    private final JTextArea productDescriptionLabel = new JTextArea();
     private final JLabel productNumberPromptLabel = new JLabel();
     private final JTextField productNumberInput = new JTextField();
     private final JButton searchButton = new JButton("Search");
@@ -66,6 +66,11 @@ public class CustomerView implements PropertyChangeListener {
         contentPane.add(productMetadataLabel);
 
         productDescriptionLabel.setBounds(152, 89, 232, 87);
+        productDescriptionLabel.setWrapStyleWord(true);
+        productDescriptionLabel.setLineWrap(true);
+        productDescriptionLabel.setEditable(false);
+        productDescriptionLabel.setOpaque(false);
+        productDescriptionLabel.setFocusable(false);
         contentPane.add(productDescriptionLabel);
 
         searchButton.setBounds(304, 214, 80, 40);

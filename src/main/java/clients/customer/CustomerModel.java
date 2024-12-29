@@ -64,7 +64,7 @@ public class CustomerModel {
     }
 
     public String getProductName() {
-        return selectedProduct != null ? selectedProduct.getDescription() : null;
+        return selectedProduct != null ? selectedProduct.getName() : null;
     }
 
     public String getProductMetadata() {
@@ -74,7 +74,7 @@ public class CustomerModel {
     }
 
     public String getProductDescription() {
-        return "Not implemented.";
+        return selectedProduct != null ? selectedProduct.getDescription() : null;
     }
 
     public void addPropertyChangeListener(PropertyChangeListener listener) {
