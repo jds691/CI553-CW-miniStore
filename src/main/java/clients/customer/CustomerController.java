@@ -1,5 +1,8 @@
 package clients.customer;
 
+import javax.swing.*;
+import java.beans.PropertyChangeListener;
+
 /**
  * The Customer Controller
  */
@@ -35,6 +38,18 @@ public class CustomerController {
 
     public String getProductDescription() {
         return model.getProductDescription();
+    }
+
+    public ImageIcon getProductImage() {
+        return model.getProductImage();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        model.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        model.removePropertyChangeListener(listener);
     }
 }
 

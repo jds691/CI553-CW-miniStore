@@ -4,14 +4,16 @@ import clients.Picture;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import static clients.customer.CustomerModel.Property;
 
 /**
  * Implements the Customer view.
  */
 
-public class CustomerView implements Observer {
+public class CustomerView implements PropertyChangeListener {
     private static final int HEIGHT = 300;
     private static final int WIDTH = 400;
 
@@ -23,6 +25,8 @@ public class CustomerView implements Observer {
     private final JLabel productNumberPromptLabel = new JLabel();
     private final JTextField productNumberInput = new JTextField();
     private final JButton searchButton = new JButton("Search");
+
+    private final JLabel promptLabel = new JLabel();
 
 
     private CustomerController controller = null;
@@ -78,6 +82,15 @@ public class CustomerView implements Observer {
         productNumberInput.setText("");
         contentPane.add(productNumberInput);
 
+        promptLabel.setBounds(16, 56, 368, 120);
+        promptLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        promptLabel.setVerticalAlignment(SwingConstants.CENTER);
+        promptLabel.setFont(pageTitleFont);
+        contentPane.add(promptLabel);
+
+        setProductDetailsVisible(false);
+        setPromptLabel("Search Product");
+
         rootWindow.setVisible(true);
         productNumberInput.requestFocus();
     }
@@ -89,16 +102,12 @@ public class CustomerView implements Observer {
      */
     public void setController(CustomerController controller) {
         this.controller = controller;
+        this.controller.addPropertyChangeListener(this);
     }
 
-    /**
-     * Update the view
-     *
-     * @param modelC The observed model
-     * @param arg    Specific args
-     */
-    public void update(Observable modelC, Object arg) {
-        CustomerModel model = (CustomerModel) modelC;
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        /*CustomerModel model = (CustomerModel) modelC;
         String message = (String) arg;
         //promptLabel.setText(message);
         ImageIcon image = model.getProductImage();
@@ -111,6 +120,47 @@ public class CustomerView implements Observer {
 
         //TODO: Add back rich message output
         //messageOutput.setText(model.getProducts().getRichDescription());
-        productNumberInput.requestFocus();
+        productNumberInput.requestFocus();*/
+
+        String property = evt.getPropertyName();
+
+        switch (property) {
+            case Property.PROMPT:
+                setPromptLabel((String) evt.getNewValue());
+                break;
+            case Property.SELECTED_PRODUCT:
+                Object value = evt.getNewValue();
+
+                if (value != null) {
+                    productNameLabel.setText(controller.getProductName());
+                    productMetadataLabel.setText(controller.getProductMetadata());
+                    productDescriptionLabel.setText(controller.getProductDescription());
+                    productPicture.set(controller.getProductImage());
+                    setProductDetailsVisible(true);
+                } else {
+                    setProductDetailsVisible(false);
+                }
+                break;
+            default:
+                break;
+            //throw new IllegalStateException("Unexpected value: " + property);
+        }
+    }
+
+    private void setProductDetailsVisible(boolean visible) {
+        productPicture.setVisible(visible);
+        productNameLabel.setVisible(visible);
+        productMetadataLabel.setVisible(visible);
+        productDescriptionLabel.setVisible(visible);
+    }
+
+    private void setPromptLabel(String text) {
+        if (text.isBlank()) {
+            promptLabel.setVisible(false);
+            return;
+        }
+
+        promptLabel.setText(text);
+        promptLabel.setVisible(true);
     }
 }
