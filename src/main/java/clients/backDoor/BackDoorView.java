@@ -86,7 +86,7 @@ public class BackDoorView implements Observer {
 
         // Scrolling pane
         messageScrollPane.setBounds(110, 100, 270, 160);
-        messageOutput.setText("");
+        messageOutput.setText("History:\n\n");
         messageOutput.setFont(monospaceFont);
         contentPane.add(messageScrollPane);
 
@@ -111,8 +111,7 @@ public class BackDoorView implements Observer {
         String message = (String) arg;
         promptLabel.setText(message);
 
-        //TODO: Reimplement message output
-        //messageOutput.setText(model.getProducts().getRichDescription());
+        messageOutput.setText(model.getHistory());
         productNumberInput.requestFocus();
     }
 }

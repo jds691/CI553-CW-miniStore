@@ -6,7 +6,6 @@ import logic.Product;
 import logic.ProductReader;
 import logic.StockWriter;
 
-import java.util.ArrayList;
 import java.util.Observable;
 
 /**
@@ -14,16 +13,14 @@ import java.util.Observable;
  */
 public class BackDoorModel extends Observable {
     /**
-     * Bought items
-     */
-    private ArrayList<Product> products = null;
-    /**
      * Product being processed
      */
     private String productNumber = "";
 
     private ProductReader productReader = null;
     private StockWriter stockWriter = null;
+
+    private String history = "History:\n\n";
 
     /**
      * Construct the model of the back door client
@@ -36,17 +33,6 @@ public class BackDoorModel extends Observable {
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }
-
-        products = new ArrayList<>();
-    }
-
-    /**
-     * Get the Basket of products
-     *
-     * @return basket
-     */
-    public ArrayList<Product> getProducts() {
-        return products;
     }
 
     /**
@@ -82,14 +68,13 @@ public class BackDoorModel extends Observable {
      */
     public void restockProduct(String productNumber, int quantity) {
         String prompt;
-        products = new ArrayList<>();
         this.productNumber = productNumber.trim();
 
         if (productReader.doesProductExist(this.productNumber)) {
             Product product = productReader.getProductDetails(this.productNumber);
             stockWriter.addStock(product, quantity);
-            products.add(product);
             prompt = "";
+            history += String.format("%s: (+%d) (Now: %d)\n", product.getName(), quantity, product.getQuantity());
         } else {
             prompt = "Unknown product number " + this.productNumber;
         }
@@ -103,9 +88,13 @@ public class BackDoorModel extends Observable {
      */
     public void reset() {
         String prompt = "Enter Product Number";
-        products.clear();
+        history = "History:\n\n";
         setChanged();
         notifyObservers(prompt);
+    }
+    
+    public String getHistory() {
+        return history;
     }
 }
 
