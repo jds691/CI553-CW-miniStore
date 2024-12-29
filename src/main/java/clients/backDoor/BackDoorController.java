@@ -30,16 +30,12 @@ public class BackDoorController {
      * @param productNumber       The product number to be re-stocked
      * @param quantity The quantity to be re-stocked
      */
-    public void restockProduct(String productNumber, String quantity) throws NumberFormatException {
-        quantity = quantity.trim();
-
-        int numericQuantity = Integer.parseInt(quantity);
-
-        if (numericQuantity < 1) {
+    public void restockProduct(String productNumber, int quantity) throws NumberFormatException {
+        if (quantity < 1) {
             throw new NumberFormatException("Quantity must be greater than 0");
         }
 
-        model.restockProduct(productNumber, numericQuantity);
+        model.restockProduct(productNumber, quantity);
     }
 
     /**

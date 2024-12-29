@@ -19,7 +19,7 @@ public class BackDoorView implements Observer {
     private final JLabel pageTitle = new JLabel();
     private final JLabel promptLabel = new JLabel();
     private final JTextField productNumberInput = new JTextField();
-    private final JTextField quantityInput = new JTextField();
+    private final JSpinner quantityInput = new JSpinner(new SpinnerNumberModel(0, 0, null, 1));
     private final JTextArea messageOutput = new JTextArea();
     private final JScrollPane messageScrollPane = new JScrollPane();
     private final JButton clearButton = new JButton(CLEAR);
@@ -58,7 +58,7 @@ public class BackDoorView implements Observer {
         restockButton.setBounds(16, 25 + 60, 80, 40);
         restockButton.addActionListener(e -> {
             try {
-                controller.restockProduct(productNumberInput.getText(), quantityInput.getText());
+                controller.restockProduct(productNumberInput.getText(), ((Number) quantityInput.getValue()).intValue());
             } catch (NumberFormatException exception) {
                 promptLabel.setText(exception.getMessage());
             }
@@ -82,7 +82,6 @@ public class BackDoorView implements Observer {
 
         // Input Area
         quantityInput.setBounds(260, 50, 120, 40);
-        quantityInput.setText("0");
         contentPane.add(quantityInput);
 
         // Scrolling pane

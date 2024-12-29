@@ -101,7 +101,6 @@ public class BackDoorModel extends Observable {
     /**
      * Clear the product
      */
-    //TODO: Figure out what this is actually responsible for
     public void reset() {
         String prompt = "Enter Product Number";
         products.clear();
