@@ -1,5 +1,6 @@
 package clients.cashier;
 
+import clients.adapters.ProductNameAdapter;
 import debug.DEBUG;
 import logic.*;
 
@@ -27,6 +28,7 @@ public class CashierModel {
     private StockWriter stockWriter = null;
     // Process order
     private OrderProcessor orderProcessor = null;
+    private ProductNameAdapter productNameAdapter = null;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -40,6 +42,7 @@ public class CashierModel {
             productReader = factory.getProductReader();
             stockWriter = factory.getStockWriter();
             orderProcessor = factory.getOrderProcessor();
+            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
         } catch (Exception e) {
             DEBUG.error("CashierModel.constructor\n%s", e.getMessage());
         }
@@ -130,6 +133,11 @@ public class CashierModel {
         // Product being processed
         productNumber = productNumber.trim();
         int amount = 1;
+
+        // productNumber must be only numbers and at least 1
+        if (!productNumber.matches("^[0-9]+$")) {
+            productNumber = productNameAdapter.getProductNumber(productNumber);
+        }
 
         if (productReader.doesProductExist(productNumber)) {
             Product product = productReader.getProductDetails(productNumber);

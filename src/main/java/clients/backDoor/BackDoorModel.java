@@ -1,5 +1,6 @@
 package clients.backDoor;
 
+import clients.adapters.ProductNameAdapter;
 import debug.DEBUG;
 import logic.LogicFactory;
 import logic.Product;
@@ -19,6 +20,7 @@ public class BackDoorModel extends Observable {
 
     private ProductReader productReader = null;
     private StockWriter stockWriter = null;
+    private ProductNameAdapter productNameAdapter = null;
 
     private String history = "History:\n\n";
 
@@ -30,6 +32,7 @@ public class BackDoorModel extends Observable {
         try {
             productReader = factory.getProductReader();
             stockWriter = factory.getStockWriter();
+            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }
@@ -69,6 +72,11 @@ public class BackDoorModel extends Observable {
     public void restockProduct(String productNumber, int quantity) {
         String prompt;
         this.productNumber = productNumber.trim();
+
+        // productNumber must be only numbers and at least 1
+        if (!this.productNumber.matches("^[0-9]+$")) {
+            this.productNumber = productNameAdapter.getProductNumber(this.productNumber);
+        }
 
         if (productReader.doesProductExist(this.productNumber)) {
             Product product = productReader.getProductDetails(this.productNumber);

@@ -33,4 +33,9 @@ class ProductReaderImpl implements ProductReader {
             return new ImageIcon(Path.of("src", "main", "java", filename).toString());
         }
     }
+
+    @Override
+    public Repository<Product> getRepository() {
+        return productRepository;
+    }
 }

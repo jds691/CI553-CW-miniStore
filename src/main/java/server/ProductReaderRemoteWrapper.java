@@ -2,6 +2,7 @@ package server;
 
 import logic.Product;
 import logic.ProductReader;
+import remote.Repository;
 
 import javax.swing.*;
 import java.io.Serial;
@@ -34,5 +35,10 @@ class ProductReaderRemoteWrapper
     @Override
     public synchronized ImageIcon getProductImage(String pNum) {
         return origin.getProductImage(pNum);
+    }
+
+    @Override
+    public Repository<Product> getRepository() {
+        return origin.getRepository();
     }
 }
