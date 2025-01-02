@@ -1,5 +1,7 @@
 package logic;
 
+import remote.Repository;
+
 import javax.swing.*;
 import java.rmi.Remote;
 
@@ -28,4 +30,10 @@ public interface ProductReader extends Remote {
      * @return Image
      */
     ImageIcon getProductImage(String pNum);
+    /**
+     * Gets the underlying data repository this is reading from
+     *
+     * @return Data repository
+     */
+    Repository<Product> getRepository();
 }

@@ -1,5 +1,6 @@
 package clients.customer;
 
+import clients.adapters.ProductNameAdapter;
 import debug.DEBUG;
 import logic.LogicFactory;
 import logic.Product;
@@ -16,6 +17,7 @@ public class CustomerModel {
     private ProductReader productReader = null;
     private ImageIcon image = null;
     private Product selectedProduct = null;
+    private ProductNameAdapter productNameAdapter = null;
 
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -27,6 +29,7 @@ public class CustomerModel {
     public CustomerModel(LogicFactory factory) {
         try {
             productReader = factory.getProductReader();
+            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
         }
@@ -43,6 +46,12 @@ public class CustomerModel {
         String prompt = "";
         // Product being processed
         productNumber = productNumber.trim();
+
+        // productNumber must be only numbers and at least 1
+        if (!productNumber.matches("^[0-9]+$")) {
+            productNumber = productNameAdapter.getProductNumber(productNumber);
+        }
+
         if (productReader.doesProductExist(productNumber)) {
             selectedProduct = productReader.getProductDetails(productNumber);
             image = productReader.getProductImage(productNumber);
