@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 class ProductRepository extends Repository<Product> {
     public ProductRepository(Connection connection) {
@@ -60,7 +61,26 @@ class ProductRepository extends Repository<Product> {
 
     @Override
     public Product[] readAll() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ArrayList<Product> products = new ArrayList<>();
+
+        try {
+            ResultSet results;
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select PRODUCTNO from ProductTable"
+            )) {
+                results = statement.executeQuery();
+
+                if (results.next()) {
+                    products.add(read(results.getString("PRODUCTNO")));
+                }
+
+                results.close();
+            }
+        } catch (SQLException e) {
+
+        }
+
+        return products.toArray(new Product[0]);
     }
 
     @Override
