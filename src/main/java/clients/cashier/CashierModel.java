@@ -7,9 +7,7 @@ import logic.*;
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.Currency;
-import java.util.Formatter;
-import java.util.Locale;
+import java.rmi.RemoteException;
 
 /**
  * Implements the Model of the cashier client
@@ -30,6 +28,8 @@ public class CashierModel {
     private OrderProcessor orderProcessor = null;
     private ProductNameAdapter productNameAdapter = null;
 
+    private boolean wasLastPromptError = false;
+
     private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
@@ -48,6 +48,15 @@ public class CashierModel {
         }
 
         currentState = State.PROCESS;
+    }
+
+    public boolean getWasLastPromptError() {
+        if (wasLastPromptError) {
+            wasLastPromptError = false;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -139,28 +148,34 @@ public class CashierModel {
             productNumber = productNameAdapter.getProductNumber(productNumber);
         }
 
-        if (productReader.doesProductExist(productNumber)) {
-            Product product = productReader.getProductDetails(productNumber);
-            if (product.getQuantity() >= amount) {
-                prompt = String.format(
-                        "%s : %7.2f (%2d) ",
-                        product.getName(),
-                        product.getPrice(),
-                        product.getQuantity()
-                );
+        try {
+            if (productReader.doesProductExist(productNumber)) {
+                Product product = productReader.getProductDetails(productNumber);
+                if (product.getQuantity() >= amount) {
+                    prompt = String.format(
+                            "%s : %7.2f (%2d) ",
+                            product.getName(),
+                            product.getPrice(),
+                            product.getQuantity()
+                    );
 
-                //   Remember prod.
-                currentProduct = product;
-                //   OK await BUY
-                currentState = State.CHECKED;
-                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+                    //   Remember prod.
+                    currentProduct = product;
+                    //   OK await BUY
+                    currentState = State.CHECKED;
+                    propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+                } else {
+                    prompt = product.getName() + " not in stock";
+                    propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+                }
             } else {
-                prompt = product.getName() + " not in stock";
+                prompt = "Unknown product number " + productNumber;
                 propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
             }
-        } else {
-            prompt = "Unknown product number " + productNumber;
-            propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+        } catch (RemoteException e) {
+            prompt = "Unable to connect to server";
+            System.err.println("RemoteException: " + e.getMessage());
+            wasLastPromptError = true;
         }
 
         propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
@@ -176,21 +191,28 @@ public class CashierModel {
             prompt = "please check its availability";
         } else {
             //TODO: WHY DO WE DIRECTLY BUY STOCK BEFORE THE ORDER IS BOUGHT???
-            boolean stockBought = stockWriter.buyStock(currentProduct, quantity);
+            try {
+                boolean stockBought = stockWriter.buyStock(currentProduct, quantity);
 
-            if (stockBought) {
-                makeBasketIfRequired();
-                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
-                propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
-                prompt = "Purchased " + currentProduct.getName();
-            } else {
-                prompt = "!!! Not in stock";
+                if (stockBought) {
+                    makeBasketIfRequired();
+                    currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
+                    propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
+                    prompt = "Purchased " + currentProduct.getName();
+                } else {
+                    prompt = "!!! Not in stock";
+                }
+
+                // Return to State.PROCESS when done
+                currentState = State.PROCESS;
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+            } catch (RemoteException e) {
+                prompt = "Unable to connect to server";
+                System.err.println("RemoteException: " + e.getMessage());
+                wasLastPromptError = true;
             }
         }
 
-        // Return to State.PROCESS when done
-        currentState = State.PROCESS;
-        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
         propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
@@ -198,18 +220,24 @@ public class CashierModel {
      * Customer pays for the contents of the basket
      */
     public void buyBasket() {
-        String prompt;
+        String prompt = "";
 
         if (currentOrder != null && !currentOrder.isEmpty()) {
-            orderProcessor.addOrderToQueue(currentOrder);
+            try {
+                orderProcessor.addOrderToQueue(currentOrder);
+
+                prompt = "Start New Order";
+                currentState = State.PROCESS;
+                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+
+                currentOrder = null;
+                propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
+            } catch (RemoteException e) {
+                prompt = "Unable to connect to server";
+                System.err.println("RemoteException: " + e.getMessage());
+                wasLastPromptError = true;
+            }
         }
-
-        prompt = "Start New Order";
-        currentState = State.PROCESS;
-        propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
-
-        currentOrder = null;
-        propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
 
         propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
@@ -222,45 +250,21 @@ public class CashierModel {
         propertyChangeSupport.firePropertyChange(Property.PROMPT, null, "Welcome!");
     }
 
-    //TODO: See if theres a way to make a unified source for this
-    public String getOrderDescription() {
-        Locale locale = Locale.UK;
-        StringBuilder stringBuilder = new StringBuilder(256);
-        Formatter formatter = new Formatter(stringBuilder, locale);
-        String currencySymbol = (Currency.getInstance(locale)).getSymbol();
-        double total = 0.00;
-
-        if (currentOrder.getOrderNumber() != 0)
-            formatter.format("Order number: %03d\n", currentOrder.getOrderNumber());
-
-        if (!currentOrder.isEmpty()) {
-            for (Order.Item item : currentOrder.getAllItems()) {
-                Product product = productReader.getProductDetails(item.getProductNumber());
-                formatter.format("%-7s", product.getProductNumber());
-                formatter.format("%-14.14s ", product.getName());
-                formatter.format("(%3d) ", item.getQuantity());
-                formatter.format("%s%7.2f", currencySymbol, product.getPrice() * item.getQuantity());
-                formatter.format("\n");
-                total += product.getPrice() * item.getQuantity();
-            }
-
-            formatter.format("----------------------------\n");
-            formatter.format("Total                       ");
-            formatter.format("%s%7.2f\n", currencySymbol, total);
-            formatter.close();
-        }
-
-        return stringBuilder.toString();
-    }
-
     /**
      * Gets the quantity of the specified item currently in stock
      *
      * @param productNumber Product number of product to check
      * @return Quantity in stock
+     *
+     * @throws RuntimeException Shouldn't fail as the product information was previously available
      */
     public int getProductQuantity(String productNumber) {
-        return productReader.getProductDetails(productNumber).getQuantity();
+        try {
+            return productReader.getProductDetails(productNumber).getQuantity();
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -268,9 +272,16 @@ public class CashierModel {
      *
      * @param item Item that the product is associated with
      * @return Image to display in a {@link clients.Picture}
+     *
+     * @throws RuntimeException Shouldn't fail as the product information was previously available
      */
     public ImageIcon getItemIcon(Order.Item item) {
-        return productReader.getProductImage(item.getProductNumber());
+        try {
+            return productReader.getProductImage(item.getProductNumber());
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -278,15 +289,22 @@ public class CashierModel {
      *
      * @param item Item that the product is associated with
      * @return Name of product
+     *
+     * @throws RuntimeException Shouldn't fail as the product information was previously available
      */
     public String getProductName(Order.Item item) {
-        return productReader.getProductDetails(item.getProductNumber()).getName();
+        try {
+            return productReader.getProductDetails(item.getProductNumber()).getName();
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * make a Basket when required
      */
-    private void makeBasketIfRequired() {
+    private void makeBasketIfRequired() throws RemoteException {
         if (currentOrder == null) {
             currentOrder = orderProcessor.createOrder();
         }
