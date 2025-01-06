@@ -2,7 +2,6 @@ package server;
 
 import logic.Product;
 import logic.ProductReader;
-import remote.Repository;
 
 import javax.swing.*;
 import java.io.Serial;
@@ -19,26 +18,28 @@ class ProductReaderRemoteWrapper
     private final ProductReader origin;
 
     public ProductReaderRemoteWrapper(ProductReader origin) throws RemoteException {
+        super();
+
         this.origin = origin;
     }
 
     @Override
-    public synchronized boolean doesProductExist(String productNumber) {
+    public synchronized boolean doesProductExist(String productNumber) throws RemoteException {
         return origin.doesProductExist(productNumber);
     }
 
     @Override
-    public synchronized Product getProductDetails(String pNum) {
+    public synchronized Product getProductDetails(String pNum) throws RemoteException {
         return origin.getProductDetails(pNum);
     }
 
     @Override
-    public synchronized ImageIcon getProductImage(String pNum) {
+    public synchronized ImageIcon getProductImage(String pNum) throws RemoteException {
         return origin.getProductImage(pNum);
     }
 
     @Override
-    public Repository<Product> getRepository() {
-        return origin.getRepository();
+    public Product[] readAllProducts() throws RemoteException {
+        return origin.readAllProducts();
     }
 }

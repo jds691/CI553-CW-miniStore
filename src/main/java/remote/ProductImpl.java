@@ -2,7 +2,9 @@ package remote;
 
 import logic.Product;
 
-class ProductImpl implements Product {
+import java.io.Serializable;
+
+class ProductImpl implements Product, Serializable {
     private String productNumber;
     private String name;
     private String description;

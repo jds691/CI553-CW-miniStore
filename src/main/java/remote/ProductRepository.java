@@ -9,8 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 class ProductRepository extends Repository<Product> {
+    private final Connection connection;
+
     public ProductRepository(Connection connection) {
-        super(connection);
+        this.connection = connection;
     }
 
     @Override

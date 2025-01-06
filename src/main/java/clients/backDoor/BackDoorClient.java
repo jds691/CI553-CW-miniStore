@@ -11,14 +11,19 @@ import javax.swing.*;
  */
 public class BackDoorClient {
     public static void main(String[] args) {
-        String stockURL = args.length < 1     // URL of stock RW
-                        ? Endpoint.STOCK_WRITE      //  default  location
-                        : args[0];            //  supplied location
-        String orderURL = args.length < 2     // URL of order
-                        ? Endpoint.ORDER         //  default  location
-                        : args[1];            //  supplied location
+        String productURL = args.length < 1
+                ? Endpoint.PRODUCT_READ
+                : args[0];
 
-        RemoteLogicFactory factory = new RemoteLogicFactory(orderURL, null, stockURL);
+        String stockURL = args.length < 2
+                ? Endpoint.STOCK_WRITE
+                : args[1];
+
+        String orderURL = args.length < 3
+                ? Endpoint.ORDER
+                : args[2];
+
+        RemoteLogicFactory factory = new RemoteLogicFactory(orderURL, productURL, stockURL);
         displayGUI(factory);
     }
 

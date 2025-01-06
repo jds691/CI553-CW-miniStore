@@ -22,6 +22,15 @@ public class CashierController {
     }
 
     /**
+     * Determines whether the last prompt output by the underlying model was an error message or not
+     *
+     * @return Was error message
+     */
+    public boolean getWasLastPromptError() {
+        return model.getWasLastPromptError();
+    }
+
+    /**
      * Check interaction from view
      *
      * @param productNumber The product number to be checked
@@ -109,10 +118,6 @@ public class CashierController {
     public void buyBasket() {
         model.buyBasket();
         clearCurrentOrder();
-    }
-
-    public String getOrderDescription() {
-        return model.getOrderDescription();
     }
 
     /**

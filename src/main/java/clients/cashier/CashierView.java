@@ -9,6 +9,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
 import static clients.cashier.CashierModel.State;
+import static javax.swing.JOptionPane.showMessageDialog;
 
 /**
  * View of the model
@@ -141,6 +142,11 @@ public class CashierView implements PropertyChangeListener {
 
         switch (property) {
             case CashierModel.Property.PROMPT:
+                if (controller.getWasLastPromptError()) {
+                    String prompt = (String) evt.getNewValue();
+                    showMessageDialog(null, prompt, "Error", JOptionPane.ERROR_MESSAGE);
+                }
+
                 break;
             case CashierModel.Property.STATE:
                 State state = (State) evt.getNewValue();

@@ -7,6 +7,7 @@ import logic.Product;
 import logic.ProductReader;
 import logic.StockWriter;
 
+import java.rmi.RemoteException;
 import java.util.Observable;
 
 /**
@@ -32,7 +33,7 @@ public class BackDoorModel extends Observable {
         try {
             productReader = factory.getProductReader();
             stockWriter = factory.getStockWriter();
-            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
+            productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }
@@ -47,16 +48,21 @@ public class BackDoorModel extends Observable {
         String prompt;
         this.productNumber = productNumber.trim();
 
-        if (productReader.doesProductExist(this.productNumber)) {
-            Product product = productReader.getProductDetails(this.productNumber);
-            prompt = String.format(
-                    "%s : %7.2f (%2d) ",
-                    product.getName(),
-                    product.getPrice(),
-                    product.getQuantity()
-            );
-        } else {
-            prompt = "Unknown product number " + this.productNumber;
+        try {
+            if (productReader.doesProductExist(this.productNumber)) {
+                Product product = productReader.getProductDetails(this.productNumber);
+                prompt = String.format(
+                        "%s : %7.2f (%2d) ",
+                        product.getName(),
+                        product.getPrice(),
+                        product.getQuantity()
+                );
+            } else {
+                prompt = "Unknown product number " + this.productNumber;
+            }
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            prompt = "Unable to connect to server";
         }
 
         setChanged();
@@ -78,13 +84,18 @@ public class BackDoorModel extends Observable {
             this.productNumber = productNameAdapter.getProductNumber(this.productNumber);
         }
 
-        if (productReader.doesProductExist(this.productNumber)) {
-            Product product = productReader.getProductDetails(this.productNumber);
-            stockWriter.addStock(product, quantity);
-            prompt = "";
-            history += String.format("%s: (+%d) (Now: %d)\n", product.getName(), quantity, product.getQuantity());
-        } else {
-            prompt = "Unknown product number " + this.productNumber;
+        try {
+            if (productReader.doesProductExist(this.productNumber)) {
+                Product product = productReader.getProductDetails(this.productNumber);
+                stockWriter.addStock(product, quantity);
+                prompt = "";
+                history += String.format("%s: (+%d)\n", product.getName(), quantity);
+            } else {
+                prompt = "Unknown product number " + this.productNumber;
+            }
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            prompt = "Unable to connect to server";
         }
 
         setChanged();

@@ -9,6 +9,7 @@ import logic.ProductReader;
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.rmi.RemoteException;
 
 /**
  * Implements the Model of the customer client
@@ -29,7 +30,7 @@ public class CustomerModel {
     public CustomerModel(LogicFactory factory) {
         try {
             productReader = factory.getProductReader();
-            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
+            productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
         }
@@ -52,11 +53,16 @@ public class CustomerModel {
             productNumber = productNameAdapter.getProductNumber(productNumber);
         }
 
-        if (productReader.doesProductExist(productNumber)) {
-            selectedProduct = productReader.getProductDetails(productNumber);
-            image = productReader.getProductImage(productNumber);
-        } else {
-            prompt = "Unknown product number " + productNumber;
+        try {
+            if (productReader.doesProductExist(productNumber)) {
+                selectedProduct = productReader.getProductDetails(productNumber);
+                image = productReader.getProductImage(productNumber);
+            } else {
+                prompt = "Unknown product number " + productNumber;
+            }
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            prompt = "Unable to connect to server";
         }
 
         propertyChangeSupport.firePropertyChange(Property.SELECTED_PRODUCT, null, selectedProduct);

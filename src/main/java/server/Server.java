@@ -57,7 +57,6 @@ class Server {
             Naming.rebind(urlStockRW, stockWriterWrapper);
             System.out.println("StockRW bound to: " + urlStockRW);
 
-            //theOrder = new R_Order(urlOrder);
             OrderProcessor orderProcessorWrapper = new OrderProcessorRemoteWrapper(factory.getOrderProcessor());
             Naming.rebind(urlOrder, orderProcessorWrapper);
             System.out.println("Order   bound to: " + urlOrder);

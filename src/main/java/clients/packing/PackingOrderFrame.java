@@ -5,6 +5,9 @@ import logic.Order;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
+
+import static javax.swing.JOptionPane.showMessageDialog;
 
 public class PackingOrderFrame extends JFrame {
     private static final int HEIGHT = 300;
@@ -91,9 +94,16 @@ public class PackingOrderFrame extends JFrame {
 
         orderRowPanel.add(itemCountLabel, constraints);
 
-        JLabel costLabel = new JLabel(
-                String.format("£%.2f", controller.getOrderCost(order))
-        );
+        JLabel costLabel = null;
+        try {
+            costLabel = new JLabel(
+                    String.format("£%.2f", controller.getOrderCost(order))
+            );
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+            showMessageDialog(null, "Unable to connect to server", "Error", JOptionPane.ERROR_MESSAGE);
+            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        }
 
         constraints.gridx = 1;
         constraints.gridy = 1;
@@ -114,7 +124,13 @@ public class PackingOrderFrame extends JFrame {
         stateComboBox.setSelectedIndex(order.getState().ordinal());
         stateComboBox.addActionListener((actionEvent) -> {
             order.setState(Order.State.values()[stateComboBox.getSelectedIndex()]);
-            controller.updateOrderState(order);
+            try {
+                controller.updateOrderState(order);
+            } catch (Exception e) {
+                System.err.println("Exception: " + e.getMessage());
+                showMessageDialog(null, "Unable to connect to server", "Error", JOptionPane.ERROR_MESSAGE);
+                dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            }
         });
 
         orderRowPanel.add(stateComboBox, constraints);
@@ -135,7 +151,13 @@ public class PackingOrderFrame extends JFrame {
 
         Picture itemIcon = new Picture(42, 42);
         itemIcon.clear();
-        itemIcon.set(controller.getItemIcon(item));
+        try {
+            itemIcon.set(controller.getItemIcon(item));
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+            showMessageDialog(null, "Unable to connect to server", "Error", JOptionPane.ERROR_MESSAGE);
+            dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+        }
 
         itemRowPanel.add(itemIcon, constraints);
 
@@ -147,9 +169,14 @@ public class PackingOrderFrame extends JFrame {
 
         Font boldFont = new Font("Dialog", Font.BOLD, 14);
 
-        JLabel productNameLabel = new JLabel(
-                controller.getProductName(item)
-        );
+        JLabel productNameLabel = null;
+        try {
+            productNameLabel = new JLabel(
+                    controller.getProductName(item)
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         productNameLabel.setFont(boldFont);
 
         itemRowPanel.add(productNameLabel, constraints);

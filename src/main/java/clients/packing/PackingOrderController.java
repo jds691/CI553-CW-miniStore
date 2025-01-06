@@ -11,19 +11,19 @@ public class PackingOrderController {
         this.model = model;
     }
 
-    public double getOrderCost(Order order) {
+    public double getOrderCost(Order order) throws Exception {
         return model.getOrderCost(order);
     }
 
-    public void updateOrderState(Order order) {
+    public void updateOrderState(Order order) throws Exception {
         model.updateOrderState(order);
     }
 
-    public ImageIcon getItemIcon(Order.Item item) {
+    public ImageIcon getItemIcon(Order.Item item) throws Exception {
         return model.getImageIcon(item);
     }
 
-    public String getProductName(Order.Item item) {
+    public String getProductName(Order.Item item) throws Exception {
         return model.getProductName(item);
     }
 }
