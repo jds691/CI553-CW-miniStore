@@ -9,6 +9,7 @@ import logic.ProductReader;
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.rmi.RemoteException;
 
 /**
  * Implements the Model of the customer client
@@ -52,11 +53,16 @@ public class CustomerModel {
             productNumber = productNameAdapter.getProductNumber(productNumber);
         }
 
-        if (productReader.doesProductExist(productNumber)) {
-            selectedProduct = productReader.getProductDetails(productNumber);
-            image = productReader.getProductImage(productNumber);
-        } else {
-            prompt = "Unknown product number " + productNumber;
+        try {
+            if (productReader.doesProductExist(productNumber)) {
+                selectedProduct = productReader.getProductDetails(productNumber);
+                image = productReader.getProductImage(productNumber);
+            } else {
+                prompt = "Unknown product number " + productNumber;
+            }
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            prompt = "Unable to connect to server";
         }
 
         propertyChangeSupport.firePropertyChange(Property.SELECTED_PRODUCT, null, selectedProduct);
