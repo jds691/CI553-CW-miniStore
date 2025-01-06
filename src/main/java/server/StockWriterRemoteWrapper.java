@@ -16,6 +16,8 @@ class StockWriterRemoteWrapper
     private final StockWriter origin;
 
     public StockWriterRemoteWrapper(StockWriter origin) throws RemoteException {
+        super();
+
         this.origin = origin;
     }
 

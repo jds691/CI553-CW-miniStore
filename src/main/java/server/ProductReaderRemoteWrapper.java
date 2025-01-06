@@ -19,6 +19,8 @@ class ProductReaderRemoteWrapper
     private final ProductReader origin;
 
     public ProductReaderRemoteWrapper(ProductReader origin) throws RemoteException {
+        super();
+
         this.origin = origin;
     }
 

@@ -22,6 +22,8 @@ class OrderProcessorRemoteWrapper
     private final OrderProcessor origin;
 
     public OrderProcessorRemoteWrapper(OrderProcessor origin) throws RemoteException {
+        super();
+
         this.origin = origin;
     }
 
