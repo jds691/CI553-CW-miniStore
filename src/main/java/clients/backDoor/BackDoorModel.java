@@ -89,7 +89,7 @@ public class BackDoorModel extends Observable {
                 Product product = productReader.getProductDetails(this.productNumber);
                 stockWriter.addStock(product, quantity);
                 prompt = "";
-                history += String.format("%s: (+%d) (Now: %d)\n", product.getName(), quantity, product.getQuantity());
+                history += String.format("%s: (+%d)\n", product.getName(), quantity);
             } else {
                 prompt = "Unknown product number " + this.productNumber;
             }
