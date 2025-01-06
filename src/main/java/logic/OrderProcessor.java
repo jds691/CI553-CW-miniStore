@@ -1,6 +1,7 @@
 package logic;
 
 import java.rmi.Remote;
+import java.rmi.RemoteException;
 
 import static logic.Order.State;
 
@@ -13,7 +14,7 @@ public interface OrderProcessor extends Remote {
      *
      * @return New Order instance.
      */
-    Order createOrder();
+    Order createOrder() throws RemoteException;
     /**
      * Adds an order to the processing queue.
      * <p>
@@ -22,27 +23,27 @@ public interface OrderProcessor extends Remote {
      *
      * @param order Order to process.
      */
-    void addOrderToQueue(Order order);
+    void addOrderToQueue(Order order) throws RemoteException;
     /**
      * Pops an order from the top of the processing queue. May be null.
      *
      * @return Order that needs processed or null.
      */
-    Order popOrder();
+    Order popOrder() throws RemoteException;
     /**
      * Pops an order from the top of the processing queue for a specified state. May be null.
      *
      * @return Order that needs processed or null.
      */
-    Order popOrder(State state);
+    Order popOrder(State state) throws RemoteException;
 
     //Querying
-    Order[] getAllOrdersInState(State state);
+    Order[] getAllOrdersInState(State state) throws RemoteException;
 
     /**
      * Requests that the OrderProcessor re-syncs itself with the underlying data repository.
      *
      * @return Whether any data has been refreshed or not.
      */
-    boolean requestDataRefresh();
+    boolean requestDataRefresh() throws RemoteException;
 }
