@@ -23,22 +23,22 @@ class ProductReaderRemoteWrapper
     }
 
     @Override
-    public synchronized boolean doesProductExist(String productNumber) {
+    public synchronized boolean doesProductExist(String productNumber) throws RemoteException {
         return origin.doesProductExist(productNumber);
     }
 
     @Override
-    public synchronized Product getProductDetails(String pNum) {
+    public synchronized Product getProductDetails(String pNum) throws RemoteException {
         return origin.getProductDetails(pNum);
     }
 
     @Override
-    public synchronized ImageIcon getProductImage(String pNum) {
+    public synchronized ImageIcon getProductImage(String pNum) throws RemoteException {
         return origin.getProductImage(pNum);
     }
 
     @Override
-    public Repository<Product> getRepository() {
+    public Repository<Product> getRepository() throws RemoteException {
         return origin.getRepository();
     }
 }

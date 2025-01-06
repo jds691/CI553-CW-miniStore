@@ -26,32 +26,32 @@ class OrderProcessorRemoteWrapper
     }
 
     @Override
-    public synchronized Order createOrder() {
+    public synchronized Order createOrder() throws RemoteException {
         return origin.createOrder();
     }
 
     @Override
-    public synchronized void addOrderToQueue(Order order) {
+    public synchronized void addOrderToQueue(Order order) throws RemoteException {
         origin.addOrderToQueue(order);
     }
 
     @Override
-    public synchronized Order popOrder() {
+    public synchronized Order popOrder() throws RemoteException {
         return origin.popOrder();
     }
 
     @Override
-    public synchronized Order popOrder(State state) {
+    public synchronized Order popOrder(State state) throws RemoteException {
         return origin.popOrder(state);
     }
 
     @Override
-    public synchronized Order[] getAllOrdersInState(State state) {
+    public synchronized Order[] getAllOrdersInState(State state) throws RemoteException {
         return origin.getAllOrdersInState(state);
     }
 
     @Override
-    public synchronized boolean requestDataRefresh() {
+    public synchronized boolean requestDataRefresh() throws RemoteException {
         return origin.requestDataRefresh();
     }
 }

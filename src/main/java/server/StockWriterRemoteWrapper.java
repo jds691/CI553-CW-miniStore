@@ -20,17 +20,17 @@ class StockWriterRemoteWrapper
     }
 
     @Override
-    public synchronized boolean buyStock(Product product, int amount) {
+    public synchronized boolean buyStock(Product product, int amount) throws RemoteException {
         return origin.buyStock(product, amount);
     }
 
     @Override
-    public synchronized void addStock(Product product, int amount) {
+    public synchronized void addStock(Product product, int amount) throws RemoteException {
         origin.addStock(product, amount);
     }
 
     @Override
-    public synchronized void modifyStock(Product detail) {
+    public synchronized void modifyStock(Product detail) throws RemoteException {
         origin.modifyStock(detail);
     }
 }
