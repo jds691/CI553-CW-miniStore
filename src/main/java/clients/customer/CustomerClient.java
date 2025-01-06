@@ -11,11 +11,19 @@ import javax.swing.*;
  */
 public class CustomerClient {
     public static void main(String[] args) {
-        String stockURL = args.length < 1         // URL of stock R
-                        ? Endpoint.PRODUCT_READ           //  default  location
-                        : args[0];                //  supplied location
+        String productURL = args.length < 1
+                ? Endpoint.PRODUCT_READ
+                : args[0];
 
-        RemoteLogicFactory factory = new RemoteLogicFactory(null, null, stockURL);
+        String stockURL = args.length < 2
+                ? Endpoint.STOCK_WRITE
+                : args[1];
+
+        String orderURL = args.length < 3
+                ? Endpoint.ORDER
+                : args[2];
+
+        RemoteLogicFactory factory = new RemoteLogicFactory(orderURL, productURL, stockURL);
         displayGUI(factory);
     }
 
