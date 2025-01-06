@@ -33,7 +33,7 @@ public class BackDoorModel extends Observable {
         try {
             productReader = factory.getProductReader();
             stockWriter = factory.getStockWriter();
-            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
+            productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
         }

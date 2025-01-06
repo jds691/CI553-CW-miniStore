@@ -1,14 +1,8 @@
 package remote;
 
-import java.sql.Connection;
+import java.io.Serializable;
 
-public abstract class Repository<Entity> {
-    protected final Connection connection;
-
-    public Repository(Connection connection) {
-        this.connection = connection;
-    }
-
+public abstract class Repository<Entity> implements Serializable {
     public abstract Entity create();
     public abstract Entity read(String id);
     /**

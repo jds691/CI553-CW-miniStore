@@ -1,8 +1,9 @@
 package clients.adapters;
 
 import logic.Product;
-import remote.Repository;
+import logic.ProductReader;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 /**
@@ -14,11 +15,15 @@ public class ProductNameAdapter {
     /**
      * Initialises the list of products to convert between from the product repository.
      *
-     * @param productRepository Repository to read product information from
+     * @param productReader ProductReader to get information from
      */
-    public ProductNameAdapter(Repository<Product> productRepository) {
-        for (Product product : productRepository.readAll()) {
-            productMapping.put(product.getName(), product.getProductNumber());
+    public ProductNameAdapter(ProductReader productReader) {
+        try {
+            for (Product product : productReader.readAllProducts()) {
+                productMapping.put(product.getName(), product.getProductNumber());
+            }
+        } catch (RemoteException ignored) {
+            // Disable the adapter
         }
     }
 

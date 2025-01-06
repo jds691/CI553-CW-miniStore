@@ -35,7 +35,7 @@ class ProductReaderImpl implements ProductReader {
     }
 
     @Override
-    public Repository<Product> getRepository() {
-        return productRepository;
+    public Product[] readAllProducts() {
+        return productRepository.readAll();
     }
 }

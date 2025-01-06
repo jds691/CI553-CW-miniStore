@@ -1,11 +1,11 @@
 package remote;
 
 import logic.Order;
-import logic.Product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-class OrderImpl implements Order {
+class OrderImpl implements Order, Serializable {
     private final ArrayList<Item> items = new ArrayList<>();
     private int orderNumber = 0;
     private State state = State.WAITING;

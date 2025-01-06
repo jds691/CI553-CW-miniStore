@@ -30,7 +30,7 @@ public class CustomerModel {
     public CustomerModel(LogicFactory factory) {
         try {
             productReader = factory.getProductReader();
-            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
+            productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
             DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
         }

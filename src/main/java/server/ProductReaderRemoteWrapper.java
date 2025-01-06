@@ -2,7 +2,6 @@ package server;
 
 import logic.Product;
 import logic.ProductReader;
-import remote.Repository;
 
 import javax.swing.*;
 import java.io.Serial;
@@ -40,7 +39,7 @@ class ProductReaderRemoteWrapper
     }
 
     @Override
-    public Repository<Product> getRepository() throws RemoteException {
-        return origin.getRepository();
+    public Product[] readAllProducts() throws RemoteException {
+        return origin.readAllProducts();
     }
 }

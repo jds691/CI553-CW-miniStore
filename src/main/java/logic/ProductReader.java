@@ -1,7 +1,5 @@
 package logic;
 
-import remote.Repository;
-
 import javax.swing.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -32,9 +30,9 @@ public interface ProductReader extends Remote {
      */
     ImageIcon getProductImage(String pNum) throws RemoteException;
     /**
-     * Gets the underlying data repository this is reading from
+     * Gets all products from the remote repository
      *
-     * @return Data repository
+     * @return All products
      */
-    Repository<Product> getRepository() throws RemoteException;
+    Product[] readAllProducts() throws RemoteException;
 }

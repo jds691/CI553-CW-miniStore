@@ -42,7 +42,7 @@ public class CashierModel {
             productReader = factory.getProductReader();
             stockWriter = factory.getStockWriter();
             orderProcessor = factory.getOrderProcessor();
-            productNameAdapter = new ProductNameAdapter(productReader.getRepository());
+            productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
             DEBUG.error("CashierModel.constructor\n%s", e.getMessage());
         }
