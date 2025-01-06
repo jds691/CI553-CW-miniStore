@@ -13,7 +13,7 @@ public class PackingOrderModel {
         orderProcessor = factory.getOrderProcessor();
     }
 
-    public double getOrderCost(Order order) {
+    public double getOrderCost(Order order) throws Exception {
         double total = 0.0;
 
         for (Order.Item item : order.getAllItems()) {
@@ -25,15 +25,15 @@ public class PackingOrderModel {
         return total;
     }
 
-    public void updateOrderState(Order order) {
+    public void updateOrderState(Order order) throws Exception {
         orderProcessor.addOrderToQueue(order);
     }
 
-    public ImageIcon getImageIcon(Order.Item item) {
+    public ImageIcon getImageIcon(Order.Item item) throws Exception {
         return productReader.getProductImage(item.getProductNumber());
     }
 
-    public String getProductName(Order.Item item) {
+    public String getProductName(Order.Item item) throws Exception {
         return productReader.getProductDetails(item.getProductNumber()).getName();
     }
 }

@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.util.Observable;
 import java.util.Observer;
 
+import static javax.swing.JOptionPane.showMessageDialog;
 import static logic.Order.Item;
 
 /**
@@ -95,6 +96,11 @@ public class PackingView implements Observer {
     public void update(Observable modelC, Object arg) {
         PackingModel model = (PackingModel) modelC;
 
+        if (arg instanceof String message) {
+            showMessageDialog(null, message, "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         Order[][] orders = model.getAllOrders();
         renderOrderListViewport(orders);
     }
@@ -114,7 +120,18 @@ public class PackingView implements Observer {
         for (Order[] orderCollection : orders) {
             for (Order order : orderCollection) {
                 totalOrders++;
-                orderListViewport.add(createOrderRow(order));
+
+                JComponent row = createOrderRow(order);
+
+                if (row == null) {
+                    promptLabel.setText("Unable to connect to server");
+                    orderListViewport.removeAll();
+                    orderListViewport.revalidate();
+                    orderListViewport.repaint();
+                    return;
+                }
+
+                orderListViewport.add(row);
             }
         }
 
@@ -163,8 +180,14 @@ public class PackingView implements Observer {
 
         orderRowPanel.add(itemCountLabel, constraints);
 
+        double orderCost = controller.getOrderCost(order);
+
+        if (orderCost == -1) {
+            return null;
+        }
+
         JLabel costLabel = new JLabel(
-                String.format("£%.2f", controller.getOrderCost(order))
+                String.format("£%.2f", orderCost)
         );
 
         constraints.gridx = 1;

@@ -3,6 +3,7 @@ package clients.packing;
 import debug.DEBUG;
 import logic.*;
 
+import java.rmi.RemoteException;
 import java.util.Observable;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -79,7 +80,7 @@ public class PackingModel extends Observable {
                     this.allOrders.set(allOrders);
 
                     setChanged();
-                    notifyObservers("Bought Receipt");
+                    notifyObservers();
                 }
 
                 Thread.sleep(10000);
@@ -102,7 +103,15 @@ public class PackingModel extends Observable {
         double total = 0.0;
 
         for (Order.Item item : order.getAllItems()) {
-            Product product = productReader.getProductDetails(item.getProductNumber());
+            Product product = null;
+            try {
+                product = productReader.getProductDetails(item.getProductNumber());
+            } catch (RemoteException e) {
+                System.err.println("RemoteException: " + e.getMessage());
+                setChanged();
+                notifyObservers("Unable to connect to server");
+                return -1;
+            }
 
             total += product.getPrice() * item.getQuantity();
         }
@@ -111,7 +120,13 @@ public class PackingModel extends Observable {
     }
 
     public void updateOrderState(Order order) {
-        orderProcessor.addOrderToQueue(order);
+        try {
+            orderProcessor.addOrderToQueue(order);
+        } catch (RemoteException e) {
+            System.err.println("RemoteException: " + e.getMessage());
+            setChanged();
+            notifyObservers("Unable to connect to server");
+        }
     }
 }
 
