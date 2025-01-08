@@ -1,7 +1,6 @@
 package clients.cashier;
 
 import clients.adapters.ProductNameAdapter;
-import debug.DEBUG;
 import logic.*;
 
 import javax.swing.*;
@@ -44,7 +43,7 @@ public class CashierModel {
             orderProcessor = factory.getOrderProcessor();
             productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
-            DEBUG.error("CashierModel.constructor\n%s", e.getMessage());
+            System.err.printf("Unable to create cashier model\n%s", e.getMessage());
         }
 
         currentState = State.PROCESS;

@@ -12,7 +12,6 @@ import clients.customer.CustomerView;
 import clients.packing.PackingController;
 import clients.packing.PackingModel;
 import clients.packing.PackingView;
-import debug.DEBUG;
 import logic.LocalLogicFactory;
 import logic.LogicFactory;
 
@@ -29,7 +28,6 @@ import java.awt.*;
  */
 class Main {
     public static void main(String[] args) {
-        DEBUG.set(true);
         LogicFactory factory = new LocalLogicFactory();  // Direct remote.access
 
         startCustomerGUI_MVC(factory);

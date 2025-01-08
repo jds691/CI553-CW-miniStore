@@ -1,6 +1,5 @@
 package clients.packing;
 
-import debug.DEBUG;
 import logic.*;
 
 import java.rmi.RemoteException;
@@ -30,7 +29,8 @@ public class PackingModel extends Observable {
             orderProcessor = mf.getOrderProcessor();
             productReader = mf.getProductReader();
         } catch (Exception e) {
-            DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
+            System.err.println("Unable to create packing model");
+            throw new RuntimeException(e);
         }
 
         allOrders.set(null);

@@ -5,8 +5,6 @@
 
 package remote.access;
 
-import debug.DEBUG;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -40,7 +38,7 @@ public class DBAccessFactory {
      */
     public DBAccess getNewDBAccess() {
         setEnvironment();
-        DEBUG.traceA("Using [%s] as database type\n", databaseType);
+        System.out.printf("Using [%s] as database type\n", databaseType);
         switch (databaseType) {
             case "Derby":
                 return new DerbyAccess();
@@ -57,8 +55,8 @@ public class DBAccessFactory {
                 return new LinuxAccess();
 
             default:
-                DEBUG.error("DataBase [%s] not known\n", databaseType);
-                System.exit(0);
+                System.err.printf("DataBase [%s] not known\n", databaseType);
+                System.exit(-1);
         }
 
         throw new RuntimeException("No database driver");
@@ -91,14 +89,14 @@ public class DBAccessFactory {
                 istream.close();
                 return vec;
             } else {
-                DEBUG.error("File %s length %d bytes too long", file, len);
+                System.err.printf("File %s length %d bytes too long\n", file, len);
             }
         } catch (FileNotFoundException err) {
-            DEBUG.error("File does not exist: fileToBytes [%s]\n", file);
-            System.exit(0);
+            System.err.printf("File does not exist: fileToBytes [%s]\n", file);
+            System.exit(-1);
         } catch (IOException err) {
-            DEBUG.error("IO error: fileToBytes [%s]\n", file);
-            System.exit(0);
+            System.err.printf("IO error: fileToBytes [%s]\n", file);
+            System.exit(-1);
         }
 
         return vec;
@@ -114,8 +112,8 @@ public class DBAccessFactory {
             File in = new File(path);
             return in.length();
         } catch (SecurityException err) {
-            DEBUG.error("Security error: length of file [%s]\n", path);
-            System.exit(0);
+            System.err.printf("Security error: length of file [%s]\n", path);
+            System.exit(-1);
         }
 
         return -1;

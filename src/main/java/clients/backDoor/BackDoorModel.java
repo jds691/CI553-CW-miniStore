@@ -1,7 +1,6 @@
 package clients.backDoor;
 
 import clients.adapters.ProductNameAdapter;
-import debug.DEBUG;
 import logic.LogicFactory;
 import logic.Product;
 import logic.ProductReader;
@@ -35,7 +34,8 @@ public class BackDoorModel extends Observable {
             stockWriter = factory.getStockWriter();
             productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
-            DEBUG.error("CustomerModel.constructor\n%s", e.getMessage());
+            System.err.printf("Unable to create BackDoor model\n%s", e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
