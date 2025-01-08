@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 /**
  * Implements the Model of the cashier client
@@ -189,18 +190,11 @@ public class CashierModel {
         if (currentState != State.CHECKED) {
             prompt = "please check its availability";
         } else {
-            //TODO: WHY DO WE DIRECTLY BUY STOCK BEFORE THE ORDER IS BOUGHT???
             try {
-                boolean stockBought = stockWriter.buyStock(currentProduct, quantity);
-
-                if (stockBought) {
-                    makeBasketIfRequired();
-                    currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
-                    propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
-                    prompt = "Purchased " + currentProduct.getName();
-                } else {
-                    prompt = "!!! Not in stock";
-                }
+                makeBasketIfRequired();
+                currentOrder.addItem(new Order.Item(currentProduct.getProductNumber(), quantity));
+                propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, currentOrder);
+                prompt = "Added " + currentProduct.getName() + " to order";
 
                 // Return to State.PROCESS when done
                 currentState = State.PROCESS;
@@ -220,17 +214,40 @@ public class CashierModel {
      */
     public void buyBasket() {
         String prompt = "";
+        // Used to track the already bought stock in the event some products aren't in stock when placing order
+        HashMap<Product, Integer> history = new HashMap<>();
 
         if (currentOrder != null && !currentOrder.isEmpty()) {
             try {
-                orderProcessor.addOrderToQueue(currentOrder);
+                boolean abort = false;
 
-                prompt = "Start New Order";
-                currentState = State.PROCESS;
-                propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+                for (Order.Item item : currentOrder.getAllItems()) {
+                    Product product = productReader.getProductDetails(item.getProductNumber());
+                    if (!stockWriter.buyStock(product, item.getQuantity())) {
+                        prompt = "Product '" + product.getName() + "' not in stock.\nYour purchase cannot be completed.";
+                        wasLastPromptError = true;
+                        abort = true;
+                        history.put(product, item.getQuantity());
+                        break;
+                    }
 
-                currentOrder = null;
-                propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
+                    history.put(product, item.getQuantity());
+                }
+
+                if (!abort) {
+                    orderProcessor.addOrderToQueue(currentOrder);
+
+                    prompt = "Start New Order";
+                    currentState = State.PROCESS;
+                    propertyChangeSupport.firePropertyChange(Property.STATE, null, currentState);
+
+                    currentOrder = null;
+                    propertyChangeSupport.firePropertyChange(Property.ORDER_CONTENTS, null, null);
+                } else {
+                    for (Product product : history.keySet()) {
+                        stockWriter.addStock(product, history.get(product));
+                    }
+                }
             } catch (RemoteException e) {
                 prompt = "Unable to connect to server";
                 System.err.println("RemoteException: " + e.getMessage());
