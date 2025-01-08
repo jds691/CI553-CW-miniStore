@@ -2,13 +2,15 @@ package clients.backDoor;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Observable;
-import java.util.Observer;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import static clients.backDoor.BackDoorModel.Property;
 
 /**
  * Implements the Customer view.
  */
-public class BackDoorView implements Observer {
+public class BackDoorView implements PropertyChangeListener {
     private static final String RESTOCK = "Add";
     private static final String CLEAR = "Clear";
     private static final String QUERY = "Query";
@@ -67,7 +69,11 @@ public class BackDoorView implements Observer {
 
         clearButton.setBounds(16, 25 + 60 * 2, 80, 40);
         clearButton.addActionListener(
-                e -> controller.reset()
+                e -> {
+                    controller.reset();
+                    productNumberInput.setText("");
+                    quantityInput.setValue(0);
+                }
         );
         contentPane.add(clearButton);
 
@@ -97,21 +103,16 @@ public class BackDoorView implements Observer {
 
     public void setController(BackDoorController controller) {
         this.controller = controller;
+        controller.addPropertyChangeListener(this);
     }
 
-    /**
-     * Update the view, called by notifyObservers(theAction) in model,
-     *
-     * @param modelC The observed model
-     * @param arg    Specific args
-     */
     @Override
-    public void update(Observable modelC, Object arg) {
-        BackDoorModel model = (BackDoorModel) modelC;
-        String message = (String) arg;
-        promptLabel.setText(message);
+    public void propertyChange(PropertyChangeEvent evt) {
+        String property = evt.getPropertyName();
 
-        messageOutput.setText(model.getHistory());
-        productNumberInput.requestFocus();
+        switch (property) {
+            case Property.PROMPT -> promptLabel.setText(evt.getNewValue().toString());
+            case Property.HISTORY -> messageOutput.setText(evt.getNewValue().toString());
+        }
     }
 }

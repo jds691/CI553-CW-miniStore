@@ -6,13 +6,14 @@ import logic.Product;
 import logic.ProductReader;
 import logic.StockWriter;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.rmi.RemoteException;
-import java.util.Observable;
 
 /**
  * Implements the Model of the back door client
  */
-public class BackDoorModel extends Observable {
+public class BackDoorModel {
     /**
      * Product being processed
      */
@@ -23,6 +24,8 @@ public class BackDoorModel extends Observable {
     private ProductNameAdapter productNameAdapter = null;
 
     private String history = "History:\n\n";
+
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
      * Construct the model of the back door client
@@ -65,8 +68,7 @@ public class BackDoorModel extends Observable {
             prompt = "Unable to connect to server";
         }
 
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
@@ -90,6 +92,7 @@ public class BackDoorModel extends Observable {
                 stockWriter.addStock(product, quantity);
                 prompt = "";
                 history += String.format("%s: (+%d)\n", product.getName(), quantity);
+                propertyChangeSupport.firePropertyChange(Property.HISTORY, null, history);
             } else {
                 prompt = "Unknown product number " + this.productNumber;
             }
@@ -98,8 +101,7 @@ public class BackDoorModel extends Observable {
             prompt = "Unable to connect to server";
         }
 
-        setChanged();
-        notifyObservers(prompt);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
 
     /**
@@ -108,12 +110,25 @@ public class BackDoorModel extends Observable {
     public void reset() {
         String prompt = "Enter Product Number";
         history = "History:\n\n";
-        setChanged();
-        notifyObservers(prompt);
+
+        propertyChangeSupport.firePropertyChange(Property.HISTORY, null, history);
+        propertyChangeSupport.firePropertyChange(Property.PROMPT, null, prompt);
     }
-    
-    public String getHistory() {
-        return history;
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    /**
+     * Properties that can be updated via {@link PropertyChangeSupport}
+     */
+    public final static class Property {
+        public static final String PROMPT = "prompt";
+        public static final String HISTORY = "history";
     }
 }
 

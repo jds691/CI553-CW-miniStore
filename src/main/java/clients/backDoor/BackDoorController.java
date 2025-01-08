@@ -1,5 +1,7 @@
 package clients.backDoor;
 
+import java.beans.PropertyChangeListener;
+
 /**
  * The BackDoor Controller
  */
@@ -43,6 +45,14 @@ public class BackDoorController {
      */
     public void reset() {
         model.reset();
+    }
+
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        model.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        model.removePropertyChangeListener(listener);
     }
 }
 

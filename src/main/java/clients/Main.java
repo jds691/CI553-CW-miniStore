@@ -113,7 +113,6 @@ class Main {
         BackDoorController controller = new BackDoorController(model);
         view.setController(controller);
 
-        model.addObserver(view);
         window.setVisible(true);
     }
 }
