@@ -1,7 +1,6 @@
 package clients.customer;
 
 import clients.adapters.ProductNameAdapter;
-import debug.DEBUG;
 import logic.LogicFactory;
 import logic.Product;
 import logic.ProductReader;
@@ -32,7 +31,8 @@ public class CustomerModel {
             productReader = factory.getProductReader();
             productNameAdapter = new ProductNameAdapter(productReader);
         } catch (Exception e) {
-            DEBUG.error("CustomerModel.constructor\n" + "Database not created?\n%s\n", e.getMessage());
+            System.err.printf("Unable to create customer model\n" + "Database not created?\n%s\n", e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
