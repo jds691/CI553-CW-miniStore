@@ -4,6 +4,8 @@ import logic.LocalLogicFactory;
 import logic.OrderProcessor;
 import logic.ProductReader;
 import logic.StockWriter;
+import remote.SQLRepositoryFactory;
+import remote.access.DBAccessFactory;
 import remote.access.Endpoint;
 
 import java.net.InetAddress;
@@ -46,7 +48,7 @@ class Server {
             System.exit(0);
         }
 
-        LocalLogicFactory factory = new LocalLogicFactory();
+        LocalLogicFactory factory = new LocalLogicFactory(new SQLRepositoryFactory((new DBAccessFactory()).getNewDBAccess()));
 
         try {
             ProductReader productReaderWrapper = new ProductReaderRemoteWrapper(factory.getProductReader());

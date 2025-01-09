@@ -14,6 +14,8 @@ import clients.packing.PackingModel;
 import clients.packing.PackingView;
 import logic.LocalLogicFactory;
 import logic.LogicFactory;
+import remote.SQLRepositoryFactory;
+import remote.access.DBAccessFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +30,7 @@ import java.awt.*;
  */
 class Main {
     public static void main(String[] args) {
-        LogicFactory factory = new LocalLogicFactory();  // Direct remote.access
+        LogicFactory factory = new LocalLogicFactory(new SQLRepositoryFactory((new DBAccessFactory()).getNewDBAccess()));  // Direct remote.access
 
         startCustomerGUI_MVC(factory);
         startCashierGUI_MVC(factory);

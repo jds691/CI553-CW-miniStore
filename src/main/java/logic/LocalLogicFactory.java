@@ -1,21 +1,19 @@
 package logic;
 
 import remote.RepositoryFactory;
-import remote.SQLRepositoryFactory;
-import remote.access.DBAccessFactory;
 
 /**
  * Provides data access via calls to the local VM
  */
 public class LocalLogicFactory implements LogicFactory {
-    private static OrderProcessor orderProcessor;
-    private static ProductReader productReader;
-    private static StockWriter stockWriter;
+    private OrderProcessor orderProcessor;
+    private ProductReader productReader;
+    private StockWriter stockWriter;
 
-    private static RepositoryFactory repositoryFactory;
+    private final RepositoryFactory repositoryFactory;
 
-    public LocalLogicFactory() {
-        repositoryFactory = new SQLRepositoryFactory((new DBAccessFactory()).getNewDBAccess());
+    public LocalLogicFactory(RepositoryFactory repositoryFactory) {
+        this.repositoryFactory = repositoryFactory;
     }
 
     @Override
