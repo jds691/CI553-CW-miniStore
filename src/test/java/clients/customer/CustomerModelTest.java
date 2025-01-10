@@ -5,6 +5,7 @@ import facade.FacadeProductRepository;
 import facade.FacadeRepositoryFactory;
 import logic.LocalLogicFactory;
 import logic.Product;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import remote.RepositoryFactory;
@@ -19,6 +20,12 @@ class CustomerModelTest {
     @BeforeAll
     static void setUp() {
         customerModel = new CustomerModel(new LocalLogicFactory(generateRepositoryFactory()));
+    }
+
+    @AfterAll
+    static void tearDown() {
+        customerModel = null;
+        product = null;
     }
 
     @Test

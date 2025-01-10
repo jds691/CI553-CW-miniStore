@@ -5,12 +5,12 @@ import logic.Product;
 import java.io.Serializable;
 
 public class FacadeProduct implements Product, Serializable {
-    private String productNumber;
-    private String name;
-    private String description;
-    private double price;
-    private int quantity;
-    private String imageFilename;
+    private String productNumber = "0";
+    private String name = null;
+    private String description = null;
+    private double price = -1.0;
+    private int quantity = -1;
+    private String imageFilename = null;
 
     @Override
     public String getProductNumber() {

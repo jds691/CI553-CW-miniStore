@@ -10,7 +10,13 @@ public class FacadeProductRepository extends FacadeRepository<Product> {
 
     @Override
     public Product read(String id) {
-        return (Product) entities.stream().filter(x -> x.getProductNumber().equals(id)).toArray()[0];
+        FacadeProduct defaultProduct = new FacadeProduct();
+
+        try {
+            return (Product) entities.stream().filter(x -> x.getProductNumber().equals(id)).toArray()[0];
+        } catch (Exception e) {
+            return defaultProduct;
+        }
     }
 
     @Override
