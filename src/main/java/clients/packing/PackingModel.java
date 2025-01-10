@@ -21,13 +21,22 @@ public class PackingModel extends Observable {
     /**
      * Construct the model of the warehouse Packing client
      *
-     * @param mf The factory to create the connection objects
+     * @param factory The factory to create the connection objects
      */
-    public PackingModel(LogicFactory mf) {
-        this.factory = mf;
+    public PackingModel(LogicFactory factory) {
+        this(factory, true);
+    }
+
+    /**
+     * Constructs the model of the warehouse Packing client with control over the data refresh thread
+     *
+     * @apiNote Designed for testing only. Do not call in production code
+     */
+    public PackingModel(LogicFactory factory, boolean runBackgroundThread) {
+        this.factory = factory;
         try {
-            orderProcessor = mf.getOrderProcessor();
-            productReader = mf.getProductReader();
+            orderProcessor = factory.getOrderProcessor();
+            productReader = factory.getProductReader();
         } catch (Exception e) {
             System.err.println("Unable to create packing model");
             throw new RuntimeException(e);
@@ -35,7 +44,8 @@ public class PackingModel extends Observable {
 
         allOrders.set(null);
         // Start a background check to see when a new order can be packed
-        new Thread(this::refreshOrderData).start();
+        if (runBackgroundThread)
+            new Thread(this::refreshOrderData).start();
     }
 
     public LogicFactory getFactory() {
@@ -70,23 +80,31 @@ public class PackingModel extends Observable {
     private void refreshOrderData() {
         while (true) {
             try {
-                boolean didRefresh = orderProcessor.requestDataRefresh();
-                if (didRefresh || allOrders.get() == null) {
-                    Order[][] allOrders = new Order[State.values().length][];
-                    for (Order.State state : Order.State.values()) {
-                        allOrders[state.ordinal()] = orderProcessor.getAllOrdersInState(state);
-                    }
-
-                    this.allOrders.set(allOrders);
-
-                    setChanged();
-                    notifyObservers();
-                }
+                requestOrderDataRefresh();
 
                 Thread.sleep(10000);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public synchronized void requestOrderDataRefresh() {
+        try {
+            boolean didRefresh = orderProcessor.requestDataRefresh();
+            if (didRefresh || allOrders.get() == null) {
+                Order[][] allOrders = new Order[State.values().length][];
+                for (Order.State state : Order.State.values()) {
+                    allOrders[state.ordinal()] = orderProcessor.getAllOrdersInState(state);
+                }
+
+                this.allOrders.set(allOrders);
+
+                setChanged();
+                notifyObservers();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
