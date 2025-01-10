@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This project was developed with IntelliJ IDEA 2024.3.1.1 and should be used for marking and debugging. Functionality with other IDE applications are not guaranteed but the build instructions are included regardless.
+
 ###### CI553-miniStore, release for the 2024-CI553 cohort.
 ###### This is a deliberately convoluted legacy codebase for the CI553 coursework.
 ###### This version was simplified from catshop system of the previous year CW.
