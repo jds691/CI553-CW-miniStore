@@ -5,7 +5,7 @@ import logic.Order;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-class OrderImpl implements Order, Serializable {
+class OrderImpl implements Order, Serializable, Comparable<Order> {
     private final ArrayList<Item> items = new ArrayList<>();
     private int orderNumber = 0;
     private State state = State.WAITING;
@@ -77,5 +77,10 @@ class OrderImpl implements Order, Serializable {
     @Override
     public Item[] getAllItems() {
         return items.toArray(new Item[0]);
+    }
+
+    @Override
+    public int compareTo(Order o) {
+        return orderNumber - o.getOrderNumber();
     }
 }

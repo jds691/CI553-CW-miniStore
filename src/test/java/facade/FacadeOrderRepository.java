@@ -17,7 +17,7 @@ public class FacadeOrderRepository extends FacadeRepository<Order> {
 
     @Override
     public Order[] readAll() {
-        return new Order[0];
+        return entities.toArray(new Order[0]);
     }
 
     @Override
