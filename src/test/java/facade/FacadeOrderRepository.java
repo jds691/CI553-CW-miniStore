@@ -23,7 +23,7 @@ public class FacadeOrderRepository extends FacadeRepository<Order> {
     @Override
     public boolean update(Order order) {
         if (order.getOrderNumber() == 0) {
-            order.setOrderNumber(orderNumber++);
+            order.setOrderNumber(++orderNumber);
             entities.add(order);
         } else {
             if (!contains(order)) {
