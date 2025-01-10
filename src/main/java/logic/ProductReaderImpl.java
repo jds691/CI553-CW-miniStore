@@ -26,7 +26,7 @@ class ProductReaderImpl implements ProductReader {
     public ImageIcon getProductImage(String productNumber) {
         String filename = productRepository.read(productNumber).getImageFilename();
 
-        if (filename.isEmpty()) {
+        if (filename == null || filename.isEmpty()) {
             return new ImageIcon("default.jpg");
         } else {
             //TODO: Move images into resources or something to remove the need for this
