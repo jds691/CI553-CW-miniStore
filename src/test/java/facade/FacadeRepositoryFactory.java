@@ -12,6 +12,8 @@ public class FacadeRepositoryFactory implements RepositoryFactory {
 
     public FacadeRepositoryFactory() {
         orderRepository = new FacadeOrderRepository();
+        productRepository = new FacadeProductRepository();
+        stockRepository = new FacadeProductRepository();
     }
 
     @Override
